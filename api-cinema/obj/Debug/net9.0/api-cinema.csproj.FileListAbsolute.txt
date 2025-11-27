@@ -129,3 +129,4 @@
 /Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.pdb
 /Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.genruntimeconfig.cache
 /Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/ref/api-cinema.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.sourcelink.json

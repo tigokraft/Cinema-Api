@@ -25,8 +25,12 @@ if (string.IsNullOrEmpty(secretKey))
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Register Memory Cache
+builder.Services.AddMemoryCache();
+
 // Register Services
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddSingleton<TokenCacheService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -41,6 +45,30 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = jwtSettings["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
             RoleClaimType = System.Security.Claims.ClaimTypes.Role
+        };
+        
+        // Read token from cookie as well as header
+        options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // Try to get token from cookie first
+                var token = context.Request.Cookies["authToken"];
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+                // If not in cookie, try Authorization header (for API clients)
+                else if (context.Request.Headers.ContainsKey("Authorization"))
+                {
+                    var authHeader = context.Request.Headers["Authorization"].ToString();
+                    if (authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                    {
+                        context.Token = authHeader.Substring("Bearer ".Length).Trim();
+                    }
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
