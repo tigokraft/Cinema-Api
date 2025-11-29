@@ -1,0 +1,38 @@
+@model cinema_ui.Models.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>@Model.TotalMovies</h3>
+        <p>Total Movies</p>
+        <small>@Model.ActiveMovies active</small>
+    </div>
+    <div class="stat-card">
+        <h3>@Model.TotalTheaters</h3>
+        <p>Total Theaters</p>
+        <small>@Model.ActiveTheaters active</small>
+    </div>
+    <div class="stat-card">
+        <h3>@Model.TotalScreenings</h3>
+        <p>Total Screenings</p>
+        <small>@Model.ActiveScreenings active</small>
+    </div>
+    <div class="stat-card">
+        <h3>@Model.TotalUsers</h3>
+        <p>Total Users</p>
+        <small>@Model.AdminUsers admins</small>
+    </div>
+</div>
+
+<div class="stat-card">
+    <h2>Quick Actions</h2>
+    <div class="btn-group" style="margin-top: 20px;">
+        <a asp-action="CreateMovie" class="btn btn-primary">Add Movie</a>
+        <a asp-action="CreateTheater" class="btn btn-primary">Add Theater</a>
+        <a asp-action="CreateScreening" class="btn btn-primary">Add Screening</a>
+    </div>
+</div>
+

@@ -112,7 +112,8 @@ public class AuthController : ControllerBase
         return Ok(new LoginResponse
         {
             Token = token, // Still return in body for API clients
-            Username = user.Username
+            Username = user.Username,
+            Role = user.Role
         });
     }
 
@@ -123,7 +124,7 @@ public class AuthController : ControllerBase
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
         passwordHash = Convert.ToBase64String(hash);
     }
-
+    
     [HttpPost("refresh")]
     [Authorize(Policy = "Authenticated")]
     public async Task<IActionResult> RefreshToken()

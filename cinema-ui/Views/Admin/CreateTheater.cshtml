@@ -1,0 +1,64 @@
+@model cinema_ui.Models.AdminTheaterViewModel
+@{
+    ViewData["Title"] = "Create Theater";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <h2>Create New Theater</h2>
+    <a asp-action="Theaters" class="btn btn-secondary">Back to Theaters</a>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<div class="admin-form">
+    <form asp-action="CreateTheater" method="post">
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Rows"></label>
+            <input asp-for="Rows" type="number" class="form-control" id="rows" />
+            <span asp-validation-for="Rows" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="SeatsPerRow"></label>
+            <input asp-for="SeatsPerRow" type="number" class="form-control" id="seatsPerRow" />
+            <span asp-validation-for="SeatsPerRow" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Capacity"></label>
+            <input asp-for="Capacity" type="number" class="form-control" id="capacity" readonly />
+            <small class="text-muted">Automatically calculated as Rows × SeatsPerRow</small>
+        </div>
+        
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">Create Theater</button>
+            <a asp-action="Theaters" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('rows').addEventListener('input', calculateCapacity);
+    document.getElementById('seatsPerRow').addEventListener('input', calculateCapacity);
+    
+    function calculateCapacity() {
+        const rows = parseInt(document.getElementById('rows').value) || 0;
+        const seatsPerRow = parseInt(document.getElementById('seatsPerRow').value) || 0;
+        document.getElementById('capacity').value = rows * seatsPerRow;
+    }
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

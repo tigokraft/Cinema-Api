@@ -1,8 +1,93 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model cinema_ui.Models.HomeViewModel
+@{
+    ViewData["Title"] = "Cinema - Your Movie Experience";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="netflix-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to Cinema</h1>
+            <p class="hero-subtitle">Discover amazing movies and book your tickets</p>
+            @if (string.IsNullOrEmpty(Context.Request.Cookies["authToken"]))
+            {
+                <div class="hero-buttons">
+                    <a asp-controller="Auth" asp-action="Login" class="btn-hero btn-primary">Sign In</a>
+                    <a asp-controller="Auth" asp-action="Register" class="btn-hero btn-secondary">Get Started</a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Movies Section -->
+    @if (Model.Movies.Any())
+    {
+        <div class="content-section">
+            <h2 class="section-title">Now Showing</h2>
+            <div class="movie-row">
+                @foreach (var movie in Model.Movies.Take(10))
+                {
+                    <div class="movie-card">
+                        <div class="movie-poster">
+                            @if (!string.IsNullOrEmpty(movie.PosterUrl))
+                            {
+                                <img src="@movie.PosterUrl" alt="@movie.Title" />
+                            }
+                            else
+                            {
+                                <div class="movie-placeholder">
+                                    <span>@movie.Title.Substring(0, Math.Min(2, movie.Title.Length))</span>
+                                </div>
+                            }
+                        </div>
+                        <div class="movie-info">
+                            <h3 class="movie-title">@movie.Title</h3>
+                            <p class="movie-genre">@movie.Genre</p>
+                            <p class="movie-rating">@movie.Rating</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Screenings Section -->
+    @if (Model.Screenings.Any())
+    {
+        <div class="content-section">
+            <h2 class="section-title">Upcoming Screenings</h2>
+            <div class="screenings-grid">
+                @foreach (var screening in Model.Screenings)
+                {
+                    <div class="screening-card">
+                        <h3 class="screening-movie">@screening.MovieTitle</h3>
+                        <p class="screening-theater">@screening.TheaterName</p>
+                        <p class="screening-time">@screening.ShowTime.ToString("MMM dd, yyyy HH:mm")</p>
+                        <p class="screening-price">$@screening.Price.ToString("F2")</p>
+                        <p class="screening-seats">@screening.AvailableSeats seats available</p>
+                        @if (!string.IsNullOrEmpty(Context.Request.Cookies["authToken"]))
+                        {
+                            <button class="btn-book" onclick="bookTicket(@screening.Id)">Book Now</button>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="content-section">
+            <h2 class="section-title">No Screenings Available</h2>
+            <p class="empty-message">Check back later for upcoming movie screenings.</p>
+        </div>
+    }
 </div>
+
+<script>
+function bookTicket(screeningId) {
+    // TODO: Implement ticket booking
+    alert('Booking ticket for screening ' + screeningId);
+}
+</script>
+
