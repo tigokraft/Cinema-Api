@@ -1,0 +1,141 @@
+﻿@model cinema_ui.Models.HomeViewModel
+@{
+    ViewData["Title"] = "Cinema - Your Movie Experience";
+}
+
+<div class="netflix-container">
+    @if (Model.FeaturedMovie != null)
+    {
+        <!-- Featured Movie Hero -->
+        <div class="featured-hero" style="background-image: url('@Model.FeaturedMovie.BackdropUrl');">
+            <div class="featured-overlay"></div>
+            <div class="featured-content">
+                <h1 class="featured-title">@Model.FeaturedMovie.Title</h1>
+                <p class="featured-meta">
+                    <span class="rating-badge">@Model.FeaturedMovie.Rating</span>
+                    <span>@Model.FeaturedMovie.ReleaseDate.Year</span>
+                    <span>@Model.FeaturedMovie.DurationMinutes min</span>
+                    <span>@Model.FeaturedMovie.Genre</span>
+                </p>
+                <p class="featured-description">@Model.FeaturedMovie.Description</p>
+                <div class="featured-buttons">
+                    <a asp-controller="Ticket" asp-action="MovieDetail" asp-route-id="@Model.FeaturedMovie.Id" 
+                       class="btn-featured-primary">
+                        <span>▶</span> View Details & Book
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Fallback Generic Hero -->
+        <div class="hero-section">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">Welcome to Cinema</h1>
+                <p class="hero-subtitle">Discover amazing movies and book your tickets</p>
+                @if (string.IsNullOrEmpty(Context.Request.Cookies["authToken"]))
+                {
+                    <div class="hero-buttons">
+                        <a asp-controller="Auth" asp-action="Login" class="btn-hero btn-primary">Sign In</a>
+                        <a asp-controller="Auth" asp-action="Register" class="btn-hero btn-secondary">Get Started</a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Movies Section -->
+    @if (Model.Movies.Any())
+    {
+        <div class="content-section">
+            <h2 class="section-title">Now Showing</h2>
+            <div class="movie-row">
+                @foreach (var movie in Model.Movies.Take(10))
+                {
+                    <a asp-controller="Ticket" asp-action="MovieDetail" asp-route-id="@movie.Id" style="text-decoration: none; color: inherit;">
+                        <div class="movie-card">
+                            <div class="movie-poster">
+                                @if (!string.IsNullOrEmpty(movie.PosterUrl))
+                                {
+                                    <img src="@movie.PosterUrl" 
+                                         alt="@movie.Title" 
+                                         loading="lazy" 
+                                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'movie-placeholder\'><span>🎬</span><small>Image unavailable</small></div>';" />
+                                }
+                                else
+                                {
+                                    <div class="movie-placeholder">
+                                        <span>🎬</span>
+                                        <small>No poster</small>
+                                    </div>
+                                }
+                                <div class="movie-overlay">
+                                    <button class="btn-more-info">More Info</button>
+                                </div>
+                            </div>
+                            <div class="movie-info">
+                                <h3 class="movie-title">@movie.Title</h3>
+                                <p class="movie-genre">@movie.Genre</p>
+                                <p class="movie-rating">@movie.Rating</p>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Screenings Section -->
+    @if (Model.Screenings.Any())
+    {
+        <div class="content-section">
+            <h2 class="section-title">Upcoming Screenings</h2>
+            <div class="screenings-grid">
+                @foreach (var screening in Model.Screenings)
+                {
+                    <div class="screening-card">
+                        @if (!string.IsNullOrEmpty(screening.MoviePosterUrl))
+                        {
+                            <div class="screening-poster">
+                                <img src="@screening.MoviePosterUrl" alt="@screening.MovieTitle" loading="lazy" 
+                                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'movie-placeholder\'><span>🎬</span></div>';" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="screening-poster">
+                                <div class="movie-placeholder">
+                                    <span>🎬</span>
+                                </div>
+                            </div>
+                        }
+                        <div class="screening-info">
+                            <h3 class="screening-movie">@screening.MovieTitle</h3>
+                            <p class="screening-theater">@screening.TheaterName</p>
+                            <p class="screening-time">@screening.ShowTime.ToString("MMM dd, yyyy HH:mm")</p>
+                            <p class="screening-price">$@screening.Price.ToString("F2")</p>
+                            <p class="screening-seats">@screening.AvailableSeats seats available</p>
+                            @if (!string.IsNullOrEmpty(Context.Request.Cookies["authToken"]))
+                            {
+                                <a asp-controller="Ticket" asp-action="SelectSeats" asp-route-screeningId="@screening.Id" class="btn-book">Book Now</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Auth" asp-action="Login" class="btn-book">Sign In to Book</a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="content-section">
+            <h2 class="section-title">No Screenings Available</h2>
+            <p class="empty-message">Check back later for upcoming movie screenings.</p>
+        </div>
+    }
+</div>

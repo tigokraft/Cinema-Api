@@ -1,0 +1,173 @@
+@model cinema_ui.Controllers.SeatSelectionViewModel
+@{
+    ViewData["Title"] = "Select Your Seat - " + Model.Movie.Title;
+    Layout = "_Layout";
+}
+
+<div class="content-section" style="margin-top: 100px;">
+    <div class="mb-4">
+        <a asp-action="MovieDetail" asp-route-id="@Model.Movie.Id" class="btn btn-secondary">← Back to Movie</a>
+    </div>
+
+    <h2 class="section-title">Select Your Seat</h2>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>@Model.Movie.Title</h3>
+        </div>
+        <div class="card-description">
+            <p><strong>Theater:</strong> @Model.Screening.TheaterName</p>
+            <p><strong>Show Time:</strong> @Model.Screening.ShowTime.ToString("MMM dd, yyyy HH:mm")</p>
+            <p><strong>Price:</strong> $@Model.Screening.Price.ToString("F2")</p>
+        </div>
+    </div>
+
+    <div class="seat-selection-container">
+        <div class="screen-indicator">SCREEN</div>
+        
+        <div class="seat-map" id="seatMap">
+            @for (int row = 0; row < Model.Screening.Rows; row++)
+            {
+                <div class="seat-row">
+                    <span class="row-label">@((char)('A' + row))</span>
+                    @for (int seat = 1; seat <= Model.Screening.SeatsPerRow; seat++)
+                    {
+                        var seatNumber = $"{(char)('A' + row)}{seat}";
+                        var isOccupied = Model.Screening.OccupiedSeats.Contains(seatNumber);
+                        
+                        <button type="button" 
+                                class="seat-btn @(isOccupied ? "seat-occupied" : "seat-available")"
+                                data-seat="@seatNumber"
+                                @(isOccupied ? "disabled" : "")>
+                            @seat
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="seat-legend">
+            <div class="legend-item">
+                <span class="seat-btn seat-available"></span>
+                <span>Available</span>
+            </div>
+            <div class="legend-item">
+                <span class="seat-btn seat-selected"></span>
+                <span>Selected</span>
+            </div>
+            <div class="legend-item">
+                <span class="seat-btn seat-occupied"></span>
+                <span>Occupied</span>
+            </div>
+        </div>
+
+        <form id="seatForm" asp-action="UserInfo" method="get" style="display: none;">
+            <input type="hidden" name="screeningId" value="@Model.Screening.Id" />
+            <input type="hidden" name="seatNumber" id="selectedSeat" />
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: var(--spacing-xl);">Continue to Booking</button>
+        </form>
+    </div>
+</div>
+
+<style>
+.seat-selection-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.screen-indicator {
+    text-align: center;
+    padding: var(--spacing-md);
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border-radius: calc(var(--radius) + 2px);
+    margin-bottom: var(--spacing-xl);
+    font-weight: 600;
+}
+
+.seat-map {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xl);
+}
+
+.seat-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    justify-content: center;
+}
+
+.row-label {
+    width: 30px;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+}
+
+.seat-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid hsl(var(--border));
+    border-radius: calc(var(--radius) - 2px);
+    background: hsl(var(--muted));
+    color: hsl(var(--foreground));
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.seat-btn.seat-available:hover {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border-color: hsl(var(--primary));
+    transform: scale(1.1);
+}
+
+.seat-btn.seat-selected {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border-color: hsl(var(--primary));
+}
+
+.seat-btn.seat-occupied {
+    background: hsl(var(--destructive) / 0.3);
+    color: hsl(var(--muted-foreground));
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.seat-legend {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: hsl(var(--muted-foreground));
+}
+</style>
+
+<script>
+let selectedSeat = null;
+
+document.querySelectorAll('.seat-btn.seat-available').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Remove previous selection
+        document.querySelectorAll('.seat-btn').forEach(b => b.classList.remove('seat-selected'));
+        
+        // Select this seat
+        this.classList.add('seat-selected');
+        selectedSeat = this.dataset.seat;
+        
+        // Show form and set seat number
+        document.getElementById('selectedSeat').value = selectedSeat;
+        document.getElementById('seatForm').style.display = 'block';
+    });
+});
+</script>
+

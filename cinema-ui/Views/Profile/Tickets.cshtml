@@ -1,0 +1,75 @@
+@model cinema_ui.Controllers.MyTicketsViewModel
+@{
+    ViewData["Title"] = "My Tickets";
+    Layout = "_Layout";
+}
+
+<div class="netflix-container">
+    <div class="content-section" style="padding-top: 120px;">
+        <h2 class="section-title">My Tickets</h2>
+
+        <div class="flex gap-3 mb-4" style="flex-wrap: wrap;">
+            <a asp-action="Tickets" asp-route-status="" 
+               class="btn @(string.IsNullOrEmpty(Model.SelectedStatus) ? "btn-primary" : "btn-secondary")">
+                All Tickets
+            </a>
+            <a asp-action="Tickets" asp-route-status="Active" 
+               class="btn @(Model.SelectedStatus == "Active" ? "btn-primary" : "btn-secondary")">
+                Active
+            </a>
+            <a asp-action="Tickets" asp-route-status="Cancelled" 
+               class="btn @(Model.SelectedStatus == "Cancelled" ? "btn-primary" : "btn-secondary")">
+                Cancelled
+            </a>
+            <a asp-action="Tickets" asp-route-status="Used" 
+               class="btn @(Model.SelectedStatus == "Used" ? "btn-primary" : "btn-secondary")">
+                Used
+            </a>
+        </div>
+
+        @if (Model.Tickets.Any())
+        {
+            <div class="screenings-grid">
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <div class="screening-card" style="flex-direction: column; min-height: auto; max-height: none; height: auto;">
+                        <div class="screening-info" style="padding: var(--spacing-lg); width: 100%;">
+                            <h3 class="screening-movie" style="white-space: normal; margin-bottom: var(--spacing-sm);">@ticket.MovieTitle</h3>
+                            <p class="screening-theater" style="white-space: normal; margin-bottom: var(--spacing-xs);">@ticket.TheaterName</p>
+                            <p class="screening-time" style="white-space: normal; margin-bottom: var(--spacing-sm);">@ticket.ShowTime.ToString("MMM dd, yyyy HH:mm")</p>
+                            
+                            <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-sm); flex-wrap: wrap;">
+                                <div>
+                                    <strong style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); display: block;">Seat</strong>
+                                    <span style="font-size: 1rem; font-weight: 600;">@ticket.SeatNumber</span>
+                                </div>
+                                <div>
+                                    <strong style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); display: block;">Price</strong>
+                                    <span class="screening-price" style="font-size: 1rem; font-weight: 600;">$@ticket.Price.ToString("F2")</span>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--spacing-xs);">
+                                <strong style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Status:</strong>
+                                <span class="badge @(ticket.Status == "Active" ? "badge-success" : ticket.Status == "Cancelled" ? "badge-destructive" : "badge-secondary")" 
+                                      style="margin-left: 0.5rem;">
+                                    @ticket.Status
+                                </span>
+                            </div>
+                            
+                            <small class="text-muted" style="font-size: 0.75rem;">Purchased: @ticket.PurchaseDate.ToString("MMM dd, yyyy")</small>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <h3>No tickets found</h3>
+                <p>You haven't purchased any tickets yet.</p>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">Browse Movies</a>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,68 @@
+@model cinema_ui.Services.UserProfile
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "_Layout";
+}
+
+<div class="netflix-container">
+    <div class="content-section" style="padding-top: 120px;">
+        <h2 class="section-title">My Profile</h2>
+
+        @if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        }
+
+        @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+        {
+            <div class="alert alert-destructive">@TempData["ErrorMessage"]</div>
+        }
+
+        <div class="card" style="max-width: 700px; margin: 0 auto;">
+            <form asp-action="UpdateProfile" method="post">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="label">Username</label>
+                        <input type="text" class="input" value="@Model.Username" disabled />
+                        <small class="text-muted" style="font-size: 0.75rem; display: block; margin-top: 0.25rem;">Username cannot be changed</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">Role</label>
+                        <input type="text" class="input" value="@Model.Role" disabled />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label" for="Email">Email</label>
+                    <input type="email" id="Email" name="Email" class="input" value="@Model.Email" required />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="label" for="FirstName">First Name</label>
+                        <input type="text" id="FirstName" name="FirstName" class="input" value="@Model.FirstName" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label" for="LastName">Last Name</label>
+                        <input type="text" id="LastName" name="LastName" class="input" value="@Model.LastName" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Active Tickets</label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="badge badge-primary" style="font-size: 1rem; padding: 0.5rem 1rem;">@Model.TicketCount</span>
+                        <span class="text-muted">tickets purchased</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mt-5">
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                    <a asp-action="Tickets" class="btn btn-secondary">View My Tickets</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

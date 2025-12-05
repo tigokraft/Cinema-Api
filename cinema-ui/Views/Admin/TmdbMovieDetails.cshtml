@@ -1,0 +1,71 @@
+@model cinema_ui.Models.TmdbMovieDetailsViewModel
+@{
+    ViewData["Title"] = "Movie Details - " + Model.Title;
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <h2>Movie Details</h2>
+    <a asp-action="ImportFromTmdb" class="btn btn-secondary">Back to Search</a>
+</div>
+
+<div class="admin-form">
+    <div class="grid" style="grid-template-columns: 320px 1fr; gap: var(--spacing-xl);">
+        <div>
+            @if (!string.IsNullOrEmpty(Model.PosterUrl))
+            {
+                <div style="position: relative; width: 100%; aspect-ratio: 2/3; border-radius: calc(var(--radius) + 2px); overflow: hidden; box-shadow: var(--shadow-lg);">
+                    <img src="@Model.PosterUrl" 
+                         alt="@Model.Title" 
+                         style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                         loading="lazy"
+                         onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'width:100%;height:100%;background:hsl(var(--muted));display:flex;flex-direction:column;align-items:center;justify-content:center;color:hsl(var(--muted-foreground));padding:var(--spacing-md);text-align:center;\'><span style=\'font-size:2rem;margin-bottom:var(--spacing-sm);\'>📷</span><span>Image unavailable</span></div>';" />
+                </div>
+            }
+            else
+            {
+                <div style="width: 100%; aspect-ratio: 2/3; background: hsl(var(--muted)); border-radius: calc(var(--radius) + 2px); display: flex; flex-direction: column; align-items: center; justify-content: center; color: hsl(var(--muted-foreground)); padding: var(--spacing-md); text-align: center;">
+                    <span style="font-size: 3rem; margin-bottom: var(--spacing-sm);">📷</span>
+                    <span>No Poster Available</span>
+                </div>
+            }
+        </div>
+        
+        <div>
+            <h2 class="mb-3">@Model.Title</h2>
+            
+            <div class="mb-4">
+                <div class="flex flex-col gap-2">
+                    <div>
+                        <span class="font-semibold">Release Date:</span>
+                        <span class="text-muted">@Model.ReleaseDate.ToString("MMMM dd, yyyy")</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Runtime:</span>
+                        <span class="text-muted">@Model.Runtime minutes</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Director:</span>
+                        <span class="text-muted">@Model.Director</span>
+                    </div>
+                    <div>
+                        <span class="font-semibold">Genres:</span>
+                        <span class="text-muted">@string.Join(", ", Model.Genres)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <h3 class="mb-2" style="font-size: 1.125rem;">Overview</h3>
+                <p class="text-muted" style="line-height: 1.7;">@Model.Overview</p>
+            </div>
+            
+            <form asp-action="ImportTmdbMovie" asp-route-tmdbId="@Model.TmdbId" method="post">
+                <button type="submit" class="btn btn-success btn-lg" onclick="return confirm('Import this movie into the database?');">
+                    Import Movie
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+

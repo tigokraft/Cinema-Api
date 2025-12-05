@@ -1,0 +1,64 @@
+@model cinema_ui.Models.AdminScreeningsViewModel
+@{
+    ViewData["Title"] = "Screenings Management";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <h2>Screenings</h2>
+    <a asp-action="CreateScreening" class="btn btn-primary">Add New Screening</a>
+</div>
+
+@if (Model.Screenings.Any())
+{
+    <div class="admin-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Movie</th>
+                    <th>Theater</th>
+                    <th>Show Time</th>
+                    <th>Price</th>
+                    <th>Available Seats</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var screening in Model.Screenings)
+                {
+                    <tr>
+                        <td>@screening.Id</td>
+                        <td>@screening.MovieTitle</td>
+                        <td>@screening.TheaterName</td>
+                        <td>@screening.ShowTime.ToString("MMM dd, yyyy HH:mm")</td>
+                        <td>$@screening.Price.ToString("F2")</td>
+                        <td>@screening.AvailableSeats / @screening.TotalSeats</td>
+                        <td>
+                            <span class="status-badge @(screening.IsActive ? "status-active" : "status-inactive")">
+                                @(screening.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a asp-action="EditScreening" asp-route-id="@screening.Id" class="btn btn-sm btn-secondary">Edit</a>
+                                <form asp-action="DeleteScreening" asp-route-id="@screening.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure? This will cancel all tickets.');">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <h3>No screenings found</h3>
+        <a asp-action="CreateScreening" class="btn btn-primary" style="margin-top: 20px;">Add Screening</a>
+    </div>
+}
+

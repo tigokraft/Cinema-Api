@@ -1,0 +1,9 @@
+/* Site-wide styles - shadcn/ui-inspired */
+
+@import url('./shadcn.css');
+
+/* Override for light mode on public site */
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}

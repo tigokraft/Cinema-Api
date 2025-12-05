@@ -1,0 +1,41 @@
+@model cinema_ui.Services.Ticket
+@{
+    ViewData["Title"] = "Booking Confirmation";
+    Layout = "_Layout";
+}
+
+<div class="content-section" style="margin-top: 100px;">
+    <div class="admin-form" style="max-width: 600px; margin: 0 auto;">
+        <div class="text-center mb-4">
+            <div style="font-size: 4rem; color: hsl(var(--primary)); margin-bottom: var(--spacing-md);">✓</div>
+            <h1>Booking Confirmed!</h1>
+            <p class="text-muted">Your ticket has been successfully purchased</p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Ticket Details</h3>
+            </div>
+            <div class="card-description">
+                <p><strong>Movie:</strong> @Model.MovieTitle</p>
+                <p><strong>Theater:</strong> @Model.TheaterName</p>
+                <p><strong>Show Time:</strong> @Model.ShowTime.ToString("MMMM dd, yyyy HH:mm")</p>
+                <p><strong>Seat:</strong> @Model.SeatNumber</p>
+                <p><strong>Price:</strong> $@Model.Price.ToString("F2")</p>
+                <p><strong>Ticket ID:</strong> #@Model.Id</p>
+                <p><strong>Purchase Date:</strong> @Model.PurchaseDate.ToString("MMMM dd, yyyy HH:mm")</p>
+            </div>
+        </div>
+
+        <div class="alert alert-info mb-4">
+            <strong>📧 Confirmation Email</strong><br/>
+            A confirmation email has been sent to your registered email address.
+        </div>
+
+        <div class="btn-group" style="flex-direction: column; gap: var(--spacing-md);">
+            <a asp-controller="Profile" asp-action="Tickets" class="btn btn-primary btn-lg">View My Tickets</a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </div>
+</div>
+

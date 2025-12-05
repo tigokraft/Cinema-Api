@@ -1,0 +1,122 @@
+@model cinema_ui.Models.AdminTicketsViewModel
+@{
+    ViewData["Title"] = "Tickets Management";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <h2>Tickets</h2>
+</div>
+
+@if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="admin-form mb-4">
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+        <div class="form-group">
+            <label class="label">Filter by Status</label>
+            <select id="statusFilter" class="form-control" onchange="filterTickets()">
+                <option value="">All Statuses</option>
+                <option value="Active" selected="@(Model.SelectedStatus == "Active")">Active</option>
+                <option value="Cancelled" selected="@(Model.SelectedStatus == "Cancelled")">Cancelled</option>
+                <option value="Used" selected="@(Model.SelectedStatus == "Used")">Used</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="label">Filter by Screening</label>
+            <select id="screeningFilter" class="form-control" onchange="filterTickets()">
+                <option value="">All Screenings</option>
+                @foreach (var screening in Model.Screenings)
+                {
+                    <option value="@screening.Id" selected="@(Model.SelectedScreeningId == screening.Id)">
+                        @screening.MovieTitle - @screening.ShowTime.ToString("MMM dd, yyyy HH:mm")
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
+</div>
+
+@if (Model.Tickets.Any())
+{
+    <div class="admin-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Movie</th>
+                    <th>Theater</th>
+                    <th>Show Time</th>
+                    <th>Seat</th>
+                    <th>Price</th>
+                    <th>User</th>
+                    <th>Status</th>
+                    <th>Purchase Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <tr>
+                        <td>@ticket.Id</td>
+                        <td>@ticket.MovieTitle</td>
+                        <td>@ticket.TheaterName</td>
+                        <td>@ticket.ShowTime.ToString("MMM dd, yyyy HH:mm")</td>
+                        <td>@ticket.SeatNumber</td>
+                        <td>$@ticket.Price.ToString("F2")</td>
+                        <td>
+                            <div>@ticket.Username</div>
+                            <small class="text-muted">@ticket.UserEmail</small>
+                        </td>
+                        <td>
+                            <span class="badge @(ticket.Status == "Active" ? "badge-success" : ticket.Status == "Cancelled" ? "badge-destructive" : "badge-secondary")">
+                                @ticket.Status
+                            </span>
+                        </td>
+                        <td>@ticket.PurchaseDate.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a asp-action="EditTicket" asp-route-id="@ticket.Id" class="btn btn-sm btn-secondary">Edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <h3>No tickets found</h3>
+        <p>No tickets match the selected filters.</p>
+    </div>
+}
+
+<script>
+function filterTickets() {
+    const status = document.getElementById('statusFilter').value;
+    const screeningId = document.getElementById('screeningFilter').value;
+    
+    let url = '@Url.Action("Tickets", "Admin")';
+    const params = new URLSearchParams();
+    
+    if (status) params.append('status', status);
+    if (screeningId) params.append('screeningId', screeningId);
+    
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
+    
+    window.location.href = url;
+}
+</script>
+

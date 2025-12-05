@@ -1,0 +1,62 @@
+@model List<cinema_ui.Services.TheaterResponseDto>
+@{
+    ViewData["Title"] = "Theaters Management";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <h2>Theaters</h2>
+    <a asp-action="CreateTheater" class="btn btn-primary">Add New Theater</a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="admin-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Capacity</th>
+                    <th>Rows</th>
+                    <th>Seats/Row</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var theater in Model)
+                {
+                    <tr>
+                        <td>@theater.Id</td>
+                        <td>@theater.Name</td>
+                        <td>@theater.Capacity</td>
+                        <td>@theater.Rows</td>
+                        <td>@theater.SeatsPerRow</td>
+                        <td>
+                            <span class="status-badge @(theater.IsActive ? "status-active" : "status-inactive")">
+                                @(theater.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a asp-action="EditTheater" asp-route-id="@theater.Id" class="btn btn-sm btn-secondary">Edit</a>
+                                <form asp-action="DeleteTheater" asp-route-id="@theater.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <h3>No theaters found</h3>
+        <a asp-action="CreateTheater" class="btn btn-primary" style="margin-top: 20px;">Add Theater</a>
+    </div>
+}
+

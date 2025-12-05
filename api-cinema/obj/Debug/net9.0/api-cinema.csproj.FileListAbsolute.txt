@@ -1,0 +1,263 @@
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/appsettings.Development.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/appsettings.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/api-cinema.staticwebassets.endpoints.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/api-cinema
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/api-cinema.deps.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/api-cinema.runtimeconfig.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/api-cinema.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/api-cinema.pdb
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Humanizer.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.AspNetCore.OpenApi.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.Bcl.AsyncInterfaces.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.Build.Locator.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.CSharp.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.Workspaces.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.Workspaces.MSBuild.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Abstractions.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Design.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Relational.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.Extensions.DependencyModel.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.Logging.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.Tokens.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Microsoft.OpenApi.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Mono.TextTemplating.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Npgsql.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/System.CodeDom.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/System.Composition.AttributedModel.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/System.Composition.Convention.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/System.Composition.Hosting.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/System.Composition.Runtime.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/System.Composition.TypedParts.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/System.IdentityModel.Tokens.Jwt.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/cs/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/de/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/es/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/fr/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/it/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ja/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ko/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/pl/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/pt-BR/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ru/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/cs/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/de/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/es/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/fr/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/it/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ja/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ko/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/pl/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/pt-BR/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ru/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/cs/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/de/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/es/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/fr/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/it/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ja/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ko/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/pl/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/pt-BR/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ru/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/cs/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/de/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/es/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/fr/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/it/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ja/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ko/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/pl/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/pt-BR/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ru/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/cs/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/de/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/es/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/fr/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/it/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ja/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ko/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/pl/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/pt-BR/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/ru/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.csproj.AssemblyReference.cache
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/rpswa.dswa.cache.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.GeneratedMSBuildEditorConfig.editorconfig
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.AssemblyInfoInputs.cache
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.AssemblyInfo.cs
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.csproj.CoreCompileInputs.cache
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.MvcApplicationPartsAssemblyInfo.cs
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.MvcApplicationPartsAssemblyInfo.cache
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/rjimswa.dswa.cache.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/rjsmrazor.dswa.cache.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/rjsmcshtml.dswa.cache.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/scopedcss/bundle/api-cinema.styles.css
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/staticwebassets.build.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/staticwebassets.build.json.cache
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/staticwebassets.development.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/staticwebassets.build.endpoints.json
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.csproj.Up2Date
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/refint/api-cinema.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.pdb
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.genruntimeconfig.cache
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/ref/api-cinema.dll
+/Users/exxo/Documents/code/Escola/Projeto Cinema/api-cinema/obj/Debug/net9.0/api-cinema.sourcelink.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/appsettings.Development.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/appsettings.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/api-cinema.staticwebassets.endpoints.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/api-cinema
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/api-cinema.deps.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/api-cinema.runtimeconfig.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/api-cinema.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/api-cinema.pdb
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Humanizer.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.AspNetCore.OpenApi.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.Bcl.AsyncInterfaces.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.Build.Locator.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.CSharp.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.Workspaces.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.CodeAnalysis.Workspaces.MSBuild.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Abstractions.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Design.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.Relational.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.Extensions.DependencyModel.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.Logging.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.IdentityModel.Tokens.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Microsoft.OpenApi.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Mono.TextTemplating.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Npgsql.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/System.CodeDom.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/System.Composition.AttributedModel.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/System.Composition.Convention.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/System.Composition.Hosting.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/System.Composition.Runtime.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/System.Composition.TypedParts.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/System.IdentityModel.Tokens.Jwt.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/cs/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/de/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/es/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/fr/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/it/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ja/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ko/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/pl/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/pt-BR/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ru/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/cs/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/de/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/es/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/fr/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/it/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ja/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ko/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/pl/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/pt-BR/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ru/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.CSharp.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/cs/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/de/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/es/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/fr/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/it/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ja/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ko/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/pl/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/pt-BR/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ru/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/cs/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/de/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/es/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/fr/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/it/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ja/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ko/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/pl/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/pt-BR/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ru/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/cs/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/de/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/es/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/fr/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/it/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ja/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ko/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/pl/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/pt-BR/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/ru/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.csproj.AssemblyReference.cache
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/rpswa.dswa.cache.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.GeneratedMSBuildEditorConfig.editorconfig
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.AssemblyInfoInputs.cache
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.AssemblyInfo.cs
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.csproj.CoreCompileInputs.cache
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.MvcApplicationPartsAssemblyInfo.cs
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.MvcApplicationPartsAssemblyInfo.cache
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/rjimswa.dswa.cache.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/rjsmrazor.dswa.cache.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/rjsmcshtml.dswa.cache.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/scopedcss/bundle/api-cinema.styles.css
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/staticwebassets.build.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/staticwebassets.build.json.cache
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/staticwebassets.development.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/staticwebassets.build.endpoints.json
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.csproj.Up2Date
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/refint/api-cinema.dll
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.pdb
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/api-cinema.genruntimeconfig.cache
+/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/Debug/net9.0/ref/api-cinema.dll

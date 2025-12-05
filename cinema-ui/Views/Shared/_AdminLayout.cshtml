@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Dashboard</title>
+    <link rel="stylesheet" href="~/css/shadcn.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Dashboard</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a asp-controller="Admin" asp-action="Dashboard" class="nav-item">
+                    <span>📊</span> Dashboard
+                </a>
+                <a asp-controller="Admin" asp-action="Movies" class="nav-item">
+                    <span>🎬</span> Movies
+                </a>
+                <a asp-controller="Admin" asp-action="ImportFromTmdb" class="nav-item">
+                    <span>📥</span> Import from TMDB
+                </a>
+                <a asp-controller="Admin" asp-action="Theaters" class="nav-item">
+                    <span>🎭</span> Theaters
+                </a>
+                <a asp-controller="Admin" asp-action="Screenings" class="nav-item">
+                    <span>📺</span> Screenings
+                </a>
+                <a asp-controller="Admin" asp-action="Tickets" class="nav-item">
+                    <span>🎟️</span> Tickets
+                </a>
+                <a asp-controller="Admin" asp-action="Users" class="nav-item">
+                    <span>🧍‍♂️</span> Users
+                </a>
+                <a asp-controller="Home" asp-action="Index" class="nav-item">
+                    Back to site
+                </a>
+                <form asp-controller="Auth" asp-action="Logout" method="post" class="nav-item logout-form">
+                    <button type="submit" class="btn-logout-nav">🚪 Logout</button>
+                </form>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>@ViewData["Title"]</h1>
+            </header>
+            <div class="admin-content">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

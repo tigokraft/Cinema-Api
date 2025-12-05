@@ -1,0 +1,120 @@
+@model cinema_ui.Models.TmdbImportViewModel
+@{
+    ViewData["Title"] = "Import Movies from TMDB";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <h2>Import Movies from TMDB</h2>
+    <div class="btn-group">
+        <a asp-action="PopularTmdbMovies" class="btn btn-secondary">Popular Movies</a>
+        <a asp-action="Movies" class="btn btn-secondary">Back to Movies</a>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<div class="admin-form mb-4">
+    <form asp-action="SearchTmdbMovies" method="post">
+        <div class="form-group">
+            <label class="label">Search TMDB</label>
+            <div class="flex gap-2">
+                <input type="text" name="SearchQuery" class="form-control" placeholder="Enter movie title..." value="@Model.SearchQuery" required />
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if (Model.SearchResults.Any())
+{
+    <div class="stat-card mb-4">
+        <p><strong>Found @Model.TotalResults</strong> results</p>
+        <p class="text-muted">Page @Model.Page of @Model.TotalPages</p>
+    </div>
+
+    <div class="tmdb-results-grid">
+        @foreach (var movie in Model.SearchResults)
+        {
+            <div class="tmdb-movie-card">
+                <div class="tmdb-poster-wrapper">
+                    @{
+                        var posterUrl = movie.GetPosterUrl();
+                    }
+                    @if (!string.IsNullOrEmpty(posterUrl))
+                    {
+                        <img src="@posterUrl" 
+                             alt="@movie.Title" 
+                             class="tmdb-poster" 
+                             loading="lazy"
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'tmdb-poster-error\'><span>📷</span><span>Image unavailable</span></div>';" />
+                    }
+                    else
+                    {
+                        <div class="tmdb-poster-placeholder">
+                            <span>📷</span>
+                            <span>No Poster</span>
+                        </div>
+                    }
+                </div>
+                <div class="tmdb-movie-info">
+                    <h4>@movie.Title</h4>
+                    @if (!string.IsNullOrEmpty(movie.ReleaseDate))
+                    {
+                        <p class="tmdb-movie-meta">@movie.ReleaseDate</p>
+                    }
+                    @if (movie.VoteAverage.HasValue)
+                    {
+                        <div class="tmdb-rating">
+                            <span>⭐</span>
+                            <span>@movie.VoteAverage.Value.ToString("F1")</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(movie.Overview))
+                    {
+                        <p class="tmdb-overview">@movie.Overview</p>
+                    }
+                    <div class="btn-group mt-2">
+                        <a asp-action="TmdbMovieDetails" asp-route-tmdbId="@movie.Id" class="btn btn-sm btn-primary">View Details</a>
+                        <form asp-action="ImportTmdbMovie" asp-route-tmdbId="@movie.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Import this movie?');">Import</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="pagination">
+            @if (Model.Page > 1)
+            {
+                <a asp-action="SearchTmdbMovies" asp-route-SearchQuery="@Model.SearchQuery" asp-route-page="@(Model.Page - 1)" class="btn btn-secondary">Previous</a>
+            }
+            <span class="text-muted" style="padding: 0.625rem 1rem;">Page @Model.Page of @Model.TotalPages</span>
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a asp-action="SearchTmdbMovies" asp-route-SearchQuery="@Model.SearchQuery" asp-route-page="@(Model.Page + 1)" class="btn btn-secondary">Next</a>
+            }
+        </div>
+    }
+}
+else if (!string.IsNullOrEmpty(Model.SearchQuery))
+{
+    <div class="empty-state">
+        <h3>No movies found</h3>
+        <p>Try a different search query.</p>
+    </div>
+}
+else
+{
+    <div class="stat-card">
+        <h3>Search for movies to import</h3>
+        <p class="text-muted">Use the search box above to find movies from The Movie Database (TMDB), or browse popular movies.</p>
+    </div>
+}
+

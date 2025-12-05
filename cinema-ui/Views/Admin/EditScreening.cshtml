@@ -1,0 +1,82 @@
+@model cinema_ui.Models.AdminScreeningViewModel
+@{
+    ViewData["Title"] = "Edit Screening";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <h2>Edit Screening</h2>
+    <a asp-action="Screenings" class="btn btn-secondary">Back to Screenings</a>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<div class="admin-form">
+    <form asp-action="EditScreening" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group">
+            <label asp-for="MovieId" class="label">Movie</label>
+            <select asp-for="MovieId" class="form-control" asp-items="@(new SelectList(Model.AvailableMovies, "Id", "Title"))">
+                <option value="">Select a movie</option>
+            </select>
+            <span asp-validation-for="MovieId" class="form-error"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="TheaterId" class="label">Theater</label>
+            <select asp-for="TheaterId" class="form-control" asp-items="@(new SelectList(Model.AvailableTheaters, "Id", "Name"))">
+                <option value="">Select a theater</option>
+            </select>
+            <span asp-validation-for="TheaterId" class="form-error"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="StartDate" class="label">Start Date</label>
+            <input asp-for="StartDate" type="date" class="form-control" id="startDate" />
+            <span asp-validation-for="StartDate" class="form-error"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="EndDate" class="label">End Date</label>
+            <input asp-for="EndDate" type="date" class="form-control" id="endDate" />
+            <span asp-validation-for="EndDate" class="form-error"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="ShowTime" class="label">Show Time</label>
+            <input asp-for="ShowTime" type="time" class="form-control" />
+            <span asp-validation-for="ShowTime" class="form-error"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Price" class="label">Price</label>
+            <input asp-for="Price" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="Price" class="form-error"></span>
+        </div>
+        
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">Update Screening</button>
+            <a asp-action="Screenings" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Ensure end date is always at least equal to start date
+        document.getElementById('startDate')?.addEventListener('change', function() {
+            const startDate = this.value;
+            const endDateInput = document.getElementById('endDate');
+            if (endDateInput && (!endDateInput.value || endDateInput.value < startDate)) {
+                endDateInput.value = startDate;
+                endDateInput.min = startDate;
+            }
+        });
+    </script>
+}
+

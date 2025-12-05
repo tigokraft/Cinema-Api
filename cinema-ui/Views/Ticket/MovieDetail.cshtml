@@ -1,0 +1,103 @@
+@model cinema_ui.Controllers.MovieDetailViewModel
+@{
+    ViewData["Title"] = Model.Movie.Title;
+    Layout = "_Layout";
+    var hasBackdrop = !string.IsNullOrEmpty(Model.Movie.BackdropUrl);
+}
+
+@if (hasBackdrop)
+{
+    <div class="movie-detail-backdrop" style="background-image: url('@Model.Movie.BackdropUrl');"></div>
+    <div class="movie-detail-backdrop-fade"></div>
+}
+
+<div class="netflix-container">
+    <div class="movie-detail-content @(hasBackdrop ? "with-backdrop" : "")">
+        <div class="content-section" style="@(hasBackdrop ? "" : "margin-top: 100px;")">
+            <div class="grid" style="grid-template-columns: 300px 1fr; gap: var(--spacing-xl); margin-bottom: var(--spacing-2xl);">
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.Movie.PosterUrl))
+                    {
+                        <img src="@Model.Movie.PosterUrl" alt="@Model.Movie.Title" style="width: 100%; border-radius: calc(var(--radius) + 2px); box-shadow: var(--shadow-lg);" />
+                    }
+                    else
+                    {
+                        <div style="width: 100%; aspect-ratio: 2/3; background: hsl(var(--muted)); border-radius: calc(var(--radius) + 2px); display: flex; align-items: center; justify-content: center; color: hsl(var(--muted-foreground));">
+                            <span style="font-size: 3rem;">🎬</span>
+                        </div>
+                    }
+                </div>
+                
+                <div>
+                    <h1>@Model.Movie.Title</h1>
+                    <div class="mb-4">
+                        <p><strong>Genre:</strong> @Model.Movie.Genre</p>
+                        <p><strong>Rating:</strong> @Model.Movie.Rating</p>
+                        <p><strong>Duration:</strong> @Model.Movie.DurationMinutes minutes</p>
+                        <p><strong>Release Date:</strong> @Model.Movie.ReleaseDate.ToString("MMMM dd, yyyy")</p>
+                        <p><strong>Director:</strong> @Model.Movie.Director</p>
+                    </div>
+                    <div class="mb-4">
+                        <h3>Description</h3>
+                        <p class="text-muted" style="line-height: 1.7;">@Model.Movie.Description</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Available Screenings</h2>
+            @if (Model.Screenings.Any())
+            {
+                <div class="screenings-grid">
+                    @foreach (var screening in Model.Screenings)
+                    {
+                        <div class="screening-card">
+                            @if (!string.IsNullOrEmpty(screening.MoviePosterUrl))
+                            {
+                                <div class="screening-poster">
+                                    <img src="@screening.MoviePosterUrl" alt="@screening.MovieTitle" loading="lazy" 
+                                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'movie-placeholder\'><span>🎬</span></div>';" />
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model.Movie.PosterUrl))
+                            {
+                                <div class="screening-poster">
+                                    <img src="@Model.Movie.PosterUrl" alt="@screening.MovieTitle" loading="lazy" 
+                                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'movie-placeholder\'><span>🎬</span></div>';" />
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="screening-poster">
+                                    <div class="movie-placeholder">
+                                        <span>🎬</span>
+                                    </div>
+                                </div>
+                            }
+                            <div class="screening-info">
+                                <h3 class="screening-movie">@screening.TheaterName</h3>
+                                <p class="screening-time">@screening.ShowTime.ToString("MMM dd, yyyy HH:mm")</p>
+                                <p class="screening-price">$@screening.Price.ToString("F2")</p>
+                                <p class="screening-seats">@screening.AvailableSeats seats available</p>
+                                @if (screening.AvailableSeats > 0)
+                                {
+                                    <a asp-action="SelectSeats" asp-route-screeningId="@screening.Id" class="btn btn-primary" style="width: 100%; margin-top: var(--spacing-md);">Select Seats</a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary" style="width: 100%; margin-top: var(--spacing-md);" disabled>Sold Out</button>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <h3>No screenings available</h3>
+                    <p>There are no screenings scheduled for this movie at this time.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
