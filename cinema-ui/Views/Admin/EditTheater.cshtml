@@ -19,28 +19,69 @@
         <input type="hidden" asp-for="Id" />
         
         <div class="form-group">
-            <label asp-for="Name"></label>
+            <label asp-for="Name">Theater Name</label>
             <input asp-for="Name" class="form-control" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         
         <div class="form-group">
-            <label asp-for="Rows"></label>
-            <input asp-for="Rows" type="number" class="form-control" id="rows" />
-            <span asp-validation-for="Rows" class="text-danger"></span>
+            <label asp-for="Address">Address</label>
+            <input asp-for="Address" class="form-control" placeholder="e.g., 123 Main Street" />
+            <span asp-validation-for="Address" class="text-danger"></span>
         </div>
         
         <div class="form-group">
-            <label asp-for="SeatsPerRow"></label>
-            <input asp-for="SeatsPerRow" type="number" class="form-control" id="seatsPerRow" />
-            <span asp-validation-for="SeatsPerRow" class="text-danger"></span>
+            <label asp-for="RoomCount">Number of Rooms</label>
+            <input asp-for="RoomCount" type="number" min="1" max="50" class="form-control" id="roomCount" />
+            <span asp-validation-for="RoomCount" class="text-danger"></span>
+            <small class="text-muted">Warning: Reducing room count will delete rooms. Rooms with active screenings cannot be removed.</small>
+        </div>
+        
+        <hr style="margin: 2rem 0; border-color: rgba(255,255,255,0.1);" />
+        <h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Room Configuration (Same for all rooms)</h4>
+        
+        <div class="form-row" style="display: flex; gap: 1rem;">
+            <div class="form-group" style="flex: 1;">
+                <label asp-for="Rows">Rows per Room</label>
+                <input asp-for="Rows" type="number" min="1" max="50" class="form-control" id="rows" />
+                <span asp-validation-for="Rows" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group" style="flex: 1;">
+                <label asp-for="SeatsPerRow">Seats per Row</label>
+                <input asp-for="SeatsPerRow" type="number" min="1" max="50" class="form-control" id="seatsPerRow" />
+                <span asp-validation-for="SeatsPerRow" class="text-danger"></span>
+            </div>
         </div>
         
         <div class="form-group">
-            <label asp-for="Capacity"></label>
-            <input asp-for="Capacity" type="number" class="form-control" id="capacity" readonly />
-            <small class="text-muted">Automatically calculated as Rows × SeatsPerRow</small>
+            <label>Capacity per Room</label>
+            <input type="text" class="form-control" id="capacity" readonly style="background: var(--bg-secondary); color: var(--primary);" />
         </div>
+        
+        <div class="form-group">
+            <label>Total Theater Capacity</label>
+            <input type="text" class="form-control" id="totalCapacity" readonly style="background: var(--bg-secondary); color: var(--primary);" />
+        </div>
+        
+        @if (Model.Rooms.Any())
+        {
+            <hr style="margin: 2rem 0; border-color: rgba(255,255,255,0.1);" />
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Current Rooms</h4>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                @foreach (var room in Model.Rooms)
+                {
+                    <span style="background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: 4px; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-weight: bold; color: var(--primary);">@room.Name</span>
+                        <span style="font-size: 0.8rem; color: var(--text-secondary);">(@room.Capacity seats)</span>
+                        @if (room.IsActive)
+                        {
+                            <span style="width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></span>
+                        }
+                    </span>
+                }
+            </div>
+        }
         
         <div class="btn-group">
             <button type="submit" class="btn btn-primary">Update Theater</button>
@@ -52,15 +93,23 @@
 <script>
     document.getElementById('rows').addEventListener('input', calculateCapacity);
     document.getElementById('seatsPerRow').addEventListener('input', calculateCapacity);
+    document.getElementById('roomCount').addEventListener('input', calculateCapacity);
     
     function calculateCapacity() {
         const rows = parseInt(document.getElementById('rows').value) || 0;
         const seatsPerRow = parseInt(document.getElementById('seatsPerRow').value) || 0;
-        document.getElementById('capacity').value = rows * seatsPerRow;
+        const roomCount = parseInt(document.getElementById('roomCount').value) || 0;
+        const roomCapacity = rows * seatsPerRow;
+        const totalCapacity = roomCapacity * roomCount;
+        
+        document.getElementById('capacity').value = roomCapacity + ' seats';
+        document.getElementById('totalCapacity').value = totalCapacity + ' seats (' + roomCount + ' rooms × ' + roomCapacity + ' seats)';
     }
+    
+    // Initial calculation
+    calculateCapacity();
 </script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-

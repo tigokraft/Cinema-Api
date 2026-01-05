@@ -17,66 +17,126 @@
 <div class="admin-form">
     <form asp-action="EditScreening" method="post">
         <input type="hidden" asp-for="Id" />
+        
+        <div class="form-section">
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Movie</h4>
+            <div class="form-group">
+                <label asp-for="MovieId">Movie</label>
+                <select asp-for="MovieId" class="form-control" asp-items="@(new SelectList(Model.AvailableMovies, "Id", "Title"))">
+                    <option value="">Select a movie</option>
+                </select>
+                <span asp-validation-for="MovieId" class="text-danger"></span>
+            </div>
+        </div>
+        
+        <div class="form-section" style="margin-top: 2rem;">
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Theater & Room</h4>
+            <div class="form-row" style="display: flex; gap: 1rem;">
+                <div class="form-group" style="flex: 1;">
+                    <label asp-for="TheaterId">Theater</label>
+                    <select asp-for="TheaterId" class="form-control" id="theaterSelect">
+                        <option value="">Select a theater</option>
+                        @foreach (var theater in Model.AvailableTheaters)
+                        {
+                            var isSelected = Model.TheaterId == theater.Id;
+                            var jsonOptions = new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase };
+                            <option value="@theater.Id" 
+                                    data-rooms="@System.Text.Json.JsonSerializer.Serialize(theater.Rooms, jsonOptions)"
+                                    selected="@isSelected">
+                                @theater.Name (@theater.RoomCount rooms)
+                            </option>
+                        }
 
-        <div class="form-group">
-            <label asp-for="MovieId" class="label">Movie</label>
-            <select asp-for="MovieId" class="form-control" asp-items="@(new SelectList(Model.AvailableMovies, "Id", "Title"))">
-                <option value="">Select a movie</option>
-            </select>
-            <span asp-validation-for="MovieId" class="form-error"></span>
+
+                    </select>
+                    <span asp-validation-for="TheaterId" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group" style="flex: 1;">
+                    <label asp-for="RoomId">Room</label>
+                    <select asp-for="RoomId" class="form-control" id="roomSelect">
+                        <option value="">Select a room</option>
+                        @foreach (var room in Model.AvailableRooms)
+                        {
+                            var isRoomSelected = Model.RoomId == room.Id;
+                            <option value="@room.Id" 
+                                    data-capacity="@room.Capacity"
+                                    selected="@isRoomSelected">
+                                @room.Name (@room.Capacity seats)
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="RoomId" class="text-danger"></span>
+                </div>
+            </div>
         </div>
         
-        <div class="form-group">
-            <label asp-for="TheaterId" class="label">Theater</label>
-            <select asp-for="TheaterId" class="form-control" asp-items="@(new SelectList(Model.AvailableTheaters, "Id", "Name"))">
-                <option value="">Select a theater</option>
-            </select>
-            <span asp-validation-for="TheaterId" class="form-error"></span>
+        <div class="form-section" style="margin-top: 2rem;">
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Schedule</h4>
+            <div class="form-row" style="display: flex; gap: 1rem;">
+                <div class="form-group" style="flex: 1;">
+                    <label asp-for="StartDate">Date</label>
+                    <input asp-for="StartDate" type="date" class="form-control" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group" style="flex: 1;">
+                    <label asp-for="ShowTimesInput">Show Time (HH:mm)</label>
+                    <input asp-for="ShowTimesInput" type="time" class="form-control" />
+                    <span asp-validation-for="ShowTimesInput" class="text-danger"></span>
+                </div>
+            </div>
         </div>
         
-        <div class="form-group">
-            <label asp-for="StartDate" class="label">Start Date</label>
-            <input asp-for="StartDate" type="date" class="form-control" id="startDate" />
-            <span asp-validation-for="StartDate" class="form-error"></span>
+        <div class="form-section" style="margin-top: 2rem;">
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Pricing</h4>
+            <div class="form-group">
+                <label asp-for="Price">Ticket Price ($)</label>
+                <input asp-for="Price" type="number" step="0.01" min="0.01" class="form-control" style="max-width: 200px;" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
         </div>
         
-        <div class="form-group">
-            <label asp-for="EndDate" class="label">End Date</label>
-            <input asp-for="EndDate" type="date" class="form-control" id="endDate" />
-            <span asp-validation-for="EndDate" class="form-error"></span>
-        </div>
-        
-        <div class="form-group">
-            <label asp-for="ShowTime" class="label">Show Time</label>
-            <input asp-for="ShowTime" type="time" class="form-control" />
-            <span asp-validation-for="ShowTime" class="form-error"></span>
-        </div>
-        
-        <div class="form-group">
-            <label asp-for="Price" class="label">Price</label>
-            <input asp-for="Price" type="number" step="0.01" class="form-control" />
-            <span asp-validation-for="Price" class="form-error"></span>
-        </div>
-        
-        <div class="btn-group">
+        <div class="btn-group" style="margin-top: 2rem;">
             <button type="submit" class="btn btn-primary">Update Screening</button>
             <a asp-action="Screenings" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>
 
+<script>
+    const theaterSelect = document.getElementById('theaterSelect');
+    const roomSelect = document.getElementById('roomSelect');
+    const currentRoomId = @Model.RoomId;
+    
+    // Update rooms when theater changes
+    theaterSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        roomSelect.innerHTML = '<option value="">Select a room</option>';
+        
+        if (selectedOption.value) {
+            const rooms = JSON.parse(selectedOption.dataset.rooms || '[]');
+            rooms.forEach(room => {
+                const option = document.createElement('option');
+                option.value = room.id;
+                option.textContent = `${room.name} (${room.capacity} seats)`;
+                option.dataset.capacity = room.capacity;
+                if (room.id === currentRoomId) {
+                    option.selected = true;
+                }
+                roomSelect.appendChild(option);
+            });
+        }
+    });
+    
+    // Initialize rooms on page load if theater is selected
+    document.addEventListener('DOMContentLoaded', function() {
+        if (theaterSelect.value && roomSelect.options.length <= 1) {
+            // Rooms should already be populated from the model
+        }
+    });
+</script>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-        // Ensure end date is always at least equal to start date
-        document.getElementById('startDate')?.addEventListener('change', function() {
-            const startDate = this.value;
-            const endDateInput = document.getElementById('endDate');
-            if (endDateInput && (!endDateInput.value || endDateInput.value < startDate)) {
-                endDateInput.value = startDate;
-                endDateInput.min = startDate;
-            }
-        });
-    </script>
 }
-

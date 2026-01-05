@@ -1,11 +1,11 @@
 @model cinema_ui.Models.AdminScreeningViewModel
 @{
-    ViewData["Title"] = "Create Screening";
+    ViewData["Title"] = "Create Screening Schedule";
     Layout = "_AdminLayout";
 }
 
 <div class="page-header">
-    <h2>Create New Screening</h2>
+    <h2>Create Screening Schedule</h2>
     <a asp-action="Screenings" class="btn btn-secondary">Back to Screenings</a>
 </div>
 
@@ -14,93 +14,292 @@
     <div class="alert alert-danger">@Model.ErrorMessage</div>
 }
 
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success">@Model.SuccessMessage</div>
+}
+
 <div class="admin-form">
-    <form asp-action="CreateScreening" method="post">
-        <div class="form-group">
-            <label asp-for="MovieId">Movie</label>
-            <select asp-for="MovieId" class="form-control" asp-items="@(new SelectList(Model.AvailableMovies, "Id", "Title"))">
-                <option value="">Select a movie</option>
-            </select>
-            <span asp-validation-for="MovieId" class="text-danger"></span>
+    <form asp-action="CreateScreening" method="post" id="screeningForm">
+        <div class="form-section">
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                <span style="color: var(--primary);">1.</span> Select Movie
+            </h4>
+            <div class="form-group">
+                <label asp-for="MovieId">Movie</label>
+                <select asp-for="MovieId" class="form-control" asp-items="@(new SelectList(Model.AvailableMovies, "Id", "Title"))">
+                    <option value="">Select a movie</option>
+                </select>
+                <span asp-validation-for="MovieId" class="text-danger"></span>
+            </div>
         </div>
         
-        <div class="form-group">
-            <label asp-for="TheaterId">Theater</label>
-            <select asp-for="TheaterId" class="form-control" asp-items="@(new SelectList(Model.AvailableTheaters, "Id", "Name"))">
-                <option value="">Select a theater</option>
-            </select>
-            <span asp-validation-for="TheaterId" class="text-danger"></span>
+        <div class="form-section" style="margin-top: 2rem;">
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                <span style="color: var(--primary);">2.</span> Select Theater & Room
+            </h4>
+            <div class="form-row" style="display: flex; gap: 1rem;">
+                <div class="form-group" style="flex: 1;">
+                    <label asp-for="TheaterId">Theater</label>
+                    <select asp-for="TheaterId" class="form-control" id="theaterSelect">
+                        <option value="">Select a theater</option>
+                        @foreach (var theater in Model.AvailableTheaters)
+                        {
+                            var isSelected = Model.TheaterId == theater.Id;
+                            var jsonOptions = new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase };
+                            <option value="@theater.Id" 
+                                    data-rooms="@System.Text.Json.JsonSerializer.Serialize(theater.Rooms, jsonOptions)"
+                                    selected="@isSelected">
+                                @theater.Name (@theater.RoomCount rooms)
+                            </option>
+                        }
+
+                    </select>
+                    <span asp-validation-for="TheaterId" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group" style="flex: 1;">
+                    <label asp-for="RoomId">Room</label>
+                    <select asp-for="RoomId" class="form-control" id="roomSelect">
+                        <option value="">Select a room</option>
+                    </select>
+                    <span asp-validation-for="RoomId" class="text-danger"></span>
+                </div>
+            </div>
+            <div id="roomInfo" style="display: none; background: var(--bg-secondary); padding: 1rem; border-radius: 8px; margin-top: 0.5rem;">
+                <small style="color: var(--text-secondary);">Room Capacity: <span id="roomCapacity" style="color: var(--primary); font-weight: bold;">-</span></small>
+            </div>
         </div>
         
-        <div class="form-group">
-            <label asp-for="StartDate" class="label">Start Date</label>
-            <input asp-for="StartDate" type="date" class="form-control" id="startDate" />
-            <span asp-validation-for="StartDate" class="form-error"></span>
-            <small class="text-muted">The date when the screening period begins.</small>
+        <div class="form-section" style="margin-top: 2rem;">
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                <span style="color: var(--primary);">3.</span> Schedule Period
+            </h4>
+            <div class="form-row" style="display: flex; gap: 1rem;">
+                <div class="form-group" style="flex: 1;">
+                    <label asp-for="StartDate">Start Date</label>
+                    <input asp-for="StartDate" type="date" class="form-control" id="startDate" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                    <small class="text-muted">First day of screenings</small>
+                </div>
+                
+                <div class="form-group" style="flex: 1;">
+                    <label asp-for="EndDate">End Date</label>
+                    <input asp-for="EndDate" type="date" class="form-control" id="endDate" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                    <small class="text-muted">Last day of screenings</small>
+                </div>
+            </div>
         </div>
         
-        <div class="form-group">
-            <label asp-for="EndDate" class="label">End Date</label>
-            <input asp-for="EndDate" type="date" class="form-control" id="endDate" />
-            <span asp-validation-for="EndDate" class="form-error"></span>
-            <small class="text-muted">The date when the screening period ends. Must be after or equal to the start date.</small>
+        <div class="form-section" style="margin-top: 2rem;">
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                <span style="color: var(--primary);">4.</span> Days of Week
+            </h4>
+            <div class="form-group">
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    @{
+                        var days = new[] { ("0", "Sun"), ("1", "Mon"), ("2", "Tue"), ("3", "Wed"), ("4", "Thu"), ("5", "Fri"), ("6", "Sat") };
+                    }
+                    @foreach (var (value, label) in days)
+                    {
+                        var isChecked = Model.SelectedDays.Contains(int.Parse(value));
+                        <label style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
+                            <input type="checkbox" name="SelectedDays" value="@value" @(isChecked ? "checked" : "") />
+                            @label
+                        </label>
+                    }
+                </div>
+                <small class="text-muted">Select the days when screenings will occur</small>
+            </div>
         </div>
         
-        <div class="form-group">
-            <label asp-for="ShowTime" class="label">Show Time</label>
-            <input asp-for="ShowTime" type="time" class="form-control" />
-            <span asp-validation-for="ShowTime" class="form-error"></span>
-            <small class="text-muted">The time when the movie starts each day (e.g., 18:00 for 6:00 PM).</small>
+        <div class="form-section" style="margin-top: 2rem;">
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                <span style="color: var(--primary);">5.</span> Show Times
+            </h4>
+            <div class="form-group">
+                <label asp-for="ShowTimesInput">Show Times (comma-separated, HH:mm format)</label>
+                <input asp-for="ShowTimesInput" class="form-control" placeholder="e.g., 10:00,14:00,18:00,21:00" />
+                <span asp-validation-for="ShowTimesInput" class="text-danger"></span>
+                <small class="text-muted">Enter times in 24-hour format, separated by commas. Example: 10:00,14:00,18:00,21:00</small>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="addTime('10:00')">+ 10:00</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="addTime('14:00')">+ 14:00</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="addTime('17:00')">+ 17:00</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="addTime('20:00')">+ 20:00</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="addTime('22:00')">+ 22:00</button>
+            </div>
         </div>
         
-        <div class="form-group">
-            <label asp-for="Price">Price</label>
-            <input asp-for="Price" type="number" step="0.01" class="form-control" />
-            <span asp-validation-for="Price" class="text-danger"></span>
+        <div class="form-section" style="margin-top: 2rem;">
+            <h4 style="color: var(--text-secondary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                <span style="color: var(--primary);">6.</span> Pricing
+            </h4>
+            <div class="form-group">
+                <label asp-for="Price">Ticket Price ($)</label>
+                <input asp-for="Price" type="number" step="0.01" min="0.01" class="form-control" style="max-width: 200px;" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
         </div>
         
-        <div class="btn-group">
-            <button type="submit" class="btn btn-primary">Create Screening</button>
+        <div id="summary" style="background: linear-gradient(135deg, var(--bg-secondary), rgba(var(--primary-rgb), 0.1)); padding: 1.5rem; border-radius: 8px; margin-top: 2rem; border: 1px solid rgba(var(--primary-rgb), 0.2);">
+            <h4 style="color: var(--primary); margin-bottom: 1rem;">Schedule Summary</h4>
+            <p id="summaryText" style="color: var(--text-secondary);">Fill in the form above to see the summary...</p>
+        </div>
+        
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button type="submit" class="btn btn-primary">Create Screening Schedule</button>
             <a asp-action="Screenings" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>
 
+<script>
+    const theaterSelect = document.getElementById('theaterSelect');
+    const roomSelect = document.getElementById('roomSelect');
+    const roomInfo = document.getElementById('roomInfo');
+    const roomCapacity = document.getElementById('roomCapacity');
+    
+    // Update rooms when theater changes
+    theaterSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        roomSelect.innerHTML = '<option value="">Select a room</option>';
+        roomInfo.style.display = 'none';
+        
+        if (selectedOption.value) {
+            const rooms = JSON.parse(selectedOption.dataset.rooms || '[]');
+            rooms.forEach(room => {
+                const option = document.createElement('option');
+                option.value = room.id;
+                option.textContent = `${room.name} (${room.capacity} seats)`;
+                option.dataset.capacity = room.capacity;
+                roomSelect.appendChild(option);
+            });
+        }
+        updateSummary();
+    });
+    
+    // Show room info when room is selected
+    roomSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value && selectedOption.dataset.capacity) {
+            roomCapacity.textContent = selectedOption.dataset.capacity + ' seats';
+            roomInfo.style.display = 'block';
+        } else {
+            roomInfo.style.display = 'none';
+        }
+        updateSummary();
+    });
+    
+    // Date validation
+    document.getElementById('startDate')?.addEventListener('change', function() {
+        const startDate = this.value;
+        const endDateInput = document.getElementById('endDate');
+        if (endDateInput && (!endDateInput.value || endDateInput.value < startDate)) {
+            endDateInput.value = startDate;
+            endDateInput.min = startDate;
+        }
+        updateSummary();
+    });
+
+    document.getElementById('endDate')?.addEventListener('change', function() {
+        const startDateInput = document.getElementById('startDate');
+        const endDate = this.value;
+        if (startDateInput && endDate < startDateInput.value) {
+            alert('End date must be after or equal to start date.');
+            this.value = startDateInput.value;
+        }
+        updateSummary();
+    });
+
+    // Set minimum date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        
+        if (startDateInput) {
+            startDateInput.min = today;
+        }
+        if (endDateInput) {
+            endDateInput.min = today;
+        }
+        
+        // Trigger theater change to load rooms if theater is pre-selected
+        if (theaterSelect.value) {
+            theaterSelect.dispatchEvent(new Event('change'));
+        }
+        
+        updateSummary();
+    });
+    
+    // Add time helper
+    function addTime(time) {
+        const input = document.querySelector('input[name="ShowTimesInput"]');
+        const currentTimes = input.value.split(',').map(t => t.trim()).filter(t => t);
+        if (!currentTimes.includes(time)) {
+            currentTimes.push(time);
+            currentTimes.sort();
+            input.value = currentTimes.join(',');
+        }
+        updateSummary();
+    }
+    
+    // Update summary
+    function updateSummary() {
+        const movie = document.querySelector('select[name="MovieId"]');
+        const theater = document.querySelector('select[name="TheaterId"]');
+        const room = document.querySelector('select[name="RoomId"]');
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const showTimes = document.querySelector('input[name="ShowTimesInput"]').value;
+        const price = document.querySelector('input[name="Price"]').value;
+        const selectedDays = document.querySelectorAll('input[name="SelectedDays"]:checked');
+        
+        let summary = '';
+        
+        if (movie.value && theater.value && room.value && startDate && endDate && showTimes) {
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const days = Array.from(selectedDays).map(d => dayNames[parseInt(d.value)]);
+            const times = showTimes.split(',').map(t => t.trim()).filter(t => t);
+            
+            // Calculate number of screenings
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const selectedDayValues = Array.from(selectedDays).map(d => parseInt(d.value));
+            let screeningCount = 0;
+            
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                if (selectedDayValues.includes(d.getDay())) {
+                    screeningCount += times.length;
+                }
+            }
+            
+            summary = `
+                <strong>${movie.options[movie.selectedIndex].text}</strong><br>
+                <span style="color: var(--text-secondary);">at</span> ${theater.options[theater.selectedIndex].text} - ${room.options[room.selectedIndex].text}<br>
+                <span style="color: var(--text-secondary);">from</span> ${startDate} <span style="color: var(--text-secondary);">to</span> ${endDate}<br>
+                <span style="color: var(--text-secondary);">on</span> ${days.join(', ')}<br>
+                <span style="color: var(--text-secondary);">at</span> ${times.join(', ')}<br>
+                <span style="color: var(--text-secondary);">price:</span> $${parseFloat(price || 0).toFixed(2)}<br><br>
+                <strong style="color: var(--primary);">~${screeningCount} screenings will be created</strong>
+            `;
+        } else {
+            summary = 'Fill in the form above to see the summary...';
+        }
+        
+        document.getElementById('summaryText').innerHTML = summary;
+    }
+    
+    // Add event listeners for summary updates
+    document.querySelector('select[name="MovieId"]').addEventListener('change', updateSummary);
+    document.querySelector('input[name="ShowTimesInput"]').addEventListener('input', updateSummary);
+    document.querySelector('input[name="Price"]').addEventListener('input', updateSummary);
+    document.querySelectorAll('input[name="SelectedDays"]').forEach(cb => cb.addEventListener('change', updateSummary));
+</script>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-        // Ensure end date is always at least equal to start date
-        document.getElementById('startDate')?.addEventListener('change', function() {
-            const startDate = this.value;
-            const endDateInput = document.getElementById('endDate');
-            if (endDateInput && (!endDateInput.value || endDateInput.value < startDate)) {
-                endDateInput.value = startDate;
-                endDateInput.min = startDate;
-            }
-        });
-
-        document.getElementById('endDate')?.addEventListener('change', function() {
-            const startDateInput = document.getElementById('startDate');
-            const endDate = this.value;
-            if (startDateInput && endDate < startDateInput.value) {
-                alert('End date must be after or equal to start date.');
-                this.value = startDateInput.value;
-            }
-        });
-
-        // Set minimum date to today
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date().toISOString().split('T')[0];
-            const startDateInput = document.getElementById('startDate');
-            const endDateInput = document.getElementById('endDate');
-            
-            if (startDateInput) {
-                startDateInput.min = today;
-            }
-            if (endDateInput) {
-                endDateInput.min = today;
-            }
-        });
-    </script>
 }
-

@@ -79,6 +79,37 @@ namespace api_cinema.Migrations
                     b.ToTable("Movies");
                 });
 
+            modelBuilder.Entity("api_cinema.Models.Room", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("RoomNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TheaterId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TheaterId");
+
+                    b.ToTable("Rooms");
+                });
+
             modelBuilder.Entity("api_cinema.Models.Screening", b =>
                 {
                     b.Property<int>("Id")
@@ -99,6 +130,12 @@ namespace api_cinema.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("RoomId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ScreeningScheduleId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("ShowTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -109,9 +146,64 @@ namespace api_cinema.Migrations
 
                     b.HasIndex("MovieId");
 
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("ScreeningScheduleId");
+
                     b.HasIndex("TheaterId");
 
                     b.ToTable("Screenings");
+                });
+
+            modelBuilder.Entity("api_cinema.Models.ScreeningSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DaysOfWeek")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ShowTimes")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("TheaterId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("TheaterId");
+
+                    b.ToTable("ScreeningSchedules");
                 });
 
             modelBuilder.Entity("api_cinema.Models.Theater", b =>
@@ -122,8 +214,9 @@ namespace api_cinema.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Capacity")
-                        .HasColumnType("integer");
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -134,6 +227,9 @@ namespace api_cinema.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("RoomCount")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Rows")
                         .HasColumnType("integer");
@@ -221,6 +317,17 @@ namespace api_cinema.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("api_cinema.Models.Room", b =>
+                {
+                    b.HasOne("api_cinema.Models.Theater", "Theater")
+                        .WithMany("Rooms")
+                        .HasForeignKey("TheaterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Theater");
+                });
+
             modelBuilder.Entity("api_cinema.Models.Screening", b =>
                 {
                     b.HasOne("api_cinema.Models.Movie", "Movie")
@@ -229,6 +336,17 @@ namespace api_cinema.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("api_cinema.Models.Room", "Room")
+                        .WithMany("Screenings")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("api_cinema.Models.ScreeningSchedule", "ScreeningSchedule")
+                        .WithMany("Screenings")
+                        .HasForeignKey("ScreeningScheduleId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("api_cinema.Models.Theater", "Theater")
                         .WithMany("Screenings")
                         .HasForeignKey("TheaterId")
@@ -236,6 +354,37 @@ namespace api_cinema.Migrations
                         .IsRequired();
 
                     b.Navigation("Movie");
+
+                    b.Navigation("Room");
+
+                    b.Navigation("ScreeningSchedule");
+
+                    b.Navigation("Theater");
+                });
+
+            modelBuilder.Entity("api_cinema.Models.ScreeningSchedule", b =>
+                {
+                    b.HasOne("api_cinema.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api_cinema.Models.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("api_cinema.Models.Theater", "Theater")
+                        .WithMany()
+                        .HasForeignKey("TheaterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("Room");
 
                     b.Navigation("Theater");
                 });
@@ -264,13 +413,25 @@ namespace api_cinema.Migrations
                     b.Navigation("Screenings");
                 });
 
+            modelBuilder.Entity("api_cinema.Models.Room", b =>
+                {
+                    b.Navigation("Screenings");
+                });
+
             modelBuilder.Entity("api_cinema.Models.Screening", b =>
                 {
                     b.Navigation("Tickets");
                 });
 
+            modelBuilder.Entity("api_cinema.Models.ScreeningSchedule", b =>
+                {
+                    b.Navigation("Screenings");
+                });
+
             modelBuilder.Entity("api_cinema.Models.Theater", b =>
                 {
+                    b.Navigation("Rooms");
+
                     b.Navigation("Screenings");
                 });
 

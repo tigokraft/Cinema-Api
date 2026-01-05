@@ -173,6 +173,21 @@ public class AdminApiService
         return null;
     }
 
+    public async Task<List<RoomResponseDto>?> GetTheaterRoomsAsync(int theaterId)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Theater/{theaterId}/rooms");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<RoomResponseDto>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
     // Screening Admin Methods
     public async Task<ScreeningResponseDto?> CreateScreeningAsync(ScreeningDto dto)
     {
@@ -184,6 +199,23 @@ public class AdminApiService
         {
             var responseContent = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<ScreeningResponseDto>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<ScreeningScheduleCreateResponse?> CreateScreeningScheduleAsync(ScreeningScheduleDto dto)
+    {
+        var json = JsonSerializer.Serialize(dto);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Screening/schedule", content);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<ScreeningScheduleCreateResponse>(responseContent, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
@@ -214,6 +246,12 @@ public class AdminApiService
         return response.IsSuccessStatusCode;
     }
 
+    public async Task<bool> DeleteScreeningScheduleAsync(int id)
+    {
+        var response = await _httpClient.DeleteAsync($"{ApiBaseUrl}/Screening/schedule/{id}");
+        return response.IsSuccessStatusCode;
+    }
+
     public async Task<ScreeningResponseDto?> GetScreeningAsync(int id)
     {
         var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Screening/{id}");
@@ -235,6 +273,21 @@ public class AdminApiService
         {
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<ScreeningResponseDto>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<List<ScreeningScheduleResponseDto>?> GetAllScreeningSchedulesAsync()
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Screening/schedules");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<ScreeningScheduleResponseDto>>(content, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
@@ -463,7 +516,6 @@ public class TmdbMovieDto
         if (string.IsNullOrWhiteSpace(PosterPath))
             return null;
         
-        // Ensure poster path starts with / if it doesn't already
         var path = PosterPath.StartsWith("/") ? PosterPath : $"/{PosterPath}";
             return $"https://image.tmdb.org/t/p/w780{path}";
     }
@@ -485,7 +537,6 @@ public class TmdbMovieDetailsDto
         if (string.IsNullOrWhiteSpace(PosterPath))
             return null;
         
-        // Ensure poster path starts with / if it doesn't already
         var path = PosterPath.StartsWith("/") ? PosterPath : $"/{PosterPath}";
             return $"https://image.tmdb.org/t/p/w780{path}";
     }
@@ -542,7 +593,8 @@ public class MovieResponseDto
 public class TheaterDto
 {
     public string Name { get; set; } = string.Empty;
-    public int Capacity { get; set; }
+    public string Address { get; set; } = string.Empty;
+    public int RoomCount { get; set; }
     public int Rows { get; set; }
     public int SeatsPerRow { get; set; }
 }
@@ -551,6 +603,22 @@ public class TheaterResponseDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public int RoomCount { get; set; }
+    public int Capacity { get; set; }
+    public int Rows { get; set; }
+    public int SeatsPerRow { get; set; }
+    public bool IsActive { get; set; }
+    public List<RoomResponseDto> Rooms { get; set; } = new();
+}
+
+public class RoomResponseDto
+{
+    public int Id { get; set; }
+    public int TheaterId { get; set; }
+    public string TheaterName { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public int RoomNumber { get; set; }
     public int Capacity { get; set; }
     public int Rows { get; set; }
     public int SeatsPerRow { get; set; }
@@ -561,8 +629,29 @@ public class ScreeningDto
 {
     public int MovieId { get; set; }
     public int TheaterId { get; set; }
+    public int RoomId { get; set; }
     public DateTime ShowTime { get; set; }
     public decimal Price { get; set; }
+}
+
+public class ScreeningScheduleDto
+{
+    public int MovieId { get; set; }
+    public int TheaterId { get; set; }
+    public int RoomId { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public List<string> ShowTimes { get; set; } = new();
+    public List<int> DaysOfWeek { get; set; } = new() { 0, 1, 2, 3, 4, 5, 6 };
+    public decimal Price { get; set; }
+}
+
+public class ScreeningScheduleCreateResponse
+{
+    public int ScheduleId { get; set; }
+    public int ScreeningsCreated { get; set; }
+    public List<string> Conflicts { get; set; } = new();
+    public string Message { get; set; } = string.Empty;
 }
 
 public class ScreeningResponseDto
@@ -573,11 +662,37 @@ public class ScreeningResponseDto
     public string? MoviePosterUrl { get; set; }
     public int TheaterId { get; set; }
     public string TheaterName { get; set; } = string.Empty;
+    public int RoomId { get; set; }
+    public string RoomName { get; set; } = string.Empty;
+    public int RoomNumber { get; set; }
     public DateTime ShowTime { get; set; }
     public decimal Price { get; set; }
     public int AvailableSeats { get; set; }
     public int TotalSeats { get; set; }
+    public int Rows { get; set; }
+    public int SeatsPerRow { get; set; }
     public bool IsActive { get; set; }
+    public int? ScreeningScheduleId { get; set; }
+}
+
+public class ScreeningScheduleResponseDto
+{
+    public int Id { get; set; }
+    public int MovieId { get; set; }
+    public string MovieTitle { get; set; } = string.Empty;
+    public string? MoviePosterUrl { get; set; }
+    public int TheaterId { get; set; }
+    public string TheaterName { get; set; } = string.Empty;
+    public int RoomId { get; set; }
+    public string RoomName { get; set; } = string.Empty;
+    public int RoomNumber { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public List<string> ShowTimes { get; set; } = new();
+    public List<int> DaysOfWeek { get; set; } = new();
+    public decimal Price { get; set; }
+    public bool IsActive { get; set; }
+    public int ScreeningCount { get; set; }
 }
 
 public class UserResponseDto
@@ -630,4 +745,3 @@ public class AdminTicketDto
     public string Username { get; set; } = string.Empty;
     public string? UserEmail { get; set; }
 }
-

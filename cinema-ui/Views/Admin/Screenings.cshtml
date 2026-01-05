@@ -6,8 +6,96 @@
 
 <div class="page-header">
     <h2>Screenings</h2>
-    <a asp-action="CreateScreening" class="btn btn-primary">Add New Screening</a>
+    <a asp-action="CreateScreening" class="btn btn-primary">Add New Screening Schedule</a>
 </div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<!-- Screening Schedules Section -->
+@if (Model.Schedules.Any())
+{
+    <div style="margin-bottom: 2rem;">
+        <h3 style="color: var(--text-secondary); margin-bottom: 1rem;">Active Schedules</h3>
+        <div class="admin-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Movie</th>
+                        <th>Theater / Room</th>
+                        <th>Date Range</th>
+                        <th>Show Times</th>
+                        <th>Days</th>
+                        <th>Price</th>
+                        <th>Screenings</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var schedule in Model.Schedules)
+                    {
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    @if (!string.IsNullOrEmpty(schedule.MoviePosterUrl))
+                                    {
+                                        <img src="@schedule.MoviePosterUrl" alt="@schedule.MovieTitle" style="width: 40px; height: 60px; object-fit: cover; border-radius: 4px;" />
+                                    }
+                                    <span>@schedule.MovieTitle</span>
+                                </div>
+                            </td>
+                            <td>
+                                <strong>@schedule.TheaterName</strong><br>
+                                <small style="color: var(--text-secondary);">@schedule.RoomName</small>
+                            </td>
+                            <td>
+                                @schedule.StartDate.ToString("MMM dd") - @schedule.EndDate.ToString("MMM dd, yyyy")
+                            </td>
+                            <td>
+                                @foreach (var time in schedule.ShowTimes.Take(3))
+                                {
+                                    <span style="background: var(--bg-secondary); padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.8rem; margin-right: 0.2rem;">@time</span>
+                                }
+                                @if (schedule.ShowTimes.Count > 3)
+                                {
+                                    <span style="color: var(--text-secondary); font-size: 0.8rem;">+@(schedule.ShowTimes.Count - 3) more</span>
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    var dayAbbr = new[] { "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" };
+                                    var selectedDays = schedule.DaysOfWeek.Select(d => dayAbbr[d]);
+                                }
+                                <small>@string.Join(", ", selectedDays)</small>
+                            </td>
+                            <td>$@schedule.Price.ToString("F2")</td>
+                            <td>
+                                <span style="background: var(--primary); color: white; padding: 0.2rem 0.5rem; border-radius: 4px;">
+                                    @schedule.ScreeningCount
+                                </span>
+                            </td>
+                            <td>
+                                <form asp-action="DeleteSchedule" asp-route-id="@schedule.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('This will deactivate all future screenings in this schedule. Continue?');">Delete Schedule</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<!-- Individual Screenings Section -->
+<h3 style="color: var(--text-secondary); margin-bottom: 1rem;">Upcoming Screenings</h3>
 
 @if (Model.Screenings.Any())
 {
@@ -17,7 +105,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Movie</th>
-                    <th>Theater</th>
+                    <th>Theater / Room</th>
                     <th>Show Time</th>
                     <th>Price</th>
                     <th>Available Seats</th>
@@ -26,12 +114,23 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var screening in Model.Screenings)
+                @foreach (var screening in Model.Screenings.Take(50))
                 {
                     <tr>
                         <td>@screening.Id</td>
-                        <td>@screening.MovieTitle</td>
-                        <td>@screening.TheaterName</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                @if (!string.IsNullOrEmpty(screening.MoviePosterUrl))
+                                {
+                                    <img src="@screening.MoviePosterUrl" alt="@screening.MovieTitle" style="width: 30px; height: 45px; object-fit: cover; border-radius: 4px;" />
+                                }
+                                <span>@screening.MovieTitle</span>
+                            </div>
+                        </td>
+                        <td>
+                            <strong>@screening.TheaterName</strong><br>
+                            <small style="color: var(--text-secondary);">@screening.RoomName</small>
+                        </td>
                         <td>@screening.ShowTime.ToString("MMM dd, yyyy HH:mm")</td>
                         <td>$@screening.Price.ToString("F2")</td>
                         <td>@screening.AvailableSeats / @screening.TotalSeats</td>
@@ -39,6 +138,12 @@
                             <span class="status-badge @(screening.IsActive ? "status-active" : "status-inactive")">
                                 @(screening.IsActive ? "Active" : "Inactive")
                             </span>
+                            @if (screening.ScreeningScheduleId.HasValue)
+                            {
+                                <span style="background: rgba(var(--primary-rgb), 0.2); color: var(--primary); padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.7rem; margin-left: 0.25rem;">
+                                    Scheduled
+                                </span>
+                            }
                         </td>
                         <td>
                             <div class="action-buttons">
@@ -53,12 +158,16 @@
             </tbody>
         </table>
     </div>
+    
+    @if (Model.Screenings.Count > 50)
+    {
+        <p style="color: var(--text-secondary); margin-top: 1rem;">Showing 50 of @Model.Screenings.Count screenings</p>
+    }
 }
 else
 {
     <div class="empty-state">
-        <h3>No screenings found</h3>
-        <a asp-action="CreateScreening" class="btn btn-primary" style="margin-top: 20px;">Add Screening</a>
+        <h3>No upcoming screenings found</h3>
+        <a asp-action="CreateScreening" class="btn btn-primary" style="margin-top: 20px;">Add Screening Schedule</a>
     </div>
 }
-

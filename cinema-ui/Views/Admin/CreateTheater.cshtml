@@ -17,27 +17,51 @@
 <div class="admin-form">
     <form asp-action="CreateTheater" method="post">
         <div class="form-group">
-            <label asp-for="Name"></label>
-            <input asp-for="Name" class="form-control" />
+            <label asp-for="Name">Theater Name</label>
+            <input asp-for="Name" class="form-control" placeholder="e.g., Downtown Cinema" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         
         <div class="form-group">
-            <label asp-for="Rows"></label>
-            <input asp-for="Rows" type="number" class="form-control" id="rows" />
-            <span asp-validation-for="Rows" class="text-danger"></span>
+            <label asp-for="Address">Address</label>
+            <input asp-for="Address" class="form-control" placeholder="e.g., 123 Main Street" />
+            <span asp-validation-for="Address" class="text-danger"></span>
         </div>
         
         <div class="form-group">
-            <label asp-for="SeatsPerRow"></label>
-            <input asp-for="SeatsPerRow" type="number" class="form-control" id="seatsPerRow" />
-            <span asp-validation-for="SeatsPerRow" class="text-danger"></span>
+            <label asp-for="RoomCount">Number of Rooms</label>
+            <input asp-for="RoomCount" type="number" min="1" max="50" class="form-control" id="roomCount" />
+            <span asp-validation-for="RoomCount" class="text-danger"></span>
+            <small class="text-muted">All rooms in this theater will have the same seat configuration.</small>
+        </div>
+        
+        <hr style="margin: 2rem 0; border-color: rgba(255,255,255,0.1);" />
+        <h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Room Configuration (Same for all rooms)</h4>
+        
+        <div class="form-row" style="display: flex; gap: 1rem;">
+            <div class="form-group" style="flex: 1;">
+                <label asp-for="Rows">Rows per Room</label>
+                <input asp-for="Rows" type="number" min="1" max="50" class="form-control" id="rows" />
+                <span asp-validation-for="Rows" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group" style="flex: 1;">
+                <label asp-for="SeatsPerRow">Seats per Row</label>
+                <input asp-for="SeatsPerRow" type="number" min="1" max="50" class="form-control" id="seatsPerRow" />
+                <span asp-validation-for="SeatsPerRow" class="text-danger"></span>
+            </div>
         </div>
         
         <div class="form-group">
-            <label asp-for="Capacity"></label>
-            <input asp-for="Capacity" type="number" class="form-control" id="capacity" readonly />
-            <small class="text-muted">Automatically calculated as Rows × SeatsPerRow</small>
+            <label>Capacity per Room</label>
+            <input type="text" class="form-control" id="capacity" readonly style="background: var(--bg-secondary); color: var(--primary);" />
+            <small class="text-muted">Automatically calculated as Rows × Seats per Row</small>
+        </div>
+        
+        <div class="form-group">
+            <label>Total Theater Capacity</label>
+            <input type="text" class="form-control" id="totalCapacity" readonly style="background: var(--bg-secondary); color: var(--primary);" />
+            <small class="text-muted">Number of Rooms × Capacity per Room</small>
         </div>
         
         <div class="btn-group">
@@ -50,15 +74,23 @@
 <script>
     document.getElementById('rows').addEventListener('input', calculateCapacity);
     document.getElementById('seatsPerRow').addEventListener('input', calculateCapacity);
+    document.getElementById('roomCount').addEventListener('input', calculateCapacity);
     
     function calculateCapacity() {
         const rows = parseInt(document.getElementById('rows').value) || 0;
         const seatsPerRow = parseInt(document.getElementById('seatsPerRow').value) || 0;
-        document.getElementById('capacity').value = rows * seatsPerRow;
+        const roomCount = parseInt(document.getElementById('roomCount').value) || 0;
+        const roomCapacity = rows * seatsPerRow;
+        const totalCapacity = roomCapacity * roomCount;
+        
+        document.getElementById('capacity').value = roomCapacity + ' seats';
+        document.getElementById('totalCapacity').value = totalCapacity + ' seats (' + roomCount + ' rooms × ' + roomCapacity + ' seats)';
     }
+    
+    // Initial calculation
+    calculateCapacity();
 </script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-

@@ -3599,24 +3599,31 @@
     ]
   },
   "packageFolders": {
-    "/Users/exxo/.nuget/packages/": {}
+    "C:\\Users\\2223234\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/exxo/Downloads/Cinema-Api-main/api-cinema/api-cinema.csproj",
+      "projectUniqueName": "C:\\Users\\2223234\\Documents\\code\\cinema-api\\api-cinema\\api-cinema.csproj",
       "projectName": "api-cinema",
-      "projectPath": "/Users/exxo/Downloads/Cinema-Api-main/api-cinema/api-cinema.csproj",
-      "packagesPath": "/Users/exxo/.nuget/packages/",
-      "outputPath": "/Users/exxo/Downloads/Cinema-Api-main/api-cinema/obj/",
+      "projectPath": "C:\\Users\\2223234\\Documents\\code\\cinema-api\\api-cinema\\api-cinema.csproj",
+      "packagesPath": "C:\\Users\\2223234\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\2223234\\Documents\\code\\cinema-api\\api-cinema\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/exxo/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\2223234\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -3687,7 +3694,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

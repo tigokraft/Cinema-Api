@@ -259,16 +259,11 @@ public class AdminController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        if (model.Capacity != model.Rows * model.SeatsPerRow)
-        {
-            model.ErrorMessage = "Capacity must equal Rows × SeatsPerRow.";
-            return View(model);
-        }
-
         var dto = new TheaterDto
         {
             Name = model.Name,
-            Capacity = model.Capacity,
+            Address = model.Address,
+            RoomCount = model.RoomCount,
             Rows = model.Rows,
             SeatsPerRow = model.SeatsPerRow
         };
@@ -276,6 +271,7 @@ public class AdminController : Controller
         var result = await _adminApi.CreateTheaterAsync(dto);
         if (result != null)
         {
+            TempData["SuccessMessage"] = $"Theater '{result.Name}' created with {result.RoomCount} rooms!";
             return RedirectToAction("Theaters");
         }
 
@@ -295,10 +291,12 @@ public class AdminController : Controller
         {
             Id = theater.Id,
             Name = theater.Name,
-            Capacity = theater.Capacity,
+            Address = theater.Address,
+            RoomCount = theater.RoomCount,
             Rows = theater.Rows,
             SeatsPerRow = theater.SeatsPerRow,
-            IsActive = theater.IsActive
+            IsActive = theater.IsActive,
+            Rooms = theater.Rooms
         };
 
         return View(model);
@@ -310,16 +308,11 @@ public class AdminController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        if (model.Capacity != model.Rows * model.SeatsPerRow)
-        {
-            model.ErrorMessage = "Capacity must equal Rows × SeatsPerRow.";
-            return View(model);
-        }
-
         var dto = new TheaterDto
         {
             Name = model.Name,
-            Capacity = model.Capacity,
+            Address = model.Address,
+            RoomCount = model.RoomCount,
             Rows = model.Rows,
             SeatsPerRow = model.SeatsPerRow
         };
@@ -327,10 +320,11 @@ public class AdminController : Controller
         var result = await _adminApi.UpdateTheaterAsync(model.Id, dto);
         if (result != null)
         {
+            TempData["SuccessMessage"] = "Theater updated successfully!";
             return RedirectToAction("Theaters");
         }
 
-        model.ErrorMessage = "Failed to update theater.";
+        model.ErrorMessage = "Failed to update theater. Some rooms may have active screenings.";
         return View(model);
     }
 
@@ -345,12 +339,14 @@ public class AdminController : Controller
     public async Task<IActionResult> Screenings()
     {
         var screenings = await _adminApi.GetAllScreeningsAsync() ?? new List<ScreeningResponseDto>();
+        var schedules = await _adminApi.GetAllScreeningSchedulesAsync() ?? new List<ScreeningScheduleResponseDto>();
         var movies = await _adminApi.GetAllMoviesAsync() ?? new List<MovieResponseDto>();
         var theaters = await _adminApi.GetAllTheatersAsync() ?? new List<TheaterResponseDto>();
 
         var viewModel = new AdminScreeningsViewModel
         {
             Screenings = screenings,
+            Schedules = schedules,
             Movies = movies,
             Theaters = theaters
         };
@@ -387,6 +383,23 @@ public class AdminController : Controller
             ModelState.AddModelError(nameof(model.StartDate), "Start date must be today or in the future.");
         }
 
+        // Validate show times
+        var showTimes = model.ShowTimesInput?.Split(',')
+            .Select(t => t.Trim())
+            .Where(t => !string.IsNullOrEmpty(t))
+            .ToList() ?? new List<string>();
+
+        if (showTimes.Count == 0)
+        {
+            ModelState.AddModelError(nameof(model.ShowTimesInput), "At least one show time is required.");
+        }
+
+        // Validate selected days
+        if (model.SelectedDays == null || model.SelectedDays.Count == 0)
+        {
+            ModelState.AddModelError(nameof(model.SelectedDays), "At least one day of week must be selected.");
+        }
+
         if (!ModelState.IsValid)
         {
             var movies = await _adminApi.GetAllMoviesAsync() ?? new List<MovieResponseDto>();
@@ -396,30 +409,27 @@ public class AdminController : Controller
             return View(model);
         }
 
-        // Combine start date with show time to create the actual show datetime
-        // HTML date/time inputs return DateTime with Kind=Unspecified
-        // We need to explicitly mark it as UTC for PostgreSQL
-        var showDateTime = model.StartDate.Date.Add(model.ShowTime.TimeOfDay);
-        if (showDateTime.Kind != DateTimeKind.Utc)
-        {
-            showDateTime = DateTime.SpecifyKind(showDateTime, DateTimeKind.Utc);
-        }
-
-        var dto = new ScreeningDto
+        // Create screening schedule DTO
+        var dto = new ScreeningScheduleDto
         {
             MovieId = model.MovieId,
             TheaterId = model.TheaterId,
-            ShowTime = showDateTime,
+            RoomId = model.RoomId,
+            StartDate = DateTime.SpecifyKind(model.StartDate.Date, DateTimeKind.Utc),
+            EndDate = DateTime.SpecifyKind(model.EndDate.Date, DateTimeKind.Utc),
+            ShowTimes = showTimes,
+            DaysOfWeek = model.SelectedDays,
             Price = model.Price
         };
 
-        var result = await _adminApi.CreateScreeningAsync(dto);
+        var result = await _adminApi.CreateScreeningScheduleAsync(dto);
         if (result != null)
         {
+            TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Screenings");
         }
 
-        model.ErrorMessage = "Failed to create screening. Check for overlapping times or inactive theater/movie.";
+        model.ErrorMessage = "Failed to create screening schedule. Check for overlapping times or inactive theater/room.";
         var moviesRetry = await _adminApi.GetAllMoviesAsync() ?? new List<MovieResponseDto>();
         var theatersRetry = await _adminApi.GetAllTheatersAsync() ?? new List<TheaterResponseDto>();
         model.AvailableMovies = moviesRetry.Where(m => m.IsActive).ToList();
@@ -441,18 +451,23 @@ public class AdminController : Controller
 
         var movies = await _adminApi.GetAllMoviesAsync() ?? new List<MovieResponseDto>();
         var theaters = await _adminApi.GetAllTheatersAsync() ?? new List<TheaterResponseDto>();
+        
+        // Get rooms for the selected theater
+        var selectedTheater = theaters.FirstOrDefault(t => t.Id == screening.TheaterId);
 
         var model = new AdminScreeningViewModel
         {
             Id = screening.Id,
             MovieId = screening.MovieId,
             TheaterId = screening.TheaterId,
+            RoomId = screening.RoomId,
             StartDate = screening.ShowTime.Date,
             EndDate = screening.ShowTime.Date,
-            ShowTime = screening.ShowTime,
+            ShowTimesInput = screening.ShowTime.ToString("HH:mm"),
             Price = screening.Price,
             AvailableMovies = movies.Where(m => m.IsActive).ToList(),
-            AvailableTheaters = theaters.Where(t => t.IsActive).ToList()
+            AvailableTheaters = theaters.Where(t => t.IsActive).ToList(),
+            AvailableRooms = selectedTheater?.Rooms ?? new List<RoomResponseDto>()
         };
 
         return View(model);
@@ -461,12 +476,6 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> EditScreening(AdminScreeningViewModel model)
     {
-        // Validate date range
-        if (model.EndDate < model.StartDate)
-        {
-            ModelState.AddModelError(nameof(model.EndDate), "End date must be after or equal to start date.");
-        }
-
         if (!ModelState.IsValid)
         {
             var movies = await _adminApi.GetAllMoviesAsync() ?? new List<MovieResponseDto>();
@@ -476,17 +485,22 @@ public class AdminController : Controller
             return View(model);
         }
 
-        // Combine start date with show time to create the actual show datetime
-        var showDateTime = model.StartDate.Date.Add(model.ShowTime.TimeOfDay);
-        if (showDateTime.Kind != DateTimeKind.Utc)
+        // Parse show time from ShowTimesInput (single time for individual screening edit)
+        var timeStr = model.ShowTimesInput?.Split(',').FirstOrDefault()?.Trim() ?? "00:00";
+        if (!TimeSpan.TryParse(timeStr, out var time))
         {
-            showDateTime = DateTime.SpecifyKind(showDateTime, DateTimeKind.Utc);
+            model.ErrorMessage = "Invalid show time format.";
+            return View(model);
         }
+
+        var showDateTime = model.StartDate.Date.Add(time);
+        showDateTime = DateTime.SpecifyKind(showDateTime, DateTimeKind.Utc);
 
         var dto = new ScreeningDto
         {
             MovieId = model.MovieId,
             TheaterId = model.TheaterId,
+            RoomId = model.RoomId,
             ShowTime = showDateTime,
             Price = model.Price
         };
@@ -498,7 +512,7 @@ public class AdminController : Controller
             return RedirectToAction("Screenings");
         }
 
-        model.ErrorMessage = "Failed to update screening. Check for overlapping times or inactive theater/movie.";
+        model.ErrorMessage = "Failed to update screening. Check for overlapping times or inactive theater/room.";
         var moviesRetry = await _adminApi.GetAllMoviesAsync() ?? new List<MovieResponseDto>();
         var theatersRetry = await _adminApi.GetAllTheatersAsync() ?? new List<TheaterResponseDto>();
         model.AvailableMovies = moviesRetry.Where(m => m.IsActive).ToList();
@@ -510,6 +524,21 @@ public class AdminController : Controller
     public async Task<IActionResult> DeleteScreening(int id)
     {
         await _adminApi.DeleteScreeningAsync(id);
+        return RedirectToAction("Screenings");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteSchedule(int id)
+    {
+        var success = await _adminApi.DeleteScreeningScheduleAsync(id);
+        if (success)
+        {
+            TempData["SuccessMessage"] = "Screening schedule deleted successfully!";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Failed to delete screening schedule.";
+        }
         return RedirectToAction("Screenings");
     }
 
@@ -592,4 +621,3 @@ public class AdminController : Controller
         return RedirectToAction("Users");
     }
 }
-

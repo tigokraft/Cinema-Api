@@ -272,6 +272,9 @@ public class ScreeningDetail
     public string? MoviePosterUrl { get; set; }
     public int TheaterId { get; set; }
     public string TheaterName { get; set; } = string.Empty;
+    public int RoomId { get; set; }
+    public string RoomName { get; set; } = string.Empty;
+    public int RoomNumber { get; set; }
     public DateTime ShowTime { get; set; }
     public decimal Price { get; set; }
     public int TotalSeats { get; set; }
@@ -322,8 +325,10 @@ public class Screening
     public string? MoviePosterUrl { get; set; }
     public int TheaterId { get; set; }
     public string TheaterName { get; set; } = string.Empty;
+    public int RoomId { get; set; }
+    public string RoomName { get; set; } = string.Empty;
+    public int RoomNumber { get; set; }
     public DateTime ShowTime { get; set; }
     public decimal Price { get; set; }
     public int AvailableSeats { get; set; }
 }
-

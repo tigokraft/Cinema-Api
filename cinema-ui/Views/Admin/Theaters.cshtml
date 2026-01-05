@@ -17,9 +17,10 @@
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Capacity</th>
-                    <th>Rows</th>
-                    <th>Seats/Row</th>
+                    <th>Address</th>
+                    <th>Rooms</th>
+                    <th>Room Capacity</th>
+                    <th>Total Capacity</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -30,9 +31,14 @@
                     <tr>
                         <td>@theater.Id</td>
                         <td>@theater.Name</td>
-                        <td>@theater.Capacity</td>
-                        <td>@theater.Rows</td>
-                        <td>@theater.SeatsPerRow</td>
+                        <td>@(string.IsNullOrEmpty(theater.Address) ? "-" : theater.Address)</td>
+                        <td>
+                            <span class="badge" style="background: var(--primary); color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">
+                                @theater.RoomCount rooms
+                            </span>
+                        </td>
+                        <td>@theater.Capacity seats (@theater.Rows×@theater.SeatsPerRow)</td>
+                        <td>@(theater.Capacity * theater.RoomCount) seats</td>
                         <td>
                             <span class="status-badge @(theater.IsActive ? "status-active" : "status-inactive")">
                                 @(theater.IsActive ? "Active" : "Inactive")
@@ -42,11 +48,27 @@
                             <div class="action-buttons">
                                 <a asp-action="EditTheater" asp-route-id="@theater.Id" class="btn btn-sm btn-secondary">Edit</a>
                                 <form asp-action="DeleteTheater" asp-route-id="@theater.Id" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure? This will deactivate all rooms in this theater.');">Delete</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
+                    @if (theater.Rooms.Any())
+                    {
+                        <tr class="room-row" style="background: rgba(var(--primary-rgb), 0.05);">
+                            <td colspan="8" style="padding: 0.5rem 1rem;">
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <small style="color: var(--text-secondary); margin-right: 0.5rem;">Rooms:</small>
+                                    @foreach (var room in theater.Rooms)
+                                    {
+                                        <span style="background: var(--bg-secondary); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                            @room.Name
+                                        </span>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
@@ -59,4 +81,3 @@ else
         <a asp-action="CreateTheater" class="btn btn-primary" style="margin-top: 20px;">Add Theater</a>
     </div>
 }
-
