@@ -50,7 +50,7 @@ public class TmdbService
 
     public async Task<TmdbMovieDetails?> GetMovieDetailsAsync(int tmdbId)
     {
-        var url = $"{_baseUrl}/movie/{tmdbId}?api_key={_apiKey}&append_to_response=credits,release_dates";
+        var url = $"{_baseUrl}/movie/{tmdbId}?api_key={_apiKey}&append_to_response=credits,release_dates,videos";
         var response = await _httpClient.GetAsync(url);
 
         if (!response.IsSuccessStatusCode) return null;
@@ -117,10 +117,31 @@ public class TmdbService
             Director = director,
             PosterUrl = posterUrl,
             BackdropUrl = backdropUrl,
+            TrailerUrl = GetTrailerUrl(tmdbMovie.Videos),
             Rating = rating,
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
+    }
+
+    private string? GetTrailerUrl(TmdbVideos? videos)
+    {
+        if (videos?.Results == null || !videos.Results.Any())
+            return null;
+
+        // Look for official YouTube trailers first, then teasers
+        var trailer = videos.Results
+            .Where(v => v.Site?.Equals("YouTube", StringComparison.OrdinalIgnoreCase) == true)
+            .Where(v => v.Type?.Equals("Trailer", StringComparison.OrdinalIgnoreCase) == true || 
+                        v.Type?.Equals("Teaser", StringComparison.OrdinalIgnoreCase) == true)
+            .OrderByDescending(v => v.Type?.Equals("Trailer", StringComparison.OrdinalIgnoreCase) == true)
+            .ThenByDescending(v => v.Official == true)
+            .FirstOrDefault();
+
+        if (trailer?.Key == null)
+            return null;
+
+        return $"https://www.youtube.com/watch?v={trailer.Key}";
     }
 
     private string ConvertTmdbRating(TmdbReleaseDates? releaseDates)
@@ -201,6 +222,7 @@ public class TmdbMovieDetails
     public List<TmdbGenre>? Genres { get; set; }
     public TmdbCredits? Credits { get; set; }
     public TmdbReleaseDates? ReleaseDates { get; set; }
+    public TmdbVideos? Videos { get; set; }
 
     public DateTime? GetReleaseDate()
     {
@@ -250,4 +272,18 @@ public class TmdbReleaseDate
 {
     public string? Certification { get; set; }
     public DateTime? ReleaseDate { get; set; }
+}
+
+public class TmdbVideos
+{
+    public List<TmdbVideo>? Results { get; set; }
+}
+
+public class TmdbVideo
+{
+    public string? Key { get; set; }
+    public string? Site { get; set; }
+    public string? Type { get; set; }
+    public bool? Official { get; set; }
+    public string? Name { get; set; }
 }
