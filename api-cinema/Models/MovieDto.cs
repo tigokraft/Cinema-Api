@@ -28,6 +28,8 @@ public class MovieDto
     
     public string? BackdropUrl { get; set; }
     
+    public string? TrailerUrl { get; set; }
+    
     [StringLength(10)]
     public string Rating { get; set; } = "NR";
     
@@ -45,6 +47,7 @@ public class MovieResponseDto
     public string Director { get; set; } = string.Empty;
     public string? PosterUrl { get; set; }
     public string? BackdropUrl { get; set; }
+    public string? TrailerUrl { get; set; }
     public string Rating { get; set; } = string.Empty;
     public bool IsActive { get; set; }
     public bool IsFeatured { get; set; }

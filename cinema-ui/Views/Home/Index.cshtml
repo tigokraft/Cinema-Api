@@ -23,8 +23,31 @@
                        class="btn-featured-primary">
                         <span>▶</span> View Details & Book
                     </a>
+                    @if (!string.IsNullOrEmpty(Model.FeaturedMovie.TrailerUrl))
+                    {
+                        <button type="button" class="btn-featured-secondary" onclick="openTrailerModal()">
+                            <span>🎬</span> Watch Trailer
+                        </button>
+                    }
                 </div>
             </div>
+            
+            @if (!string.IsNullOrEmpty(Model.FeaturedMovie.TrailerUrl))
+            {
+                <!-- Trailer Modal -->
+                <div id="trailerModal" class="trailer-modal" onclick="closeTrailerModal(event)">
+                    <div class="trailer-modal-content">
+                        <button type="button" class="trailer-close-btn" onclick="closeTrailerModal(event)">&times;</button>
+                        <div class="trailer-video-container">
+                            <iframe id="trailerFrame" 
+                                    src="" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     }
     else
@@ -139,3 +162,72 @@
         </div>
     }
 </div>
+
+@if (Model.FeaturedMovie != null && !string.IsNullOrEmpty(Model.FeaturedMovie.TrailerUrl))
+{
+    @section Scripts {
+        <script>
+            const trailerUrl = '@Html.Raw(Model.FeaturedMovie.TrailerUrl)';
+            
+            function getYouTubeEmbedUrl(url) {
+                // Convert YouTube watch URL to embed URL
+                let videoId = '';
+                
+                // Handle youtu.be short links
+                if (url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1].split('?')[0];
+                }
+                // Handle youtube.com/watch?v= links
+                else if (url.includes('youtube.com/watch')) {
+                    const urlParams = new URLSearchParams(url.split('?')[1]);
+                    videoId = urlParams.get('v');
+                }
+                // Handle youtube.com/embed/ links
+                else if (url.includes('youtube.com/embed/')) {
+                    videoId = url.split('embed/')[1].split('?')[0];
+                }
+                
+                if (videoId) {
+                    return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                }
+                return url;
+            }
+            
+            function openTrailerModal() {
+                const modal = document.getElementById('trailerModal');
+                const iframe = document.getElementById('trailerFrame');
+                
+                if (modal && iframe) {
+                    iframe.src = getYouTubeEmbedUrl(trailerUrl);
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            function closeTrailerModal(event) {
+                // Only close if clicking the modal backdrop or close button
+                if (event.target.classList.contains('trailer-modal') || 
+                    event.target.classList.contains('trailer-close-btn')) {
+                    const modal = document.getElementById('trailerModal');
+                    const iframe = document.getElementById('trailerFrame');
+                    
+                    if (modal && iframe) {
+                        modal.classList.remove('active');
+                        iframe.src = ''; // Stop the video
+                        document.body.style.overflow = '';
+                    }
+                }
+            }
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    const modal = document.getElementById('trailerModal');
+                    if (modal && modal.classList.contains('active')) {
+                        closeTrailerModal({ target: modal });
+                    }
+                }
+            });
+        </script>
+    }
+}

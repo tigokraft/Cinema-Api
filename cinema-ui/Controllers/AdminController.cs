@@ -168,6 +168,8 @@ public class AdminController : Controller
             ReleaseDate = model.ReleaseDate,
             Director = model.Director,
             PosterUrl = model.PosterUrl,
+            BackdropUrl = model.BackdropUrl,
+            TrailerUrl = model.TrailerUrl,
             Rating = model.Rating
         };
 
@@ -198,6 +200,8 @@ public class AdminController : Controller
             ReleaseDate = movie.ReleaseDate,
             Director = movie.Director,
             PosterUrl = movie.PosterUrl,
+            BackdropUrl = movie.BackdropUrl,
+            TrailerUrl = movie.TrailerUrl,
             Rating = movie.Rating,
             IsActive = movie.IsActive
         };
@@ -220,6 +224,8 @@ public class AdminController : Controller
             ReleaseDate = model.ReleaseDate,
             Director = model.Director,
             PosterUrl = model.PosterUrl,
+            BackdropUrl = model.BackdropUrl,
+            TrailerUrl = model.TrailerUrl,
             Rating = model.Rating
         };
 

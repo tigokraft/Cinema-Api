@@ -44,6 +44,12 @@ public class AdminMovieViewModel
     [Url(ErrorMessage = "Invalid URL")]
     public string? PosterUrl { get; set; }
     
+    [Url(ErrorMessage = "Invalid URL")]
+    public string? BackdropUrl { get; set; }
+    
+    [Url(ErrorMessage = "Invalid URL")]
+    public string? TrailerUrl { get; set; }
+    
     [StringLength(10)]
     public string Rating { get; set; } = "NR";
     

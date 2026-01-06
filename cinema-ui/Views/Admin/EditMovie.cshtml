@@ -57,8 +57,20 @@
         
         <div class="form-group">
             <label asp-for="PosterUrl"></label>
-            <input asp-for="PosterUrl" type="url" class="form-control" />
+            <input asp-for="PosterUrl" type="url" class="form-control" placeholder="https://example.com/poster.jpg" />
             <span asp-validation-for="PosterUrl" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="BackdropUrl">Backdrop URL</label>
+            <input asp-for="BackdropUrl" type="url" class="form-control" placeholder="https://example.com/backdrop.jpg" />
+            <span asp-validation-for="BackdropUrl" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="TrailerUrl">Trailer URL (YouTube)</label>
+            <input asp-for="TrailerUrl" type="url" class="form-control" placeholder="https://www.youtube.com/watch?v=..." />
+            <span asp-validation-for="TrailerUrl" class="text-danger"></span>
         </div>
         
         <div class="form-group">

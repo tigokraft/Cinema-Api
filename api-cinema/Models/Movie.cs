@@ -11,6 +11,7 @@ public class Movie
     public string Director { get; set; } = string.Empty;
     public string? PosterUrl { get; set; }
     public string? BackdropUrl { get; set; }
+    public string? TrailerUrl { get; set; }
     public string Rating { get; set; } = "NR"; // G, PG, PG-13, R, NR
     public bool IsActive { get; set; } = true;
     public bool IsFeatured { get; set; } = false;

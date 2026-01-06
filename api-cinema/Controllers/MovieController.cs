@@ -79,6 +79,7 @@ public class MovieController : ControllerBase
             Director = m.Director,
             PosterUrl = EnsureValidImageUrl(m.PosterUrl),
             BackdropUrl = EnsureValidImageUrl(m.BackdropUrl),
+            TrailerUrl = m.TrailerUrl,
             Rating = m.Rating,
             IsActive = m.IsActive,
             IsFeatured = m.IsFeatured,
@@ -109,6 +110,7 @@ public class MovieController : ControllerBase
             Director = movie.Director,
             PosterUrl = EnsureValidImageUrl(movie.PosterUrl),
             BackdropUrl = EnsureValidImageUrl(movie.BackdropUrl),
+            TrailerUrl = movie.TrailerUrl,
             Rating = movie.Rating,
             IsActive = movie.IsActive,
             IsFeatured = movie.IsFeatured,
@@ -133,6 +135,7 @@ public class MovieController : ControllerBase
             Director = dto.Director,
             PosterUrl = dto.PosterUrl,
             BackdropUrl = dto.BackdropUrl,
+            TrailerUrl = dto.TrailerUrl,
             Rating = dto.Rating,
             IsActive = true,
             IsFeatured = dto.IsFeatured,
@@ -152,8 +155,11 @@ public class MovieController : ControllerBase
             ReleaseDate = movie.ReleaseDate,
             Director = movie.Director,
             PosterUrl = EnsureValidImageUrl(movie.PosterUrl),
+            BackdropUrl = EnsureValidImageUrl(movie.BackdropUrl),
+            TrailerUrl = movie.TrailerUrl,
             Rating = movie.Rating,
             IsActive = movie.IsActive,
+            IsFeatured = movie.IsFeatured,
             CreatedAt = movie.CreatedAt
         });
     }
@@ -175,6 +181,7 @@ public class MovieController : ControllerBase
         movie.Director = dto.Director;
         movie.PosterUrl = dto.PosterUrl;
         movie.BackdropUrl = dto.BackdropUrl;
+        movie.TrailerUrl = dto.TrailerUrl;
         movie.Rating = dto.Rating;
         movie.UpdatedAt = DateTime.UtcNow;
 
@@ -190,8 +197,11 @@ public class MovieController : ControllerBase
             ReleaseDate = movie.ReleaseDate,
             Director = movie.Director,
             PosterUrl = EnsureValidImageUrl(movie.PosterUrl),
+            BackdropUrl = EnsureValidImageUrl(movie.BackdropUrl),
+            TrailerUrl = movie.TrailerUrl,
             Rating = movie.Rating,
             IsActive = movie.IsActive,
+            IsFeatured = movie.IsFeatured,
             CreatedAt = movie.CreatedAt
         });
     }
@@ -300,10 +310,11 @@ public class MovieController : ControllerBase
             ReleaseDate = movie.ReleaseDate,
             Director = movie.Director,
             PosterUrl = EnsureValidImageUrl(movie.PosterUrl),
-            BackdropUrl = EnsureValidImageUrl(movie.BackdropUrl), // Added for consistency
+            BackdropUrl = EnsureValidImageUrl(movie.BackdropUrl),
+            TrailerUrl = movie.TrailerUrl,
             Rating = movie.Rating,
             IsActive = movie.IsActive,
-            IsFeatured = movie.IsFeatured, // Added for consistency
+            IsFeatured = movie.IsFeatured,
             CreatedAt = movie.CreatedAt
         });
     }
@@ -329,6 +340,7 @@ public class MovieController : ControllerBase
             Director = movie.Director,
             PosterUrl = EnsureValidImageUrl(movie.PosterUrl),
             BackdropUrl = EnsureValidImageUrl(movie.BackdropUrl),
+            TrailerUrl = movie.TrailerUrl,
             Rating = movie.Rating,
             IsActive = movie.IsActive,
             IsFeatured = movie.IsFeatured,

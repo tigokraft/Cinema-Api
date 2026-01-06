@@ -231,7 +231,6 @@ C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\scopedcss\
 C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\scopedcss\projectbundle\cinema-ui.bundle.scp.css
 C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\compressed\4ytzlf9kj4-ywtdki5a10.gz
 C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\compressed\8orn945l9f-l8aswlpnsc.gz
-C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\compressed\jtdztzb7jq-sicicfqjkp.gz
 C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\compressed\h7qu1ze39o-24k46inelt.gz
 C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\compressed\5gws10euzx-umgsj6rauw.gz
 C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\compressed\x4lyxlldjc-7gnnutjlp1.gz
@@ -309,3 +308,4 @@ C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\refint\cin
 C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\cinema-ui.pdb
 C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\cinema-ui.genruntimeconfig.cache
 C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\ref\cinema-ui.dll
+C:\Users\2223234\Documents\code\cinema-api\cinema-ui\obj\Debug\net9.0\compressed\jtdztzb7jq-bu9a340vx0.gz
