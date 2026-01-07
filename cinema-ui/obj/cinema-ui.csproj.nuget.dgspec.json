@@ -1,31 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\2223234\\Documents\\code\\cinema-api\\cinema-ui\\cinema-ui.csproj": {}
+    "/Users/exxo/Documents/code/Escola/cinema-api/cinema-ui/cinema-ui.csproj": {}
   },
   "projects": {
-    "C:\\Users\\2223234\\Documents\\code\\cinema-api\\cinema-ui\\cinema-ui.csproj": {
+    "/Users/exxo/Documents/code/Escola/cinema-api/cinema-ui/cinema-ui.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\2223234\\Documents\\code\\cinema-api\\cinema-ui\\cinema-ui.csproj",
+        "projectUniqueName": "/Users/exxo/Documents/code/Escola/cinema-api/cinema-ui/cinema-ui.csproj",
         "projectName": "cinema-ui",
-        "projectPath": "C:\\Users\\2223234\\Documents\\code\\cinema-api\\cinema-ui\\cinema-ui.csproj",
-        "packagesPath": "C:\\Users\\2223234\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\2223234\\Documents\\code\\cinema-api\\cinema-ui\\obj\\",
+        "projectPath": "/Users/exxo/Documents/code/Escola/cinema-api/cinema-ui/cinema-ui.csproj",
+        "packagesPath": "/Users/exxo/.nuget/packages/",
+        "outputPath": "/Users/exxo/Documents/code/Escola/cinema-api/cinema-ui/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\2223234\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/exxo/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -68,7 +62,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

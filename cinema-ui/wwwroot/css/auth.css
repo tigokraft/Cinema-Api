@@ -1,3 +1,14 @@
+/* Auth Styles - Netflix Glassmorphic Design */
+@import url("./shadcn.css");
+
+:root {
+  --netflix-black: 0 0% 8%;
+  --netflix-red: 0 72% 51%;
+  --netflix-dark: 0 0% 13%;
+  --netflix-gray: 0 0% 25%;
+  --netflix-light-gray: 0 0% 90%;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -5,47 +16,100 @@
 }
 
 .auth-body {
-    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+    background: 
+        radial-gradient(ellipse at top left, hsl(var(--netflix-red) / 0.15) 0%, transparent 40%),
+        radial-gradient(ellipse at bottom right, hsl(var(--netflix-red) / 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at center, hsl(var(--netflix-dark) / 0.3) 0%, transparent 70%),
+        linear-gradient(180deg,
+            hsl(0 0% 4%) 0%,
+            hsl(var(--netflix-dark)) 50%,
+            hsl(0 0% 6%) 100%
+        );
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated background elements */
+.auth-body::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(circle at 20% 80%, hsl(var(--netflix-red) / 0.05) 0%, transparent 25%),
+        radial-gradient(circle at 80% 20%, hsl(var(--netflix-red) / 0.05) 0%, transparent 25%);
+    animation: authBgFloat 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes authBgFloat {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(2%, 2%) rotate(1deg); }
+    66% { transform: translate(-1%, -1%) rotate(-0.5deg); }
 }
 
 .auth-container {
     width: 100%;
-    max-width: 450px;
-    padding: 20px;
+    max-width: 480px;
+    padding: 24px;
+    position: relative;
+    z-index: 1;
 }
 
 .auth-box {
-    background: rgba(0, 0, 0, 0.85);
-    padding: 60px 68px 40px;
-    border-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 48px;
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.03),
+        0 8px 40px rgba(0, 0, 0, 0.5),
+        0 16px 80px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-box:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 12px 48px rgba(0, 0, 0, 0.6),
+        0 20px 100px rgba(0, 0, 0, 0.35);
 }
 
 .auth-logo {
-    color: #e50914;
-    font-size: 3rem;
-    font-weight: bold;
+    color: hsl(var(--netflix-red));
+    font-size: 2.25rem;
+    font-weight: 900;
     text-align: center;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
+    margin-bottom: 8px;
+    letter-spacing: 0.15em;
+    text-shadow: 0 2px 12px hsl(var(--netflix-red) / 0.3);
 }
 
 .auth-title {
-    color: #fff;
-    font-size: 2rem;
-    margin-bottom: 28px;
-    font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.75rem;
+    margin-bottom: 32px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: -0.02em;
 }
 
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .form-group {
@@ -54,88 +118,161 @@
 
 .form-control {
     width: 100%;
-    height: 50px;
-    padding: 16px 20px;
-    background: #333;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    font-size: 16px;
-    transition: background 0.3s;
+    height: 56px;
+    padding: 18px 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .form-control:focus {
-    background: #454545;
+    background: rgba(255, 255, 255, 0.1);
     outline: none;
-    border: none;
+    border-color: hsl(var(--netflix-red) / 0.5);
+    box-shadow: 
+        0 0 0 3px hsl(var(--netflix-red) / 0.1),
+        0 0 20px hsl(var(--netflix-red) / 0.1);
 }
 
 .form-control::placeholder {
-    color: #8c8c8c;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 400;
 }
 
 .btn-auth {
     width: 100%;
-    height: 50px;
-    background: #e50914;
-    color: #fff;
+    height: 54px;
+    background: hsl(var(--netflix-red));
+    color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
     font-size: 16px;
     font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
-    margin-top: 24px;
-    transition: background 0.3s;
+    margin-top: 12px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-auth::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease;
 }
 
 .btn-auth:hover {
-    background: #f40612;
+    background: hsl(var(--netflix-red) / 0.9);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 6px 20px hsl(var(--netflix-red) / 0.35),
+        0 12px 40px hsl(var(--netflix-red) / 0.15);
+}
+
+.btn-auth:hover::before {
+    opacity: 1;
+}
+
+.btn-auth:active {
+    transform: translateY(0);
 }
 
 .alert-danger {
-    background: #e50914;
-    color: #fff;
-    padding: 12px;
-    border-radius: 4px;
-    margin-bottom: 16px;
-    border: none;
+    background: hsl(var(--netflix-red) / 0.15);
+    color: hsl(0 80% 65%);
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    border: 1px solid hsl(var(--netflix-red) / 0.2);
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
 }
 
 .auth-footer {
-    color: #737373;
+    color: rgba(255, 255, 255, 0.5);
     text-align: center;
-    margin-top: 16px;
-    font-size: 16px;
+    margin-top: 28px;
+    font-size: 15px;
 }
 
 .auth-link {
-    color: #fff;
+    color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    position: relative;
 }
 
 .auth-link:hover {
-    text-decoration: underline;
+    color: hsl(var(--netflix-red));
+}
+
+.auth-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: hsl(var(--netflix-red));
+    transition: width 0.3s ease;
+}
+
+.auth-link:hover::after {
+    width: 100%;
 }
 
 .text-danger {
-    color: #e50914;
-    font-size: 14px;
-    margin-top: 4px;
+    color: hsl(0 80% 60%);
+    font-size: 13px;
+    margin-top: 6px;
     display: block;
+    font-weight: 500;
 }
 
+/* Responsive */
 @media (max-width: 600px) {
+    .auth-container {
+        padding: 16px;
+    }
+
     .auth-box {
-        padding: 40px 30px;
+        padding: 36px 28px;
+        border-radius: 12px;
     }
     
     .auth-logo {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
     
     .auth-title {
         font-size: 1.5rem;
+        margin-bottom: 28px;
+    }
+
+    .form-control {
+        height: 52px;
+        padding: 16px 18px;
+    }
+
+    .btn-auth {
+        height: 52px;
     }
 }
-
