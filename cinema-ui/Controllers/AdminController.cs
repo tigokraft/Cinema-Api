@@ -626,4 +626,71 @@ public class AdminController : Controller
         var success = await _adminApi.UpdateUserRoleAsync(id, role);
         return RedirectToAction("Users");
     }
+
+    [HttpGet]
+    public async Task<IActionResult> EditUser(int id)
+    {
+        var user = await _adminApi.GetUserAsync(id);
+        if (user == null)
+        {
+            TempData["ErrorMessage"] = "User not found.";
+            return RedirectToAction("Users");
+        }
+
+        var viewModel = new AdminEditUserViewModel
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Role = user.Role,
+            TicketCount = user.TicketCount
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditUser(AdminEditUserViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var dto = new AdminUpdateUserDto
+        {
+            Email = model.Email,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Role = model.Role,
+            Password = !string.IsNullOrWhiteSpace(model.NewPassword) ? model.NewPassword : null
+        };
+
+        var result = await _adminApi.UpdateUserAsync(model.Id, dto);
+        if (result != null)
+        {
+            TempData["SuccessMessage"] = "User updated successfully!";
+            return RedirectToAction("Users");
+        }
+
+        model.ErrorMessage = "Failed to update user. Email may already be in use.";
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        var success = await _adminApi.DeleteUserAsync(id);
+        if (success)
+        {
+            TempData["SuccessMessage"] = "User deleted successfully!";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Failed to delete user. Cannot delete yourself or users with active tickets.";
+        }
+        return RedirectToAction("Users");
+    }
 }

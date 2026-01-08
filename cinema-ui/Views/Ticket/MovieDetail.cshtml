@@ -51,50 +51,116 @@
             </div>
 
             <h2 class="section-title">Available Screenings</h2>
-            @if (Model.Screenings.Any())
+            
+            @if (Model.AvailableDates.Any())
             {
-                <div class="screenings-grid">
-                    @foreach (var screening in Model.Screenings)
-                    {
-                        <div class="screening-card">
-                            @if (!string.IsNullOrEmpty(screening.MoviePosterUrl))
-                            {
-                                <div class="screening-poster">
-                                    <img src="@screening.MoviePosterUrl" alt="@screening.MovieTitle" loading="lazy" 
-                                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'movie-placeholder\'><span>🎬</span></div>';" />
-                                </div>
-                            }
-                            else if (!string.IsNullOrEmpty(Model.Movie.PosterUrl))
-                            {
-                                <div class="screening-poster">
-                                    <img src="@Model.Movie.PosterUrl" alt="@screening.MovieTitle" loading="lazy" 
-                                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'movie-placeholder\'><span>🎬</span></div>';" />
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="screening-poster">
-                                    <div class="movie-placeholder">
-                                        <span>🎬</span>
-                                    </div>
-                                </div>
-                            }
-                            <div class="screening-info">
-                                <h3 class="screening-movie">@screening.TheaterName</h3>
-                                <p class="screening-time">@screening.ShowTime.ToString("MMM dd, yyyy HH:mm")</p>
-                                <p class="screening-price">$@screening.Price.ToString("F2")</p>
-                                <p class="screening-seats">@screening.AvailableSeats seats available</p>
-                                @if (screening.AvailableSeats > 0)
+                <!-- Filters Section -->
+                <div class="screening-filters" style="margin-bottom: var(--spacing-xl); padding: var(--spacing-lg); background: hsl(var(--card)); border-radius: var(--radius); border: 1px solid hsl(var(--border));">
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-lg); align-items: flex-start;">
+                        <!-- Date Filter Pills -->
+                        <div style="flex: 1; min-width: 300px;">
+                            <label class="label" style="margin-bottom: var(--spacing-sm); display: block;">Select Date</label>
+                            <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-xs);">
+                                <a asp-action="MovieDetail" asp-route-id="@Model.Movie.Id" asp-route-theaterId="@Model.SelectedTheaterId"
+                                   class="date-pill @(Model.SelectedDate == null ? "active" : "")"
+                                   style="padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius); @(Model.SelectedDate == null ? "background: hsl(var(--primary)); color: hsl(var(--primary-foreground));" : "background: hsl(var(--muted)); color: hsl(var(--muted-foreground));") text-decoration: none; font-size: 0.875rem; white-space: nowrap;">
+                                    All Dates
+                                </a>
+                                @foreach (var date in Model.AvailableDates.Take(7))
                                 {
-                                    <a asp-action="SelectSeats" asp-route-screeningId="@screening.Id" class="btn btn-primary" style="width: 100%; margin-top: var(--spacing-md);">Select Seats</a>
-                                }
-                                else
-                                {
-                                    <button class="btn btn-secondary" style="width: 100%; margin-top: var(--spacing-md);" disabled>Sold Out</button>
+                                    var isSelected = Model.SelectedDate.HasValue && Model.SelectedDate.Value.Date == date.Date;
+                                    var isToday = date.Date == DateTime.Today;
+                                    var displayText = isToday ? "Today" : (date.Date == DateTime.Today.AddDays(1) ? "Tomorrow" : date.ToString("ddd, MMM d"));
+                                    <a asp-action="MovieDetail" asp-route-id="@Model.Movie.Id" asp-route-date="@date.ToString("yyyy-MM-dd")" asp-route-theaterId="@Model.SelectedTheaterId"
+                                       class="date-pill @(isSelected ? "active" : "")"
+                                       style="padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius); @(isSelected ? "background: hsl(var(--primary)); color: hsl(var(--primary-foreground));" : "background: hsl(var(--muted)); color: hsl(var(--muted-foreground));") text-decoration: none; font-size: 0.875rem; white-space: nowrap;">
+                                        @displayText
+                                    </a>
                                 }
                             </div>
                         </div>
+                        
+                        <!-- Theater Filter -->
+                        @if (Model.AvailableTheaters.Count > 1)
+                        {
+                            <div style="min-width: 200px;">
+                                <label class="label" style="margin-bottom: var(--spacing-sm); display: block;">Theater</label>
+                                <select id="theaterFilter" class="form-control" onchange="filterByTheater(this.value)" style="width: 100%;">
+                                    <option value="">All Theaters</option>
+                                    @foreach (var theater in Model.AvailableTheaters)
+                                    {
+                                        if (Model.SelectedTheaterId == theater.Id)
+                                        {
+                                            <option value="@theater.Id" selected>@theater.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@theater.Id">@theater.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        }
+                    </div>
+                    
+                    @if (Model.SelectedDate.HasValue || Model.SelectedTheaterId.HasValue)
+                    {
+                        <div style="margin-top: var(--spacing-md);">
+                            <a asp-action="MovieDetail" asp-route-id="@Model.Movie.Id" class="btn btn-sm btn-secondary">
+                                ✕ Clear Filters
+                            </a>
+                        </div>
                     }
+                </div>
+            }
+            
+            @if (Model.GroupedScreenings.Any())
+            {
+                @foreach (var dateGroup in Model.GroupedScreenings)
+                {
+                    var isToday = dateGroup.Key.Date == DateTime.Today;
+                    var dateLabel = isToday ? "Today" : (dateGroup.Key.Date == DateTime.Today.AddDays(1) ? "Tomorrow" : dateGroup.Key.ToString("dddd, MMMM d"));
+                    
+                    <div class="screening-date-group" style="margin-bottom: var(--spacing-xl);">
+                        <h3 style="margin-bottom: var(--spacing-md); color: hsl(var(--primary)); font-size: 1.125rem;">
+                            📅 @dateLabel
+                        </h3>
+                        <div class="screenings-grid">
+                            @foreach (var screening in dateGroup.Value)
+                            {
+                                <div class="screening-card screening-time-card">
+                                    <div class="screening-info">
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-sm);">
+                                            <div>
+                                                <p class="screening-time-large">@screening.ShowTime.ToString("HH:mm")</p>
+                                                <p class="screening-theater">@screening.TheaterName</p>
+                                            </div>
+                                            <span class="screening-price-badge">$@screening.Price.ToString("F2")</span>
+                                        </div>
+                                        <p class="screening-seats" style="margin-bottom: var(--spacing-md);">
+                                            🎟️ @screening.AvailableSeats seats available
+                                        </p>
+                                        @if (screening.AvailableSeats > 0)
+                                        {
+                                            <a asp-action="SelectSeats" asp-route-screeningId="@screening.Id" class="btn btn-primary" style="width: 100%;">Select Seats</a>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-secondary" style="width: 100%;" disabled>Sold Out</button>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else if (Model.SelectedDate.HasValue || Model.SelectedTheaterId.HasValue)
+            {
+                <div class="empty-state">
+                    <h3>No screenings match your filters</h3>
+                    <p>Try selecting a different date or theater.</p>
+                    <a asp-action="MovieDetail" asp-route-id="@Model.Movie.Id" class="btn btn-primary" style="margin-top: var(--spacing-md);">Show All Screenings</a>
                 </div>
             }
             else
@@ -126,6 +192,16 @@
     
     @section Scripts {
         <script>
+            function filterByTheater(theaterId) {
+                const url = new URL(window.location.href);
+                if (theaterId) {
+                    url.searchParams.set('theaterId', theaterId);
+                } else {
+                    url.searchParams.delete('theaterId');
+                }
+                window.location.href = url.toString();
+            }
+            
             function getYouTubeEmbedUrl(url) {
                 let videoId = '';
                 
@@ -176,6 +252,22 @@
                     }
                 }
             });
+        </script>
+    }
+}
+else
+{
+    @section Scripts {
+        <script>
+            function filterByTheater(theaterId) {
+                const url = new URL(window.location.href);
+                if (theaterId) {
+                    url.searchParams.set('theaterId', theaterId);
+                } else {
+                    url.searchParams.delete('theaterId');
+                }
+                window.location.href = url.toString();
+            }
         </script>
     }
 }

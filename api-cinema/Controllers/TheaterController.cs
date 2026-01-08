@@ -310,7 +310,7 @@ public class TheaterController : ControllerBase
         });
     }
 
-    // DELETE: api/Theater/{id} - Admin only (soft delete)
+    // DELETE: api/Theater/{id} - Admin only (hard delete)
     [HttpDelete("{id}")]
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> DeleteTheater(int id)
@@ -322,23 +322,21 @@ public class TheaterController : ControllerBase
         if (theater == null)
             return NotFound("Theater not found.");
 
-        // Check for active screenings
-        var hasActiveScreenings = await _db.Screenings
-            .AnyAsync(s => s.TheaterId == id && s.IsActive);
+        // Check for screenings (active or not)
+        var hasScreenings = await _db.Screenings
+            .AnyAsync(s => s.TheaterId == id);
         
-        if (hasActiveScreenings)
-            return BadRequest("Cannot delete theater with active screenings.");
+        if (hasScreenings)
+            return BadRequest("Cannot delete theater with screenings. Delete screenings first.");
 
-        theater.IsActive = false;
+        // Delete all rooms first
+        _db.Rooms.RemoveRange(theater.Rooms);
         
-        // Also deactivate all rooms
-        foreach (var room in theater.Rooms)
-        {
-            room.IsActive = false;
-        }
+        // Delete the theater
+        _db.Theaters.Remove(theater);
         
         await _db.SaveChangesAsync();
 
-        return Ok("Theater deactivated successfully.");
+        return Ok("Theater deleted successfully.");
     }
 }

@@ -544,7 +544,7 @@ public class ScreeningController : ControllerBase
         });
     }
 
-    // DELETE: api/Screening/{id} - Admin only (soft delete)
+    // DELETE: api/Screening/{id} - Admin only (hard delete)
     [HttpDelete("{id}")]
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> DeleteScreening(int id)
@@ -557,10 +557,10 @@ public class ScreeningController : ControllerBase
         if (hasTickets)
             return BadRequest("Cannot delete screening with active tickets. Cancel tickets first.");
 
-        screening.IsActive = false;
+        _db.Screenings.Remove(screening);
         await _db.SaveChangesAsync();
 
-        return Ok("Screening deactivated successfully.");
+        return Ok("Screening deleted successfully.");
     }
 
     // DELETE: api/Screening/schedule/{id} - Delete a screening schedule and all its future screenings - Admin only
@@ -575,21 +575,22 @@ public class ScreeningController : ControllerBase
         if (schedule == null)
             return NotFound("Screening schedule not found.");
 
-        // Deactivate future screenings without tickets
+        // Delete future screenings without tickets
         var futureScreenings = schedule.Screenings
-            .Where(s => s.ShowTime > DateTime.UtcNow && s.IsActive)
+            .Where(s => s.ShowTime > DateTime.UtcNow)
             .ToList();
 
-        var deactivatedCount = 0;
+        var deletedCount = 0;
         var skippedCount = 0;
+        var screeningsToDelete = new List<Screening>();
 
         foreach (var screening in futureScreenings)
         {
             var hasTickets = await _db.Tickets.AnyAsync(t => t.ScreeningId == screening.Id && t.Status == "Active");
             if (!hasTickets)
             {
-                screening.IsActive = false;
-                deactivatedCount++;
+                screeningsToDelete.Add(screening);
+                deletedCount++;
             }
             else
             {
@@ -597,12 +598,17 @@ public class ScreeningController : ControllerBase
             }
         }
 
-        schedule.IsActive = false;
+        // Remove screenings that can be deleted
+        _db.Screenings.RemoveRange(screeningsToDelete);
+        
+        // Remove the schedule itself
+        _db.ScreeningSchedules.Remove(schedule);
+        
         await _db.SaveChangesAsync();
 
         return Ok(new
         {
-            Message = $"Schedule deactivated. {deactivatedCount} future screenings deactivated.",
+            Message = $"Schedule deleted. {deletedCount} future screenings deleted.",
             SkippedScreenings = skippedCount > 0 ? $"{skippedCount} screenings skipped (have active tickets)" : null
         });
     }

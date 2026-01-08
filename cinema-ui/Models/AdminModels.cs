@@ -189,3 +189,27 @@ public class TmdbMovieDetailsViewModel
     public List<string> Genres { get; set; } = new();
     public string Director { get; set; } = string.Empty;
 }
+
+public class AdminEditUserViewModel
+{
+    public int Id { get; set; }
+    public string Username { get; set; } = string.Empty;
+    
+    [EmailAddress(ErrorMessage = "Invalid email address")]
+    public string? Email { get; set; }
+    
+    [StringLength(50)]
+    public string? FirstName { get; set; }
+    
+    [StringLength(50)]
+    public string? LastName { get; set; }
+    
+    [Required(ErrorMessage = "Role is required")]
+    public string Role { get; set; } = "User";
+    
+    [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters")]
+    public string? NewPassword { get; set; }
+    
+    public int TicketCount { get; set; }
+    public string? ErrorMessage { get; set; }
+}

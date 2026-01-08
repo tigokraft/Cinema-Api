@@ -412,4 +412,4 @@ C:/Users/2223234/Documents/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed
 /Users/exxo/Documents/code/Escola/cinema-api/cinema-ui/obj/Debug/net9.0/cinema-ui.genruntimeconfig.cache
 /Users/exxo/Documents/code/Escola/cinema-api/cinema-ui/obj/Debug/net9.0/ref/cinema-ui.dll
 /Users/exxo/Documents/code/Escola/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/8orn945l9f-kw7ky9havu.gz
-/Users/exxo/Documents/code/Escola/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/jtdztzb7jq-rq46jvtw8z.gz
+/Users/exxo/Documents/code/Escola/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/jtdztzb7jq-jm6vq1r0f5.gz

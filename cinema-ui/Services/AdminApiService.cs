@@ -340,6 +340,44 @@ public class AdminApiService
         return null;
     }
 
+    public async Task<UserResponseDto?> GetUserAsync(int id)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/User/{id}");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<UserResponseDto>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<UserResponseDto?> UpdateUserAsync(int id, AdminUpdateUserDto dto)
+    {
+        var json = JsonSerializer.Serialize(dto);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/User/{id}", content);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<UserResponseDto>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<bool> DeleteUserAsync(int id)
+    {
+        var response = await _httpClient.DeleteAsync($"{ApiBaseUrl}/User/{id}");
+        return response.IsSuccessStatusCode;
+    }
+
     // User Profile
     public async Task<UserProfileDto?> GetUserProfileAsync()
     {
@@ -504,11 +542,22 @@ public class TmdbSearchResponseDto
 
 public class TmdbMovieDto
 {
+    [System.Text.Json.Serialization.JsonPropertyName("id")]
     public int Id { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("title")]
     public string? Title { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("overview")]
     public string? Overview { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("poster_path")]
     public string? PosterPath { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("release_date")]
     public string? ReleaseDate { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("vote_average")]
     public double? VoteAverage { get; set; }
     
     public string? GetPosterUrl()
@@ -517,19 +566,34 @@ public class TmdbMovieDto
             return null;
         
         var path = PosterPath.StartsWith("/") ? PosterPath : $"/{PosterPath}";
-            return $"https://image.tmdb.org/t/p/w780{path}";
+        return $"https://image.tmdb.org/t/p/w780{path}";
     }
 }
 
 public class TmdbMovieDetailsDto
 {
+    [System.Text.Json.Serialization.JsonPropertyName("id")]
     public int Id { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("title")]
     public string? Title { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("overview")]
     public string? Overview { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("poster_path")]
     public string? PosterPath { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("release_date")]
     public string? ReleaseDate { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("runtime")]
     public int? Runtime { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("genres")]
     public List<TmdbGenreDto>? Genres { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("credits")]
     public TmdbCreditsDto? Credits { get; set; }
     
     public string? GetPosterUrl()
@@ -538,24 +602,31 @@ public class TmdbMovieDetailsDto
             return null;
         
         var path = PosterPath.StartsWith("/") ? PosterPath : $"/{PosterPath}";
-            return $"https://image.tmdb.org/t/p/w780{path}";
+        return $"https://image.tmdb.org/t/p/w780{path}";
     }
 }
 
 public class TmdbGenreDto
 {
+    [System.Text.Json.Serialization.JsonPropertyName("id")]
     public int Id { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("name")]
     public string? Name { get; set; }
 }
 
 public class TmdbCreditsDto
 {
+    [System.Text.Json.Serialization.JsonPropertyName("crew")]
     public List<TmdbCrewDto>? Crew { get; set; }
 }
 
 public class TmdbCrewDto
 {
+    [System.Text.Json.Serialization.JsonPropertyName("name")]
     public string? Name { get; set; }
+    
+    [System.Text.Json.Serialization.JsonPropertyName("job")]
     public string? Job { get; set; }
 }
 
@@ -748,4 +819,13 @@ public class AdminTicketDto
     public int UserId { get; set; }
     public string Username { get; set; } = string.Empty;
     public string? UserEmail { get; set; }
+}
+
+public class AdminUpdateUserDto
+{
+    public string? Email { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Role { get; set; }
+    public string? Password { get; set; }
 }

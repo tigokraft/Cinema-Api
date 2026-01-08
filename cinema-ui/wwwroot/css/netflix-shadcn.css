@@ -557,6 +557,44 @@ body {
   box-shadow: var(--shadow-md);
 }
 
+/* Time-focused Screening Cards */
+.screening-time-card {
+  flex-direction: column;
+  min-height: auto;
+  max-height: none;
+  padding: var(--spacing-lg);
+}
+
+.screening-time-card .screening-info {
+  padding: 0;
+  width: 100%;
+}
+
+.screening-time-large {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin: 0;
+  line-height: 1.2;
+}
+
+.screening-price-badge {
+  background: hsl(var(--primary) / 0.15);
+  color: hsl(var(--primary));
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Screening Filters */
+.screening-filters {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* Empty States */
 .empty-message {
   text-align: center;

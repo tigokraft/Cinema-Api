@@ -20,7 +20,7 @@ public class TicketController : Controller
     }
 
     // Movie Detail Page
-    public async Task<IActionResult> MovieDetail(int id)
+    public async Task<IActionResult> MovieDetail(int id, DateTime? date = null, int? theaterId = null)
     {
         var movie = await _apiService.GetMovieAsync(id);
         if (movie == null)
@@ -29,11 +29,48 @@ public class TicketController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        var screenings = await _apiService.GetScreeningsByMovieAsync(id);
+        var allScreenings = await _apiService.GetScreeningsByMovieAsync(id);
+        var screenings = allScreenings ?? new List<Screening>();
+        
+        // Get unique dates and theaters for filter options
+        var availableDates = screenings
+            .Select(s => s.ShowTime.Date)
+            .Distinct()
+            .OrderBy(d => d)
+            .ToList();
+        
+        var availableTheaters = screenings
+            .Select(s => new { s.TheaterId, s.TheaterName })
+            .DistinctBy(t => t.TheaterId)
+            .OrderBy(t => t.TheaterName)
+            .ToList();
+        
+        // Apply filters
+        if (date.HasValue)
+        {
+            screenings = screenings.Where(s => s.ShowTime.Date == date.Value.Date).ToList();
+        }
+        
+        if (theaterId.HasValue)
+        {
+            screenings = screenings.Where(s => s.TheaterId == theaterId.Value).ToList();
+        }
+        
+        // Group screenings by date
+        var groupedScreenings = screenings
+            .GroupBy(s => s.ShowTime.Date)
+            .OrderBy(g => g.Key)
+            .ToDictionary(g => g.Key, g => g.OrderBy(s => s.ShowTime).ToList());
+        
         var viewModel = new MovieDetailViewModel
         {
             Movie = movie,
-            Screenings = screenings ?? new List<Screening>()
+            Screenings = screenings,
+            GroupedScreenings = groupedScreenings,
+            AvailableDates = availableDates,
+            AvailableTheaters = availableTheaters.Select(t => new TheaterOption { Id = t.TheaterId, Name = t.TheaterName }).ToList(),
+            SelectedDate = date,
+            SelectedTheaterId = theaterId
         };
 
         return View(viewModel);
@@ -193,6 +230,17 @@ public class MovieDetailViewModel
 {
     public Movie Movie { get; set; } = null!;
     public List<Screening> Screenings { get; set; } = new();
+    public Dictionary<DateTime, List<Screening>> GroupedScreenings { get; set; } = new();
+    public List<DateTime> AvailableDates { get; set; } = new();
+    public List<TheaterOption> AvailableTheaters { get; set; } = new();
+    public DateTime? SelectedDate { get; set; }
+    public int? SelectedTheaterId { get; set; }
+}
+
+public class TheaterOption
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
 }
 
 public class SeatSelectionViewModel
