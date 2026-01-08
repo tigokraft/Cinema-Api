@@ -144,7 +144,7 @@ public class AdminController : Controller
         var success = await _adminApi.SetFeaturedMovieAsync(id);
         if (success)
         {
-            TempData["SuccessMessage"] = "Featured movie updated successfully!";
+            TempData["SuccessMessage"] = "Featured movie updated successfully! Trailer download started.";
         }
         else
         {

@@ -41,6 +41,12 @@
                         <h3>Description</h3>
                         <p class="text-muted" style="line-height: 1.7;">@Model.Movie.Description</p>
                     </div>
+                    @if (!string.IsNullOrEmpty(Model.Movie.TrailerUrl))
+                    {
+                        <button type="button" class="btn btn-primary" onclick="openTrailerModal('@Html.Raw(Model.Movie.TrailerUrl)')" style="margin-top: var(--spacing-md);">
+                            <span>🎬</span> Watch Trailer
+                        </button>
+                    }
                 </div>
             </div>
 
@@ -101,3 +107,75 @@
         </div>
     </div>
 </div>
+
+@if (!string.IsNullOrEmpty(Model.Movie.TrailerUrl))
+{
+    <!-- Trailer Modal -->
+    <div id="trailerModal" class="trailer-modal" onclick="closeTrailerModal(event)">
+        <div class="trailer-modal-content">
+            <button type="button" class="trailer-close-btn" onclick="closeTrailerModal(event)">&times;</button>
+            <div class="trailer-video-container">
+                <iframe id="trailerFrame" 
+                        src="" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    
+    @section Scripts {
+        <script>
+            function getYouTubeEmbedUrl(url) {
+                let videoId = '';
+                
+                if (url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1].split('?')[0];
+                } else if (url.includes('youtube.com/watch')) {
+                    const urlParams = new URLSearchParams(url.split('?')[1]);
+                    videoId = urlParams.get('v');
+                } else if (url.includes('youtube.com/embed/')) {
+                    videoId = url.split('embed/')[1].split('?')[0];
+                }
+                
+                return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : url;
+            }
+            
+            function openTrailerModal(url) {
+                const modal = document.getElementById('trailerModal');
+                const iframe = document.getElementById('trailerFrame');
+                
+                if (modal && iframe) {
+                    iframe.src = getYouTubeEmbedUrl(url);
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            function closeTrailerModal(event) {
+                if (event.target.classList.contains('trailer-modal') || 
+                    event.target.classList.contains('trailer-close-btn')) {
+                    const modal = document.getElementById('trailerModal');
+                    const iframe = document.getElementById('trailerFrame');
+                    
+                    if (modal) {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                    if (iframe) {
+                        iframe.src = '';
+                    }
+                }
+            }
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('trailerModal');
+                    if (modal && modal.classList.contains('active')) {
+                        closeTrailerModal({ target: modal });
+                    }
+                }
+            });
+        </script>
+    }
+}

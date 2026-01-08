@@ -34,6 +34,8 @@ public class MovieDto
     public string Rating { get; set; } = "NR";
     
     public bool IsFeatured { get; set; } = false;
+    
+    public bool ShowTrailer { get; set; } = true;
 }
 
 public class MovieResponseDto
@@ -51,7 +53,9 @@ public class MovieResponseDto
     public string Rating { get; set; } = string.Empty;
     public bool IsActive { get; set; }
     public bool IsFeatured { get; set; }
+    public bool ShowTrailer { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool HasDownloadedTrailer { get; set; }
 }
 
 

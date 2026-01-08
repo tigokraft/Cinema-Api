@@ -589,6 +589,8 @@ public class MovieResponseDto
     public string Rating { get; set; } = string.Empty;
     public bool IsActive { get; set; }
     public bool IsFeatured { get; set; }
+    public bool ShowTrailer { get; set; }
+    public bool HasDownloadedTrailer { get; set; }
     public DateTime CreatedAt { get; set; }
 }
 

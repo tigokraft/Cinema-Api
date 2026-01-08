@@ -525,3 +525,4 @@ C:/Users/2223234/Documents/code/cinema-api/api-cinema/obj/Debug/net9.0/ref/api-c
 /Users/exxo/Documents/code/Escola/cinema-api/api-cinema/obj/Debug/net9.0/api-cinema.pdb
 /Users/exxo/Documents/code/Escola/cinema-api/api-cinema/obj/Debug/net9.0/api-cinema.genruntimeconfig.cache
 /Users/exxo/Documents/code/Escola/cinema-api/api-cinema/obj/Debug/net9.0/ref/api-cinema.dll
+/Users/exxo/Documents/code/Escola/cinema-api/api-cinema/bin/Debug/net9.0/api-cinema.staticwebassets.runtime.json
