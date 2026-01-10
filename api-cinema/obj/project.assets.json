@@ -3599,19 +3599,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/exxo/.nuget/packages/": {}
+    "/home/exxo/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/exxo/Documents/code/Escola/cinema-api/api-cinema/api-cinema.csproj",
+      "projectUniqueName": "/home/exxo/code/cinema-api/api-cinema/api-cinema.csproj",
       "projectName": "api-cinema",
-      "projectPath": "/Users/exxo/Documents/code/Escola/cinema-api/api-cinema/api-cinema.csproj",
-      "packagesPath": "/Users/exxo/.nuget/packages/",
-      "outputPath": "/Users/exxo/Documents/code/Escola/cinema-api/api-cinema/obj/",
+      "projectPath": "/home/exxo/code/cinema-api/api-cinema/api-cinema.csproj",
+      "packagesPath": "/home/exxo/.nuget/packages/",
+      "outputPath": "/home/exxo/code/cinema-api/api-cinema/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/exxo/.nuget/NuGet/NuGet.Config"
+        "/home/exxo/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -3635,7 +3635,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net9.0": {
@@ -3679,6 +3679,16 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[9.0.11, 9.0.11]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.linux-x64",
+            "version": "[9.0.11, 9.0.11]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -3687,7 +3697,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

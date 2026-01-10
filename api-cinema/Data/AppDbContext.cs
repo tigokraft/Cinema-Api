@@ -14,6 +14,9 @@ public class AppDbContext : DbContext
     public DbSet<Screening> Screenings => Set<Screening>();
     public DbSet<ScreeningSchedule> ScreeningSchedules => Set<ScreeningSchedule>();
     public DbSet<Ticket> Tickets => Set<Ticket>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<PromoCode> PromoCodes => Set<PromoCode>();
+    public DbSet<TicketNote> TicketNotes => Set<TicketNote>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,5 +52,24 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(ss => ss.RoomId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        // PromoCode configuration
+        modelBuilder.Entity<PromoCode>()
+            .HasIndex(p => p.Code)
+            .IsUnique();
+        
+        // TicketNote configuration
+        modelBuilder.Entity<TicketNote>()
+            .HasOne(tn => tn.Ticket)
+            .WithMany(t => t.Notes)
+            .HasForeignKey(tn => tn.TicketId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        // Ticket-PromoCode configuration
+        modelBuilder.Entity<Ticket>()
+            .HasOne(t => t.PromoCode)
+            .WithMany(p => p.Tickets)
+            .HasForeignKey(t => t.PromoCodeId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
