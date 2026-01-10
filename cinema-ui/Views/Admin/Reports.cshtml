@@ -9,10 +9,10 @@
     <form method="get" class="date-filter">
         <label>Time Period:</label>
         <select name="days" onchange="this.form.submit()">
-            <option value="7" @(Model.SelectedDays == 7 ? "selected" : "")>Last 7 Days</option>
-            <option value="30" @(Model.SelectedDays == 30 ? "selected" : "")>Last 30 Days</option>
-            <option value="90" @(Model.SelectedDays == 90 ? "selected" : "")>Last 90 Days</option>
-            <option value="365" @(Model.SelectedDays == 365 ? "selected" : "")>Last Year</option>
+            @if (Model.SelectedDays == 7) { <option value="7" selected>Last 7 Days</option> } else { <option value="7">Last 7 Days</option> }
+            @if (Model.SelectedDays == 30) { <option value="30" selected>Last 30 Days</option> } else { <option value="30">Last 30 Days</option> }
+            @if (Model.SelectedDays == 90) { <option value="90" selected>Last 90 Days</option> } else { <option value="90">Last 90 Days</option> }
+            @if (Model.SelectedDays == 365) { <option value="365" selected>Last Year</option> } else { <option value="365">Last Year</option> }
         </select>
     </form>
 </div>

@@ -11,14 +11,14 @@
             <option value="">All Actions</option>
             @foreach (var action in Model.Actions)
             {
-                <option value="@action" @(Model.SelectedAction == action ? "selected" : "")>@action</option>
+                if (Model.SelectedAction == action) { <option value="@action" selected>@action</option> } else { <option value="@action">@action</option> }
             }
         </select>
         <select name="entityType" onchange="this.form.submit()">
             <option value="">All Entity Types</option>
             @foreach (var type in Model.EntityTypes)
             {
-                <option value="@type" @(Model.SelectedEntityType == type ? "selected" : "")>@type</option>
+                if (Model.SelectedEntityType == type) { <option value="@type" selected>@type</option> } else { <option value="@type">@type</option> }
             }
         </select>
         @if (!string.IsNullOrEmpty(Model.SelectedAction) || !string.IsNullOrEmpty(Model.SelectedEntityType))
