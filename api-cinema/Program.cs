@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
@@ -86,22 +85,26 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(opt =>
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Cinema API", Version = "v1" });
+    opt.SwaggerDoc("v1", new() { Title = "Cinema API", Version = "v1" });
 
-    var jwtScheme = new OpenApiSecurityScheme
+    opt.AddSecurityDefinition("Bearer", new()
     {
         Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
         Description = "Enter 'Bearer {token}'"
-    };
-
-    opt.AddSecurityDefinition("Bearer", jwtScheme);
-    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    });
+    opt.AddSecurityRequirement(new()
     {
-        { jwtScheme, new[] { "Bearer" } }
+        { 
+            new() 
+            { 
+                Reference = new() { Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme, Id = "Bearer" } 
+            }, 
+            Array.Empty<string>() 
+        }
     });
 });
 
