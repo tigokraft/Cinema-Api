@@ -123,6 +123,11 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty;
     });   
     Console.WriteLine("Swagger UI enabled in Development environment.");
+    
+    // Seed database with sample data
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await DbSeeder.SeedAsync(dbContext);
 }
 
 app.UseHttpsRedirection();

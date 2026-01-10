@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "D7G7Avyo8DY=",
+  "dgSpecHash": "shyDUhuXH0s=",
   "success": true,
   "projectFilePath": "/home/exxo/code/cinema-api/api-cinema/api-cinema.csproj",
   "expectedPackageFiles": [
+    "/home/exxo/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/home/exxo/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/home/exxo/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/10.0.0/microsoft.aspnetcore.authentication.jwtbearer.10.0.0.nupkg.sha512",
     "/home/exxo/.nuget/packages/microsoft.build/17.7.2/microsoft.build.17.7.2.nupkg.sha512",
