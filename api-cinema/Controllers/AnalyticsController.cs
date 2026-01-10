@@ -147,7 +147,7 @@ public class AnalyticsController : ControllerBase
 
         var occupancyRates = screenings.Select(s =>
         {
-            var totalSeats = s.Room?.Rows * s.Room?.SeatsPerRow ?? s.Theater.Rows * s.Theater.SeatsPerRow;
+            var totalSeats = s.Theater.Rows * s.Theater.SeatsPerRow;
             var soldSeats = s.Tickets.Count(t => t.Status == "Active" || t.Status == "Used");
             return new OccupancyRateDto
             {
@@ -205,7 +205,7 @@ public class AnalyticsController : ControllerBase
             {
                 var totalOccupancy = screenings.Sum(s =>
                 {
-                    var totalSeats = s.Room?.Rows * s.Room?.SeatsPerRow ?? s.Theater.Rows * s.Theater.SeatsPerRow;
+                    var totalSeats = s.Theater.Rows * s.Theater.SeatsPerRow;
                     var soldSeats = s.Tickets.Count(t => t.Status != "Cancelled");
                     return totalSeats > 0 ? (decimal)soldSeats / totalSeats * 100 : 0;
                 });
@@ -306,7 +306,7 @@ public class AnalyticsController : ControllerBase
 
         foreach (var screening in upcomingScreenings)
         {
-            var totalSeats = screening.Room?.Rows * screening.Room?.SeatsPerRow ?? screening.Theater.Rows * screening.Theater.SeatsPerRow;
+            var totalSeats = screening.Theater.Rows * screening.Theater.SeatsPerRow;
             var soldSeats = screening.Tickets.Count(t => t.Status == "Active");
             var occupancy = totalSeats > 0 ? (decimal)soldSeats / totalSeats * 100 : 0;
 

@@ -181,9 +181,8 @@ public class PromoCodeController : ControllerBase
         return Ok(new { Message = "Promo code deleted successfully." });
     }
 
-    // GET: api/PromoCode/validate/{code} - Validate a promo code (public endpoint for ticket purchase)
+    // GET: api/PromoCode/validate/{code} - Validate a promo code (for ticket purchase)
     [HttpGet("validate/{code}")]
-    [AllowAnonymous]
     [Authorize(Policy = "Authenticated")]
     public async Task<IActionResult> Validate(string code, [FromQuery] decimal? purchaseAmount)
     {

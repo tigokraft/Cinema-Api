@@ -508,12 +508,13 @@ public class AdminApiService
         return null;
     }
 
-    public async Task<TicketResponseDto?> UpdateTicketAsync(int id, string? status, string? seatNumber)
+    public async Task<TicketResponseDto?> UpdateTicketAsync(int id, string? status, string? seatNumber, string? refundReason = null)
     {
         var request = new
         {
             Status = status,
-            SeatNumber = seatNumber
+            SeatNumber = seatNumber,
+            RefundReason = refundReason
         };
         var json = JsonSerializer.Serialize(request);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -529,7 +530,349 @@ public class AdminApiService
         }
         return null;
     }
+
+    // Analytics Methods
+    public async Task<RevenueMetricsDto?> GetRevenueMetricsAsync(int days = 30)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Analytics/revenue?days={days}");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<RevenueMetricsDto>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<TicketStatisticsDto?> GetTicketStatisticsAsync(int days = 30)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Analytics/tickets?days={days}");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<TicketStatisticsDto>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<List<OccupancyRateDto>?> GetOccupancyRatesAsync(int? movieId = null, int? theaterId = null)
+    {
+        var queryParams = new List<string>();
+        if (movieId.HasValue) queryParams.Add($"movieId={movieId}");
+        if (theaterId.HasValue) queryParams.Add($"theaterId={theaterId}");
+        
+        var url = $"{ApiBaseUrl}/Analytics/occupancy" + (queryParams.Any() ? "?" + string.Join("&", queryParams) : "");
+        var response = await _httpClient.GetAsync(url);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<OccupancyRateDto>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<List<PopularMovieDto>?> GetPopularMoviesAnalyticsAsync(int days = 30, int limit = 10)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Analytics/popular-movies?days={days}&limit={limit}");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<PopularMovieDto>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<List<PeakHoursDto>?> GetPeakHoursAsync(int days = 30)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Analytics/peak-hours?days={days}");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<PeakHoursDto>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<List<ActivityFeedItemDto>?> GetActivityFeedAsync(int limit = 20)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Analytics/activity-feed?limit={limit}");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<ActivityFeedItemDto>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<List<AlertDto>?> GetAlertsAsync()
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Analytics/alerts");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<AlertDto>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    // Advanced Ticket Methods
+    public async Task<TicketSearchResultDto?> SearchTicketsAsync(TicketSearchParamsDto search)
+    {
+        var queryParams = new List<string>();
+        if (!string.IsNullOrEmpty(search.SearchTerm)) queryParams.Add($"searchTerm={Uri.EscapeDataString(search.SearchTerm)}");
+        if (!string.IsNullOrEmpty(search.Status)) queryParams.Add($"status={search.Status}");
+        if (search.ScreeningId.HasValue) queryParams.Add($"screeningId={search.ScreeningId}");
+        if (search.MovieId.HasValue) queryParams.Add($"movieId={search.MovieId}");
+        if (search.TheaterId.HasValue) queryParams.Add($"theaterId={search.TheaterId}");
+        if (search.DateFrom.HasValue) queryParams.Add($"dateFrom={search.DateFrom:yyyy-MM-dd}");
+        if (search.DateTo.HasValue) queryParams.Add($"dateTo={search.DateTo:yyyy-MM-dd}");
+        queryParams.Add($"page={search.Page}");
+        queryParams.Add($"pageSize={search.PageSize}");
+        
+        var url = $"{ApiBaseUrl}/Ticket/search?" + string.Join("&", queryParams);
+        var response = await _httpClient.GetAsync(url);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<TicketSearchResultDto>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<BulkOperationResultDto?> BulkCancelTicketsAsync(List<int> ticketIds, string? reason = null)
+    {
+        var request = new { TicketIds = ticketIds, Reason = reason };
+        var json = JsonSerializer.Serialize(request);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Ticket/bulk-cancel", content);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<BulkOperationResultDto>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<BulkOperationResultDto?> BulkMarkUsedAsync(List<int> ticketIds)
+    {
+        var request = new { TicketIds = ticketIds };
+        var json = JsonSerializer.Serialize(request);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Ticket/bulk-mark-used", content);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<BulkOperationResultDto>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<bool> CheckInTicketAsync(int ticketId)
+    {
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Ticket/{ticketId}/check-in", null);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<TicketNoteResponseDto?> AddTicketNoteAsync(int ticketId, string note)
+    {
+        var request = new { Note = note };
+        var json = JsonSerializer.Serialize(request);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Ticket/{ticketId}/notes", content);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<TicketNoteResponseDto>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<List<TicketNoteResponseDto>?> GetTicketNotesAsync(int ticketId)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Ticket/{ticketId}/notes");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<TicketNoteResponseDto>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public string GetTicketExportUrl(string? status = null, int? screeningId = null, int? movieId = null, DateTime? dateFrom = null, DateTime? dateTo = null)
+    {
+        var queryParams = new List<string>();
+        if (!string.IsNullOrEmpty(status)) queryParams.Add($"status={status}");
+        if (screeningId.HasValue) queryParams.Add($"screeningId={screeningId}");
+        if (movieId.HasValue) queryParams.Add($"movieId={movieId}");
+        if (dateFrom.HasValue) queryParams.Add($"dateFrom={dateFrom:yyyy-MM-dd}");
+        if (dateTo.HasValue) queryParams.Add($"dateTo={dateTo:yyyy-MM-dd}");
+        
+        return $"{ApiBaseUrl}/Ticket/export" + (queryParams.Any() ? "?" + string.Join("&", queryParams) : "");
+    }
+
+    // Promo Code Methods
+    public async Task<List<PromoCodeResponseDto>?> GetAllPromoCodesAsync()
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/PromoCode");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<PromoCodeResponseDto>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<PromoCodeResponseDto?> GetPromoCodeAsync(int id)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/PromoCode/{id}");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<PromoCodeResponseDto>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<bool> CreatePromoCodeAsync(PromoCodeCreateDto dto)
+    {
+        var json = JsonSerializer.Serialize(dto);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/PromoCode", content);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> UpdatePromoCodeAsync(int id, PromoCodeCreateDto dto)
+    {
+        var json = JsonSerializer.Serialize(dto);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/PromoCode/{id}", content);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> TogglePromoCodeAsync(int id)
+    {
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/PromoCode/{id}/toggle", null);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> DeletePromoCodeAsync(int id)
+    {
+        var response = await _httpClient.DeleteAsync($"{ApiBaseUrl}/PromoCode/{id}");
+        return response.IsSuccessStatusCode;
+    }
+
+    // Audit Log Methods
+    public async Task<AuditLogListDto?> GetAuditLogsAsync(string? action = null, string? entityType = null, int? userId = null, DateTime? from = null, DateTime? to = null, int page = 1, int pageSize = 50)
+    {
+        var queryParams = new List<string>();
+        if (!string.IsNullOrEmpty(action)) queryParams.Add($"action={action}");
+        if (!string.IsNullOrEmpty(entityType)) queryParams.Add($"entityType={entityType}");
+        if (userId.HasValue) queryParams.Add($"userId={userId}");
+        if (from.HasValue) queryParams.Add($"from={from:yyyy-MM-dd}");
+        if (to.HasValue) queryParams.Add($"to={to:yyyy-MM-dd}");
+        queryParams.Add($"page={page}");
+        queryParams.Add($"pageSize={pageSize}");
+        
+        var url = $"{ApiBaseUrl}/AuditLog?" + string.Join("&", queryParams);
+        var response = await _httpClient.GetAsync(url);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<AuditLogListDto>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<List<string>?> GetAuditLogEntityTypesAsync()
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/AuditLog/entity-types");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<string>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<List<string>?> GetAuditLogActionsAsync()
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/AuditLog/actions");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<string>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
 }
+
 
 // TMDB DTOs
 public class TmdbSearchResponseDto
@@ -816,6 +1159,7 @@ public class AdminTicketDto
     public decimal Price { get; set; }
     public DateTime PurchaseDate { get; set; }
     public string Status { get; set; } = string.Empty;
+    public DateTime? CheckedInAt { get; set; }
     public int UserId { get; set; }
     public string Username { get; set; } = string.Empty;
     public string? UserEmail { get; set; }
@@ -828,4 +1172,219 @@ public class AdminUpdateUserDto
     public string? LastName { get; set; }
     public string? Role { get; set; }
     public string? Password { get; set; }
+}
+
+// Analytics DTOs
+public class RevenueMetricsDto
+{
+    public decimal TotalRevenue { get; set; }
+    public decimal TodayRevenue { get; set; }
+    public decimal WeekRevenue { get; set; }
+    public decimal MonthRevenue { get; set; }
+    public List<RevenueByDateDto> DailyRevenue { get; set; } = new();
+    public List<RevenueByMovieDto> TopMoviesByRevenue { get; set; } = new();
+    public List<RevenueByTheaterDto> RevenueByTheater { get; set; } = new();
+}
+
+public class RevenueByDateDto
+{
+    public DateTime Date { get; set; }
+    public decimal Revenue { get; set; }
+    public int TicketCount { get; set; }
+}
+
+public class RevenueByMovieDto
+{
+    public int MovieId { get; set; }
+    public string MovieTitle { get; set; } = string.Empty;
+    public string? PosterUrl { get; set; }
+    public decimal Revenue { get; set; }
+    public int TicketCount { get; set; }
+}
+
+public class RevenueByTheaterDto
+{
+    public int TheaterId { get; set; }
+    public string TheaterName { get; set; } = string.Empty;
+    public decimal Revenue { get; set; }
+    public int TicketCount { get; set; }
+}
+
+public class TicketStatisticsDto
+{
+    public int TotalTickets { get; set; }
+    public int ActiveTickets { get; set; }
+    public int UsedTickets { get; set; }
+    public int CancelledTickets { get; set; }
+    public int TodayTickets { get; set; }
+    public int WeekTickets { get; set; }
+    public int MonthTickets { get; set; }
+    public List<TicketsByDateDto> DailyTickets { get; set; } = new();
+}
+
+public class TicketsByDateDto
+{
+    public DateTime Date { get; set; }
+    public int Count { get; set; }
+}
+
+public class OccupancyRateDto
+{
+    public int ScreeningId { get; set; }
+    public string MovieTitle { get; set; } = string.Empty;
+    public string TheaterName { get; set; } = string.Empty;
+    public string RoomName { get; set; } = string.Empty;
+    public DateTime ShowTime { get; set; }
+    public int TotalSeats { get; set; }
+    public int SoldSeats { get; set; }
+    public decimal OccupancyPercent { get; set; }
+}
+
+public class PopularMovieDto
+{
+    public int MovieId { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string? PosterUrl { get; set; }
+    public int TicketsSold { get; set; }
+    public decimal Revenue { get; set; }
+    public int ScreeningsCount { get; set; }
+    public decimal AverageOccupancy { get; set; }
+}
+
+public class PeakHoursDto
+{
+    public int Hour { get; set; }
+    public int TicketCount { get; set; }
+    public decimal RevenueAmount { get; set; }
+}
+
+public class ActivityFeedItemDto
+{
+    public string Type { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public DateTime Timestamp { get; set; }
+    public string? Username { get; set; }
+    public int? EntityId { get; set; }
+}
+
+public class AlertDto
+{
+    public string Type { get; set; } = string.Empty;
+    public string Severity { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
+    public int? ScreeningId { get; set; }
+}
+
+// Ticket Search DTOs
+public class TicketSearchParamsDto
+{
+    public string? SearchTerm { get; set; }
+    public string? Status { get; set; }
+    public int? ScreeningId { get; set; }
+    public int? MovieId { get; set; }
+    public int? TheaterId { get; set; }
+    public DateTime? DateFrom { get; set; }
+    public DateTime? DateTo { get; set; }
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 50;
+}
+
+public class TicketSearchResultDto
+{
+    public List<AdminTicketDetailDto> Tickets { get; set; } = new();
+    public int TotalCount { get; set; }
+    public int Page { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages { get; set; }
+}
+
+public class AdminTicketDetailDto
+{
+    public int Id { get; set; }
+    public int ScreeningId { get; set; }
+    public string MovieTitle { get; set; } = string.Empty;
+    public string TheaterName { get; set; } = string.Empty;
+    public string RoomName { get; set; } = string.Empty;
+    public DateTime ShowTime { get; set; }
+    public string SeatNumber { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public decimal? DiscountAmount { get; set; }
+    public DateTime PurchaseDate { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public DateTime? CheckedInAt { get; set; }
+    public string? RefundReason { get; set; }
+    public int UserId { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string? UserEmail { get; set; }
+    public string? PromoCode { get; set; }
+    public List<TicketNoteResponseDto> Notes { get; set; } = new();
+}
+
+public class BulkOperationResultDto
+{
+    public string Message { get; set; } = string.Empty;
+    public int CancelledCount { get; set; }
+    public int UpdatedCount { get; set; }
+}
+
+public class TicketNoteResponseDto
+{
+    public int Id { get; set; }
+    public int TicketId { get; set; }
+    public string Note { get; set; } = string.Empty;
+    public string AdminUsername { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+}
+
+// Promo Code DTOs
+public class PromoCodeResponseDto
+{
+    public int Id { get; set; }
+    public string Code { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public decimal DiscountPercent { get; set; }
+    public decimal? MaxDiscountAmount { get; set; }
+    public int? MaxUses { get; set; }
+    public int CurrentUses { get; set; }
+    public decimal? MinPurchaseAmount { get; set; }
+    public DateTime? ValidFrom { get; set; }
+    public DateTime? ExpiresAt { get; set; }
+    public bool IsActive { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public string CreatedBy { get; set; } = string.Empty;
+}
+
+public class PromoCodeCreateDto
+{
+    public string Code { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public decimal DiscountPercent { get; set; }
+    public decimal? MaxDiscountAmount { get; set; }
+    public int? MaxUses { get; set; }
+    public decimal? MinPurchaseAmount { get; set; }
+    public DateTime? ValidFrom { get; set; }
+    public DateTime? ExpiresAt { get; set; }
+}
+
+// Audit Log DTOs
+public class AuditLogListDto
+{
+    public List<AuditLogResponseDto> Logs { get; set; } = new();
+    public int TotalCount { get; set; }
+    public int Page { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages { get; set; }
+}
+
+public class AuditLogResponseDto
+{
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string Action { get; set; } = string.Empty;
+    public string EntityType { get; set; } = string.Empty;
+    public int EntityId { get; set; }
+    public string? Details { get; set; }
+    public string? IpAddress { get; set; }
+    public DateTime Timestamp { get; set; }
 }
