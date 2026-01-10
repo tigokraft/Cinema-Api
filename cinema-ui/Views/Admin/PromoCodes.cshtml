@@ -1,0 +1,155 @@
+@model List<PromoCodeResponseDto>
+@{
+    ViewData["Title"] = "Promo Codes";
+    Layout = "_AdminLayout";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="page-header">
+    <h2>Promotional Codes</h2>
+    <a asp-action="CreatePromoCode" class="btn btn-primary">+ Create Promo Code</a>
+</div>
+
+@if (Model.Any())
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Discount</th>
+                <th>Uses</th>
+                <th>Valid Period</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var promo in Model)
+            {
+                var isExpired = promo.ExpiresAt.HasValue && promo.ExpiresAt.Value < DateTime.UtcNow;
+                var isNotStarted = promo.ValidFrom.HasValue && promo.ValidFrom.Value > DateTime.UtcNow;
+                var usedUp = promo.MaxUses.HasValue && promo.CurrentUses >= promo.MaxUses.Value;
+                
+                <tr class="@(isExpired || usedUp ? "row-muted" : "")">
+                    <td><code>@promo.Code</code></td>
+                    <td>@(promo.Description ?? "-")</td>
+                    <td>
+                        @promo.DiscountPercent%
+                        @if (promo.MaxDiscountAmount.HasValue)
+                        {
+                            <small>(max $@promo.MaxDiscountAmount)</small>
+                        }
+                    </td>
+                    <td>
+                        @promo.CurrentUses / @(promo.MaxUses?.ToString() ?? "∞")
+                    </td>
+                    <td>
+                        @if (promo.ValidFrom.HasValue || promo.ExpiresAt.HasValue)
+                        {
+                            <span>@(promo.ValidFrom?.ToString("MMM dd") ?? "—") to @(promo.ExpiresAt?.ToString("MMM dd") ?? "—")</span>
+                        }
+                        else
+                        {
+                            <span>No limit</span>
+                        }
+                    </td>
+                    <td>
+                        @if (isExpired)
+                        {
+                            <span class="badge badge-destructive">Expired</span>
+                        }
+                        else if (usedUp)
+                        {
+                            <span class="badge badge-secondary">Used Up</span>
+                        }
+                        else if (isNotStarted)
+                        {
+                            <span class="badge badge-warning">Scheduled</span>
+                        }
+                        else if (promo.IsActive)
+                        {
+                            <span class="badge badge-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-secondary">Inactive</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a asp-action="EditPromoCode" asp-route-id="@promo.Id" class="btn btn-sm btn-secondary">Edit</a>
+                            <form asp-action="TogglePromoCode" asp-route-id="@promo.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-sm @(promo.IsActive ? "btn-warning" : "btn-success")">
+                                    @(promo.IsActive ? "Disable" : "Enable")
+                                </button>
+                            </form>
+                            <form asp-action="DeletePromoCode" asp-route-id="@promo.Id" method="post" style="display:inline;" onsubmit="return confirm('Delete this promo code?');">
+                                <button type="submit" class="btn btn-sm btn-destructive">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="empty-state">
+        <h3>No Promo Codes Yet</h3>
+        <p>Create your first promotional code to offer discounts to customers.</p>
+        <a asp-action="CreatePromoCode" class="btn btn-primary">Create Promo Code</a>
+    </div>
+}
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.row-muted {
+    opacity: 0.6;
+}
+
+.action-buttons {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+}
+
+code {
+    background: var(--bg-secondary);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: monospace;
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: var(--card-bg);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius);
+}
+
+.badge-warning {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+}
+</style>

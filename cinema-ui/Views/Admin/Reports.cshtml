@@ -1,0 +1,295 @@
+@model cinema_ui.Models.ReportsViewModel
+@{
+    ViewData["Title"] = "Reports";
+    Layout = "_AdminLayout";
+}
+
+<div class="reports-header">
+    <h2>Analytics & Reports</h2>
+    <form method="get" class="date-filter">
+        <label>Time Period:</label>
+        <select name="days" onchange="this.form.submit()">
+            <option value="7" @(Model.SelectedDays == 7 ? "selected" : "")>Last 7 Days</option>
+            <option value="30" @(Model.SelectedDays == 30 ? "selected" : "")>Last 30 Days</option>
+            <option value="90" @(Model.SelectedDays == 90 ? "selected" : "")>Last 90 Days</option>
+            <option value="365" @(Model.SelectedDays == 365 ? "selected" : "")>Last Year</option>
+        </select>
+    </form>
+</div>
+
+<!-- Revenue Summary -->
+<div class="report-section">
+    <h3>💰 Revenue Overview</h3>
+    <div class="stats-grid">
+        <div class="stat-card highlight">
+            <h4>$@(Model.Revenue?.TotalRevenue.ToString("N2") ?? "0.00")</h4>
+            <p>Total Revenue</p>
+        </div>
+        <div class="stat-card">
+            <h4>$@(Model.Revenue?.TodayRevenue.ToString("N2") ?? "0.00")</h4>
+            <p>Today</p>
+        </div>
+        <div class="stat-card">
+            <h4>$@(Model.Revenue?.WeekRevenue.ToString("N2") ?? "0.00")</h4>
+            <p>This Week</p>
+        </div>
+        <div class="stat-card">
+            <h4>$@(Model.Revenue?.MonthRevenue.ToString("N2") ?? "0.00")</h4>
+            <p>This Month</p>
+        </div>
+    </div>
+</div>
+
+<!-- Revenue by Theater -->
+@if (Model.Revenue?.RevenueByTheater?.Any() == true)
+{
+    <div class="report-section">
+        <h3>🎭 Revenue by Theater</h3>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Theater</th>
+                    <th>Tickets Sold</th>
+                    <th>Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var theater in Model.Revenue.RevenueByTheater)
+                {
+                    <tr>
+                        <td>@theater.TheaterName</td>
+                        <td>@theater.TicketCount</td>
+                        <td>$@theater.Revenue.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- Ticket Statistics -->
+<div class="report-section">
+    <h3>🎟️ Ticket Statistics</h3>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4>@(Model.Tickets?.TotalTickets ?? 0)</h4>
+            <p>Total Tickets</p>
+        </div>
+        <div class="stat-card success">
+            <h4>@(Model.Tickets?.ActiveTickets ?? 0)</h4>
+            <p>Active</p>
+        </div>
+        <div class="stat-card secondary">
+            <h4>@(Model.Tickets?.UsedTickets ?? 0)</h4>
+            <p>Used</p>
+        </div>
+        <div class="stat-card destructive">
+            <h4>@(Model.Tickets?.CancelledTickets ?? 0)</h4>
+            <p>Cancelled</p>
+        </div>
+    </div>
+</div>
+
+<!-- Popular Movies -->
+@if (Model.PopularMovies?.Any() == true)
+{
+    <div class="report-section">
+        <h3>🎬 Top Selling Movies</h3>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Movie</th>
+                    <th>Tickets Sold</th>
+                    <th>Revenue</th>
+                    <th>Screenings</th>
+                    <th>Avg Occupancy</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var movie in Model.PopularMovies)
+                {
+                    <tr>
+                        <td>
+                            <div class="movie-cell">
+                                @if (!string.IsNullOrEmpty(movie.PosterUrl))
+                                {
+                                    <img src="@movie.PosterUrl" alt="@movie.Title" class="movie-thumb" />
+                                }
+                                <span>@movie.Title</span>
+                            </div>
+                        </td>
+                        <td>@movie.TicketsSold</td>
+                        <td>$@movie.Revenue.ToString("N2")</td>
+                        <td>@movie.ScreeningsCount</td>
+                        <td>@movie.AverageOccupancy%</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- Peak Hours -->
+@if (Model.PeakHours?.Any() == true)
+{
+    <div class="report-section">
+        <h3>⏰ Peak Hours Analysis</h3>
+        <div class="peak-hours-chart">
+            @foreach (var hour in Model.PeakHours)
+            {
+                var maxTickets = Model.PeakHours.Max(h => h.TicketCount);
+                var height = maxTickets > 0 ? (hour.TicketCount * 100 / maxTickets) : 0;
+                <div class="hour-bar">
+                    <div class="bar" style="height: @height%;" title="@hour.TicketCount tickets, $@hour.RevenueAmount.ToString("N2")"></div>
+                    <span class="hour-label">@hour.Hour:00</span>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<!-- Occupancy Rates -->
+@if (Model.OccupancyRates?.Any() == true)
+{
+    <div class="report-section">
+        <h3>📊 Upcoming Screening Occupancy</h3>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Movie</th>
+                    <th>Theater</th>
+                    <th>Room</th>
+                    <th>Show Time</th>
+                    <th>Sold / Total</th>
+                    <th>Occupancy</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var screening in Model.OccupancyRates.Take(20))
+                {
+                    var occupancyClass = screening.OccupancyPercent < 30 ? "low" : (screening.OccupancyPercent > 70 ? "high" : "medium");
+                    <tr>
+                        <td>@screening.MovieTitle</td>
+                        <td>@screening.TheaterName</td>
+                        <td>@screening.RoomName</td>
+                        <td>@screening.ShowTime.ToString("MMM dd HH:mm")</td>
+                        <td>@screening.SoldSeats / @screening.TotalSeats</td>
+                        <td>
+                            <span class="occupancy-badge @occupancyClass">@screening.OccupancyPercent%</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<style>
+.reports-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.date-filter {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.date-filter select {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+
+.report-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.report-section h3 {
+    margin-bottom: var(--spacing-md);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.stat-card h4 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.stat-card.highlight { background: linear-gradient(135deg, var(--accent-color), var(--accent-hover)); color: white; }
+.stat-card.success { border-left: 4px solid #28a745; }
+.stat-card.secondary { border-left: 4px solid #6c757d; }
+.stat-card.destructive { border-left: 4px solid #dc3545; }
+
+.movie-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.movie-thumb {
+    width: 40px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+.peak-hours-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 200px;
+    padding: var(--spacing-md);
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+}
+
+.hour-bar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hour-bar .bar {
+    width: 100%;
+    background: var(--accent-color);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    min-height: 4px;
+    transition: height 0.3s;
+}
+
+.hour-bar .bar:hover {
+    background: var(--accent-hover);
+}
+
+.hour-label {
+    font-size: 0.65rem;
+    margin-top: 4px;
+    color: var(--text-muted);
+}
+
+.occupancy-badge {
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.occupancy-badge.low { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+.occupancy-badge.medium { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+.occupancy-badge.high { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+</style>

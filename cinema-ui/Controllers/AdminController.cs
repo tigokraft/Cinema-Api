@@ -24,8 +24,15 @@ public class AdminController : Controller
         var theaters = await _adminApi.GetAllTheatersAsync() ?? new List<TheaterResponseDto>();
         var screenings = await _adminApi.GetAllScreeningsAsync() ?? new List<ScreeningResponseDto>();
         var users = await _adminApi.GetAllUsersAsync() ?? new List<UserResponseDto>();
+        
+        // Fetch analytics data
+        var revenue = await _adminApi.GetRevenueMetricsAsync(30);
+        var tickets = await _adminApi.GetTicketStatisticsAsync(30);
+        var popularMovies = await _adminApi.GetPopularMoviesAnalyticsAsync(30, 5);
+        var activityFeed = await _adminApi.GetActivityFeedAsync(10);
+        var alerts = await _adminApi.GetAlertsAsync();
 
-        var viewModel = new AdminDashboardViewModel
+        var viewModel = new EnhancedDashboardViewModel
         {
             TotalMovies = movies.Count,
             ActiveMovies = movies.Count(m => m.IsActive),
@@ -34,7 +41,12 @@ public class AdminController : Controller
             TotalScreenings = screenings.Count,
             ActiveScreenings = screenings.Count(s => s.IsActive),
             TotalUsers = users.Count,
-            AdminUsers = users.Count(u => u.Role == "Admin")
+            AdminUsers = users.Count(u => u.Role == "Admin"),
+            Revenue = revenue,
+            Tickets = tickets,
+            PopularMovies = popularMovies,
+            ActivityFeed = activityFeed,
+            Alerts = alerts
         };
 
         return View(viewModel);
@@ -692,5 +704,168 @@ public class AdminController : Controller
             TempData["ErrorMessage"] = "Failed to delete user. Cannot delete yourself or users with active tickets.";
         }
         return RedirectToAction("Users");
+    }
+
+    // Reports
+    public async Task<IActionResult> Reports(int days = 30)
+    {
+        var revenue = await _adminApi.GetRevenueMetricsAsync(days);
+        var tickets = await _adminApi.GetTicketStatisticsAsync(days);
+        var popularMovies = await _adminApi.GetPopularMoviesAnalyticsAsync(days, 10);
+        var peakHours = await _adminApi.GetPeakHoursAsync(days);
+        var occupancy = await _adminApi.GetOccupancyRatesAsync();
+
+        var viewModel = new ReportsViewModel
+        {
+            Revenue = revenue,
+            Tickets = tickets,
+            PopularMovies = popularMovies,
+            PeakHours = peakHours,
+            OccupancyRates = occupancy,
+            SelectedDays = days
+        };
+
+        return View(viewModel);
+    }
+
+    // Promo Codes Management
+    public async Task<IActionResult> PromoCodes()
+    {
+        var promoCodes = await _adminApi.GetAllPromoCodesAsync() ?? new List<PromoCodeResponseDto>();
+        return View(promoCodes);
+    }
+
+    [HttpGet]
+    public IActionResult CreatePromoCode()
+    {
+        return View(new PromoCodeFormViewModel());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreatePromoCode(PromoCodeFormViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var dto = new PromoCodeCreateDto
+        {
+            Code = model.Code.ToUpperInvariant(),
+            Description = model.Description,
+            DiscountPercent = model.DiscountPercent,
+            MaxDiscountAmount = model.MaxDiscountAmount,
+            MaxUses = model.MaxUses,
+            MinPurchaseAmount = model.MinPurchaseAmount,
+            ValidFrom = model.ValidFrom,
+            ExpiresAt = model.ExpiresAt
+        };
+
+        var success = await _adminApi.CreatePromoCodeAsync(dto);
+        if (success)
+        {
+            TempData["SuccessMessage"] = "Promo code created successfully!";
+            return RedirectToAction("PromoCodes");
+        }
+
+        model.ErrorMessage = "Failed to create promo code. Code may already exist.";
+        return View(model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditPromoCode(int id)
+    {
+        var promoCode = await _adminApi.GetPromoCodeAsync(id);
+        if (promoCode == null)
+        {
+            TempData["ErrorMessage"] = "Promo code not found.";
+            return RedirectToAction("PromoCodes");
+        }
+
+        var model = new PromoCodeFormViewModel
+        {
+            Id = promoCode.Id,
+            Code = promoCode.Code,
+            Description = promoCode.Description,
+            DiscountPercent = promoCode.DiscountPercent,
+            MaxDiscountAmount = promoCode.MaxDiscountAmount,
+            MaxUses = promoCode.MaxUses,
+            MinPurchaseAmount = promoCode.MinPurchaseAmount,
+            ValidFrom = promoCode.ValidFrom,
+            ExpiresAt = promoCode.ExpiresAt
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditPromoCode(PromoCodeFormViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var dto = new PromoCodeCreateDto
+        {
+            Code = model.Code.ToUpperInvariant(),
+            Description = model.Description,
+            DiscountPercent = model.DiscountPercent,
+            MaxDiscountAmount = model.MaxDiscountAmount,
+            MaxUses = model.MaxUses,
+            MinPurchaseAmount = model.MinPurchaseAmount,
+            ValidFrom = model.ValidFrom,
+            ExpiresAt = model.ExpiresAt
+        };
+
+        var success = await _adminApi.UpdatePromoCodeAsync(model.Id, dto);
+        if (success)
+        {
+            TempData["SuccessMessage"] = "Promo code updated successfully!";
+            return RedirectToAction("PromoCodes");
+        }
+
+        model.ErrorMessage = "Failed to update promo code.";
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> TogglePromoCode(int id)
+    {
+        await _adminApi.TogglePromoCodeAsync(id);
+        return RedirectToAction("PromoCodes");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeletePromoCode(int id)
+    {
+        var success = await _adminApi.DeletePromoCodeAsync(id);
+        if (success)
+        {
+            TempData["SuccessMessage"] = "Promo code deleted successfully!";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Failed to delete promo code.";
+        }
+        return RedirectToAction("PromoCodes");
+    }
+
+    // Audit Logs
+    public async Task<IActionResult> AuditLogs(string? action, string? entityType, int page = 1)
+    {
+        var logs = await _adminApi.GetAuditLogsAsync(action, entityType, null, null, null, page, 50);
+        var entityTypes = await _adminApi.GetAuditLogEntityTypesAsync() ?? new List<string>();
+        var actions = await _adminApi.GetAuditLogActionsAsync() ?? new List<string>();
+
+        var viewModel = new AuditLogsViewModel
+        {
+            Logs = logs?.Logs ?? new List<AuditLogResponseDto>(),
+            TotalCount = logs?.TotalCount ?? 0,
+            Page = page,
+            TotalPages = logs?.TotalPages ?? 1,
+            EntityTypes = entityTypes,
+            Actions = actions,
+            SelectedAction = action,
+            SelectedEntityType = entityType
+        };
+
+        return View(viewModel);
     }
 }

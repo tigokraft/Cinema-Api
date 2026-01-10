@@ -1,25 +1,51 @@
-@model cinema_ui.Models.AdminDashboardViewModel
+@model cinema_ui.Models.EnhancedDashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
     Layout = "_AdminLayout";
 }
 
-<div class="stats-grid">
+<div class="dashboard-grid">
+    <!-- Revenue Stats Row -->
+    <div class="stat-card highlight">
+        <div class="stat-icon">💰</div>
+        <div class="stat-content">
+            <h3>$@Model.Revenue?.TotalRevenue.ToString("N2")</h3>
+            <p>Total Revenue</p>
+            <div class="stat-breakdown">
+                <small>Today: $@Model.Revenue?.TodayRevenue.ToString("N2")</small>
+                <small>This Week: $@Model.Revenue?.WeekRevenue.ToString("N2")</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>@Model.Tickets?.TotalTickets</h3>
+        <p>Total Tickets</p>
+        <div class="stat-breakdown">
+            <span class="badge badge-success">@Model.Tickets?.ActiveTickets Active</span>
+            <span class="badge badge-secondary">@Model.Tickets?.UsedTickets Used</span>
+            <span class="badge badge-destructive">@Model.Tickets?.CancelledTickets Cancelled</span>
+        </div>
+    </div>
+    
     <div class="stat-card">
         <h3>@Model.TotalMovies</h3>
         <p>Total Movies</p>
         <small>@Model.ActiveMovies active</small>
     </div>
+    
     <div class="stat-card">
         <h3>@Model.TotalTheaters</h3>
         <p>Total Theaters</p>
         <small>@Model.ActiveTheaters active</small>
     </div>
+    
     <div class="stat-card">
         <h3>@Model.TotalScreenings</h3>
         <p>Total Screenings</p>
         <small>@Model.ActiveScreenings active</small>
     </div>
+    
     <div class="stat-card">
         <h3>@Model.TotalUsers</h3>
         <p>Total Users</p>
@@ -27,12 +53,264 @@
     </div>
 </div>
 
-<div class="stat-card">
-    <h2>Quick Actions</h2>
-    <div class="btn-group" style="margin-top: 20px;">
-        <a asp-action="CreateMovie" class="btn btn-primary">Add Movie</a>
-        <a asp-action="CreateTheater" class="btn btn-primary">Add Theater</a>
-        <a asp-action="CreateScreening" class="btn btn-primary">Add Screening</a>
+<!-- Alerts Section -->
+@if (Model.Alerts?.Any() == true)
+{
+    <div class="alerts-section">
+        <h2>⚠️ Alerts</h2>
+        <div class="alerts-grid">
+            @foreach (var alert in Model.Alerts.Take(5))
+            {
+                <div class="alert-card @(alert.Severity == "Warning" ? "alert-warning" : "alert-info")">
+                    <strong>@alert.Type</strong>
+                    <p>@alert.Message</p>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<div class="dashboard-row">
+    <!-- Popular Movies Section -->
+    <div class="dashboard-section">
+        <h2>🎬 Top Selling Movies (Last 30 Days)</h2>
+        @if (Model.PopularMovies?.Any() == true)
+        {
+            <div class="popular-movies-grid">
+                @foreach (var movie in Model.PopularMovies.Take(5))
+                {
+                    <div class="popular-movie-card">
+                        @if (!string.IsNullOrEmpty(movie.PosterUrl))
+                        {
+                            <img src="@movie.PosterUrl" alt="@movie.Title" class="movie-poster-small" />
+                        }
+                        <div class="movie-info">
+                            <h4>@movie.Title</h4>
+                            <p>@movie.TicketsSold tickets sold</p>
+                            <p>$@movie.Revenue.ToString("N2") revenue</p>
+                            <p>@movie.AverageOccupancy% avg occupancy</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No ticket sales data available yet.</p>
+        }
+    </div>
+    
+    <!-- Activity Feed Section -->
+    <div class="dashboard-section">
+        <h2>📋 Recent Activity</h2>
+        @if (Model.ActivityFeed?.Any() == true)
+        {
+            <div class="activity-feed">
+                @foreach (var activity in Model.ActivityFeed.Take(10))
+                {
+                    <div class="activity-item">
+                        <span class="activity-type @(activity.Type.ToLower())">@activity.Type</span>
+                        <span class="activity-description">@activity.Description</span>
+                        <span class="activity-time">@activity.Timestamp.ToString("MMM dd HH:mm")</span>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No recent activity.</p>
+        }
     </div>
 </div>
 
+<!-- Quick Actions -->
+<div class="quick-actions-section">
+    <h2>Quick Actions</h2>
+    <div class="btn-group">
+        <a asp-action="CreateMovie" class="btn btn-primary">Add Movie</a>
+        <a asp-action="CreateTheater" class="btn btn-primary">Add Theater</a>
+        <a asp-action="CreateScreening" class="btn btn-primary">Add Screening</a>
+        <a asp-action="PromoCodes" class="btn btn-secondary">Manage Promo Codes</a>
+        <a asp-action="Reports" class="btn btn-secondary">View Reports</a>
+    </div>
+</div>
+
+<style>
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.stat-card.highlight {
+    grid-column: span 2;
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+    color: white;
+}
+
+.stat-card.highlight h3 {
+    font-size: 2rem;
+}
+
+.stat-card.highlight .stat-content {
+    flex: 1;
+}
+
+.stat-card.highlight .stat-icon {
+    font-size: 3rem;
+    margin-right: var(--spacing-md);
+}
+
+.stat-card.highlight {
+    display: flex;
+    align-items: center;
+}
+
+.stat-breakdown {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    margin-top: var(--spacing-xs);
+}
+
+.alerts-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.alerts-grid {
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.alert-card {
+    padding: var(--spacing-md);
+    border-radius: var(--radius);
+    border-left: 4px solid;
+}
+
+.alert-warning {
+    background: rgba(255, 193, 7, 0.1);
+    border-color: #ffc107;
+}
+
+.alert-info {
+    background: rgba(23, 162, 184, 0.1);
+    border-color: #17a2b8;
+}
+
+.dashboard-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.dashboard-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+}
+
+.popular-movies-grid {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.popular-movie-card {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.popular-movie-card:last-child {
+    border-bottom: none;
+}
+
+.movie-poster-small {
+    width: 60px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+.movie-info h4 {
+    margin: 0 0 var(--spacing-xs) 0;
+    font-size: 1rem;
+}
+
+.movie-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.activity-feed {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--border-color);
+    align-items: center;
+}
+
+.activity-type {
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.activity-type.purchase {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+}
+
+.activity-type.cancellation {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+}
+
+.activity-type.registration {
+    background: rgba(23, 162, 184, 0.2);
+    color: #17a2b8;
+}
+
+.activity-description {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.activity-time {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.quick-actions-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+}
+
+.quick-actions-section h2 {
+    margin-bottom: var(--spacing-md);
+}
+
+@@media (max-width: 768px) {
+    .dashboard-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card.highlight {
+        grid-column: span 1;
+    }
+}
+</style>

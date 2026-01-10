@@ -15,6 +15,16 @@ public class AdminDashboardViewModel
     public int AdminUsers { get; set; }
 }
 
+public class EnhancedDashboardViewModel : AdminDashboardViewModel
+{
+    public RevenueMetricsDto? Revenue { get; set; }
+    public TicketStatisticsDto? Tickets { get; set; }
+    public List<PopularMovieDto>? PopularMovies { get; set; }
+    public List<ActivityFeedItemDto>? ActivityFeed { get; set; }
+    public List<AlertDto>? Alerts { get; set; }
+}
+
+
 public class AdminMovieViewModel
 {
     public int Id { get; set; }
@@ -212,4 +222,57 @@ public class AdminEditUserViewModel
     
     public int TicketCount { get; set; }
     public string? ErrorMessage { get; set; }
+}
+
+// Reports View Model
+public class ReportsViewModel
+{
+    public RevenueMetricsDto? Revenue { get; set; }
+    public TicketStatisticsDto? Tickets { get; set; }
+    public List<PopularMovieDto>? PopularMovies { get; set; }
+    public List<PeakHoursDto>? PeakHours { get; set; }
+    public List<OccupancyRateDto>? OccupancyRates { get; set; }
+    public int SelectedDays { get; set; } = 30;
+}
+
+// Promo Code Form View Model
+public class PromoCodeFormViewModel
+{
+    public int Id { get; set; }
+    
+    [Required(ErrorMessage = "Code is required")]
+    [StringLength(50)]
+    public string Code { get; set; } = string.Empty;
+    
+    [StringLength(500)]
+    public string? Description { get; set; }
+    
+    [Required(ErrorMessage = "Discount percent is required")]
+    [Range(1, 100, ErrorMessage = "Discount must be between 1 and 100")]
+    public decimal DiscountPercent { get; set; }
+    
+    public decimal? MaxDiscountAmount { get; set; }
+    public int? MaxUses { get; set; }
+    public decimal? MinPurchaseAmount { get; set; }
+    
+    [DataType(DataType.Date)]
+    public DateTime? ValidFrom { get; set; }
+    
+    [DataType(DataType.Date)]
+    public DateTime? ExpiresAt { get; set; }
+    
+    public string? ErrorMessage { get; set; }
+}
+
+// Audit Logs View Model
+public class AuditLogsViewModel
+{
+    public List<AuditLogResponseDto> Logs { get; set; } = new();
+    public int TotalCount { get; set; }
+    public int Page { get; set; }
+    public int TotalPages { get; set; }
+    public List<string> EntityTypes { get; set; } = new();
+    public List<string> Actions { get; set; } = new();
+    public string? SelectedAction { get; set; }
+    public string? SelectedEntityType { get; set; }
 }

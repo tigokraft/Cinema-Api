@@ -1,0 +1,205 @@
+@model cinema_ui.Models.AuditLogsViewModel
+@{
+    ViewData["Title"] = "Audit Logs";
+    Layout = "_AdminLayout";
+}
+
+<div class="audit-header">
+    <h2>Audit Logs</h2>
+    <form method="get" class="filters">
+        <select name="action" onchange="this.form.submit()">
+            <option value="">All Actions</option>
+            @foreach (var action in Model.Actions)
+            {
+                <option value="@action" @(Model.SelectedAction == action ? "selected" : "")>@action</option>
+            }
+        </select>
+        <select name="entityType" onchange="this.form.submit()">
+            <option value="">All Entity Types</option>
+            @foreach (var type in Model.EntityTypes)
+            {
+                <option value="@type" @(Model.SelectedEntityType == type ? "selected" : "")>@type</option>
+            }
+        </select>
+        @if (!string.IsNullOrEmpty(Model.SelectedAction) || !string.IsNullOrEmpty(Model.SelectedEntityType))
+        {
+            <a asp-action="AuditLogs" class="btn btn-secondary btn-sm">Clear Filters</a>
+        }
+    </form>
+</div>
+
+<div class="audit-summary">
+    <p>Showing <strong>@Model.Logs.Count</strong> of <strong>@Model.TotalCount</strong> entries</p>
+</div>
+
+@if (Model.Logs.Any())
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Entity Type</th>
+                <th>Entity ID</th>
+                <th>Details</th>
+                <th>IP Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.Logs)
+            {
+                <tr>
+                    <td>
+                        <span class="timestamp">@log.Timestamp.ToString("MMM dd HH:mm:ss")</span>
+                    </td>
+                    <td>
+                        <strong>@log.Username</strong>
+                        <small class="user-id">(#@log.UserId)</small>
+                    </td>
+                    <td>
+                        <span class="action-badge action-@log.Action.ToLower()">@log.Action</span>
+                    </td>
+                    <td>@log.EntityType</td>
+                    <td>#@log.EntityId</td>
+                    <td class="details-cell">
+                        @if (!string.IsNullOrEmpty(log.Details))
+                        {
+                            <span class="details-toggle" title="@log.Details">
+                                @(log.Details.Length > 50 ? log.Details.Substring(0, 50) + "..." : log.Details)
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td><code>@(log.IpAddress ?? "—")</code></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <div class="pagination">
+            @if (Model.Page > 1)
+            {
+                <a asp-action="AuditLogs" 
+                   asp-route-page="@(Model.Page - 1)" 
+                   asp-route-action="@Model.SelectedAction"
+                   asp-route-entityType="@Model.SelectedEntityType"
+                   class="btn btn-secondary">← Previous</a>
+            }
+            
+            <span class="page-info">Page @Model.Page of @Model.TotalPages</span>
+            
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a asp-action="AuditLogs" 
+                   asp-route-page="@(Model.Page + 1)"
+                   asp-route-action="@Model.SelectedAction"
+                   asp-route-entityType="@Model.SelectedEntityType"
+                   class="btn btn-secondary">Next →</a>
+            }
+        </div>
+    }
+}
+else
+{
+    <div class="empty-state">
+        <h3>No Audit Logs</h3>
+        <p>No audit log entries match your filters.</p>
+    </div>
+}
+
+<style>
+.audit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.filters {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.filters select {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+
+.audit-summary {
+    margin-bottom: var(--spacing-md);
+    color: var(--text-muted);
+}
+
+.timestamp {
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.user-id {
+    color: var(--text-muted);
+}
+
+.action-badge {
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.action-create, .action-created { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+.action-update, .action-updated { background: rgba(23, 162, 184, 0.2); color: #17a2b8; }
+.action-delete, .action-deleted { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+.action-login { background: rgba(111, 66, 193, 0.2); color: #6f42c1; }
+.action-logout { background: rgba(108, 117, 125, 0.2); color: #6c757d; }
+
+.details-cell {
+    max-width: 200px;
+}
+
+.details-toggle {
+    cursor: help;
+}
+
+code {
+    background: var(--bg-secondary);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+}
+
+.page-info {
+    color: var(--text-muted);
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: var(--card-bg);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius);
+}
+</style>
