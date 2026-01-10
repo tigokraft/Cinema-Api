@@ -189,12 +189,13 @@ public static class DbSeeder
         await context.SaveChangesAsync();
         Console.WriteLine($"Created {tickets.Count} tickets");
 
-        // Create some promo codes
+        // Create some promo codes (get admin user id)
+        var adminUser = await context.Users.FirstAsync(u => u.Role == "Admin");
         var promoCodes = new List<PromoCode>
         {
-            new() { Code = "WELCOME10", Description = "Welcome discount for new users", DiscountPercent = 10, MaxUses = 100, IsActive = true },
-            new() { Code = "SUMMER20", Description = "Summer special - 20% off", DiscountPercent = 20, MaxUses = 50, ExpiresAt = DateTime.UtcNow.AddMonths(2), IsActive = true },
-            new() { Code = "VIP30", Description = "VIP exclusive 30% discount", DiscountPercent = 30, MaxUses = 20, MaxDiscountAmount = 15, IsActive = true },
+            new() { Code = "WELCOME10", Description = "Welcome discount for new users", DiscountPercent = 10, MaxUses = 100, IsActive = true, CreatedByUserId = adminUser.Id },
+            new() { Code = "SUMMER20", Description = "Summer special - 20% off", DiscountPercent = 20, MaxUses = 50, ExpiresAt = DateTime.UtcNow.AddMonths(2), IsActive = true, CreatedByUserId = adminUser.Id },
+            new() { Code = "VIP30", Description = "VIP exclusive 30% discount", DiscountPercent = 30, MaxUses = 20, MaxDiscountAmount = 15, IsActive = true, CreatedByUserId = adminUser.Id },
         };
         context.PromoCodes.AddRange(promoCodes);
         await context.SaveChangesAsync();
