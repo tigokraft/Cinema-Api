@@ -1,79 +1,411 @@
 @model cinema_ui.Controllers.PaymentViewModel
 @{
-    ViewData["Title"] = "Payment";
+    ViewData["Title"] = "Complete Payment";
     Layout = "_Layout";
 }
 
-<div class="content-section" style="margin-top: 100px;">
-    <div class="mb-4">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">← Cancel</a>
-    </div>
-
-    <h2 class="section-title">Payment</h2>
-
-    <div class="card mb-4">
-        <div class="card-header">
-            <h3>Booking Summary</h3>
+<div class="payment-page">
+    <div class="payment-container">
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div class="summary-card">
+                <div class="movie-info">
+                    <h3>@Model.MovieTitle</h3>
+                    @if (Model.ShowTime.HasValue)
+                    {
+                        <p class="showtime">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            @Model.ShowTime.Value.ToString("dddd, MMMM d 'at' h:mm tt")
+                        </p>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.TheaterName))
+                    {
+                        <p class="theater">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            @Model.TheaterName
+                        </p>
+                    }
+                </div>
+                
+                <div class="ticket-details">
+                    <div class="detail-row">
+                        <span class="label">Seat</span>
+                        <span class="value seat-badge">@Model.SeatNumber</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Ticket Price</span>
+                        <span class="value">$@Model.OriginalPrice.ToString("F2")</span>
+                    </div>
+                    <div class="detail-row discount-row" id="discountRow" style="display: none;">
+                        <span class="label">Discount</span>
+                        <span class="value discount" id="discountAmount">-$0.00</span>
+                    </div>
+                    <div class="detail-row total-row">
+                        <span class="label">Total</span>
+                        <span class="value total" id="totalAmount">$@Model.Price.ToString("F2")</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-description">
-            <p><strong>Movie:</strong> @Model.MovieTitle</p>
-            <p><strong>Seat:</strong> @Model.SeatNumber</p>
-            <p><strong>Total:</strong> $@Model.Price.ToString("F2")</p>
-        </div>
-    </div>
-
-    <div class="admin-form" style="max-width: 600px;">
-        <div class="alert alert-info mb-4">
-            <strong>⚠️ Demo Payment System</strong><br/>
-            This is a demo payment system. Your payment will not be processed. Fill in any information to proceed.
-        </div>
-
-        <form asp-action="ProcessPayment" method="post">
-            <input type="hidden" asp-for="ScreeningId" />
-            <input type="hidden" asp-for="SeatNumber" />
-            <input type="hidden" asp-for="Price" />
-            <input type="hidden" asp-for="MovieTitle" />
-
-            <div class="form-group">
-                <label class="label" asp-for="CardNumber">Card Number *</label>
-                <input asp-for="CardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required />
-                <span asp-validation-for="CardNumber" class="form-error"></span>
+        
+        <!-- Payment Form -->
+        <div class="payment-form-section">
+            <h2>Payment Details</h2>
+            
+            <div class="demo-notice">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div>
+                    <strong>Demo Mode</strong>
+                    <p>This is a demonstration. No actual payment will be processed.</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label class="label" asp-for="CardHolderName">Card Holder Name *</label>
-                <input asp-for="CardHolderName" class="form-control" placeholder="John Doe" required />
-                <span asp-validation-for="CardHolderName" class="form-error"></span>
-            </div>
+            <form asp-action="ProcessPayment" method="post" id="paymentForm">
+                <input type="hidden" asp-for="ScreeningId" />
+                <input type="hidden" asp-for="SeatNumber" />
+                <input type="hidden" asp-for="Price" id="priceField" />
+                <input type="hidden" asp-for="OriginalPrice" />
+                <input type="hidden" asp-for="DiscountAmount" id="discountField" />
+                <input type="hidden" asp-for="MovieTitle" />
+                <input type="hidden" asp-for="TheaterName" />
+                <input type="hidden" asp-for="ShowTime" />
 
-            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+                <!-- Promo Code Section -->
+                <div class="promo-section">
+                    <label class="label">Have a promo code?</label>
+                    <div class="promo-input-group">
+                        <input type="text" asp-for="PromoCode" class="input promo-input" placeholder="Enter code" id="promoCodeInput" style="text-transform: uppercase;" />
+                        <button type="button" class="btn btn-secondary" id="applyPromoBtn">Apply</button>
+                    </div>
+                    <div class="promo-message" id="promoMessage"></div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Card Details -->
                 <div class="form-group">
-                    <label class="label" asp-for="ExpiryDate">Expiry Date *</label>
-                    <input asp-for="ExpiryDate" class="form-control" placeholder="MM/YY" maxlength="5" required />
-                    <span asp-validation-for="ExpiryDate" class="form-error"></span>
+                    <label class="label" asp-for="CardNumber">Card Number</label>
+                    <div class="card-input-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                        <input asp-for="CardNumber" class="input card-input" placeholder="1234 5678 9012 3456" maxlength="19" required />
+                    </div>
+                    <span asp-validation-for="CardNumber" class="form-error"></span>
                 </div>
 
                 <div class="form-group">
-                    <label class="label" asp-for="Cvv">CVV *</label>
-                    <input asp-for="Cvv" class="form-control" placeholder="123" maxlength="4" required />
-                    <span asp-validation-for="Cvv" class="form-error"></span>
+                    <label class="label" asp-for="CardHolderName">Cardholder Name</label>
+                    <input asp-for="CardHolderName" class="input" placeholder="John Doe" required />
+                    <span asp-validation-for="CardHolderName" class="form-error"></span>
                 </div>
-            </div>
 
-            <div class="btn-group">
-                <button type="submit" class="btn btn-success btn-lg" style="flex: 1;">Complete Purchase</button>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+                <div class="card-row">
+                    <div class="form-group">
+                        <label class="label" asp-for="ExpiryDate">Expiry Date</label>
+                        <input asp-for="ExpiryDate" class="input" placeholder="MM/YY" maxlength="5" required />
+                        <span asp-validation-for="ExpiryDate" class="form-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label" asp-for="Cvv">CVV</label>
+                        <input asp-for="Cvv" class="input" placeholder="123" maxlength="4" required />
+                        <span asp-validation-for="Cvv" class="form-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg submit-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        Pay <span id="payAmount">$@Model.Price.ToString("F2")</span>
+                    </button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<style>
+.payment-page {
+    min-height: 100vh;
+    padding: 120px var(--spacing-lg) var(--spacing-2xl);
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(222 47% 8%) 100%);
+}
+
+.payment-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: var(--spacing-xl);
+}
+
+@@media (max-width: 768px) {
+    .payment-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.order-summary h2,
+.payment-form-section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-lg);
+    color: hsl(var(--foreground));
+}
+
+.summary-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+}
+
+.movie-info h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: hsl(var(--foreground));
+}
+
+.movie-info p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.movie-info svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.ticket-details {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+}
+
+.detail-row .label {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+}
+
+.detail-row .value {
+    color: hsl(var(--foreground));
+    font-weight: 500;
+}
+
+.seat-badge {
+    background: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(263 70% 50%) 100%);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.discount-row .discount {
+    color: hsl(142 76% 45%);
+}
+
+.total-row {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.total-row .label,
+.total-row .value {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.total-row .total {
+    color: hsl(142 76% 45%);
+}
+
+/* Payment Form */
+.payment-form-section {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: var(--spacing-xl);
+}
+
+.demo-notice {
+    display: flex;
+    gap: var(--spacing-md);
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.demo-notice svg {
+    color: hsl(217 91% 60%);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.demo-notice strong {
+    color: hsl(217 91% 70%);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.demo-notice p {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* Promo Section */
+.promo-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.promo-input-group {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.promo-input {
+    flex: 1;
+}
+
+.promo-message {
+    margin-top: var(--spacing-sm);
+    font-size: 0.875rem;
+    min-height: 20px;
+}
+
+.promo-message.success {
+    color: hsl(142 76% 45%);
+}
+
+.promo-message.error {
+    color: hsl(var(--destructive));
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: var(--spacing-lg) 0;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group .label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+}
+
+.input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    color: hsl(var(--foreground));
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: hsl(217 91% 60%);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.input::placeholder {
+    color: hsl(var(--muted-foreground));
+}
+
+.card-input-wrapper {
+    position: relative;
+}
+
+.card-input-wrapper svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: hsl(var(--muted-foreground));
+}
+
+.card-input {
+    padding-left: 44px;
+}
+
+.card-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xl);
+}
+
+.submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(142 76% 28%) 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+}
+
+.form-error {
+    color: hsl(var(--destructive));
+    font-size: 0.8rem;
+    margin-top: 4px;
+    display: block;
+}
+</style>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
+        const originalPrice = @Model.OriginalPrice;
+        let currentDiscount = 0;
+        let appliedPromoCode = null;
+
         // Format card number
         document.getElementById('CardNumber')?.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\s/g, '');
+            let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
             let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
             e.target.value = formatted.substring(0, 19);
         });
@@ -86,6 +418,69 @@
             }
             e.target.value = value;
         });
+
+        // CVV only numbers
+        document.getElementById('Cvv')?.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        });
+
+        // Apply promo code
+        document.getElementById('applyPromoBtn')?.addEventListener('click', async function() {
+            const code = document.getElementById('promoCodeInput').value.trim().toUpperCase();
+            const messageEl = document.getElementById('promoMessage');
+            
+            if (!code) {
+                messageEl.textContent = 'Please enter a promo code';
+                messageEl.className = 'promo-message error';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/PromoCode/validate/${encodeURIComponent(code)}?purchaseAmount=${originalPrice}`, {
+                    headers: { 'x-api-key': 'dev-api-key-12345' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to validate code');
+                }
+                
+                const result = await response.json();
+                
+                if (result.isValid) {
+                    let discountAmount = originalPrice * (result.discountPercent / 100);
+                    if (result.maxDiscountAmount && discountAmount > result.maxDiscountAmount) {
+                        discountAmount = result.maxDiscountAmount;
+                    }
+                    
+                    currentDiscount = discountAmount;
+                    appliedPromoCode = code;
+                    
+                    updatePriceDisplay();
+                    
+                    messageEl.textContent = `✓ Code applied! ${result.discountPercent}% off`;
+                    messageEl.className = 'promo-message success';
+                    document.getElementById('promoCodeInput').disabled = true;
+                    document.getElementById('applyPromoBtn').disabled = true;
+                    document.getElementById('applyPromoBtn').textContent = 'Applied';
+                } else {
+                    messageEl.textContent = result.errorMessage || 'Invalid promo code';
+                    messageEl.className = 'promo-message error';
+                }
+            } catch (error) {
+                messageEl.textContent = 'Could not validate code. Try again.';
+                messageEl.className = 'promo-message error';
+            }
+        });
+
+        function updatePriceDisplay() {
+            const finalPrice = originalPrice - currentDiscount;
+            
+            document.getElementById('discountRow').style.display = currentDiscount > 0 ? 'flex' : 'none';
+            document.getElementById('discountAmount').textContent = `-$${currentDiscount.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `$${finalPrice.toFixed(2)}`;
+            document.getElementById('payAmount').textContent = `$${finalPrice.toFixed(2)}`;
+            document.getElementById('priceField').value = finalPrice.toFixed(2);
+            document.getElementById('discountField').value = currentDiscount.toFixed(2);
+        }
     </script>
 }
-

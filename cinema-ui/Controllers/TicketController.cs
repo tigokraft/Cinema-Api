@@ -157,7 +157,7 @@ public class TicketController : Controller
     }
 
     // Payment Page (Fake)
-    public IActionResult Payment()
+    public async Task<IActionResult> Payment()
     {
         var screeningId = TempData["ScreeningId"]?.ToString();
         var seatNumber = TempData["SeatNumber"]?.ToString();
@@ -170,12 +170,18 @@ public class TicketController : Controller
             return RedirectToAction("Index", "Home");
         }
 
+        var parsedPrice = decimal.Parse(price);
+        var screening = await _apiService.GetScreeningDetailAsync(int.Parse(screeningId));
+
         var viewModel = new PaymentViewModel
         {
             ScreeningId = int.Parse(screeningId),
             SeatNumber = seatNumber,
-            Price = decimal.Parse(price),
-            MovieTitle = movieTitle ?? "Unknown Movie"
+            Price = parsedPrice,
+            OriginalPrice = parsedPrice,
+            MovieTitle = movieTitle ?? "Unknown Movie",
+            TheaterName = screening?.TheaterName,
+            ShowTime = screening?.ShowTime
         };
 
         // Store again for confirmation
@@ -274,7 +280,14 @@ public class PaymentViewModel
     public int ScreeningId { get; set; }
     public string SeatNumber { get; set; } = string.Empty;
     public decimal Price { get; set; }
+    public decimal OriginalPrice { get; set; }
+    public decimal DiscountAmount { get; set; }
     public string MovieTitle { get; set; } = string.Empty;
+    public string? TheaterName { get; set; }
+    public DateTime? ShowTime { get; set; }
+
+    [Display(Name = "Promo Code")]
+    public string? PromoCode { get; set; }
 
     [Required]
     [Display(Name = "Card Number")]
