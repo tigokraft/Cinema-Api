@@ -58,6 +58,12 @@ public class AppDbContext : DbContext
             .HasIndex(p => p.Code)
             .IsUnique();
         
+        modelBuilder.Entity<PromoCode>()
+            .HasOne(p => p.CreatedBy)
+            .WithMany()
+            .HasForeignKey(p => p.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         // TicketNote configuration
         modelBuilder.Entity<TicketNote>()
             .HasOne(tn => tn.Ticket)

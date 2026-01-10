@@ -793,6 +793,11 @@ public class AdminApiService
         var json = JsonSerializer.Serialize(dto);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var response = await _httpClient.PostAsync($"{ApiBaseUrl}/PromoCode", content);
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"CreatePromoCode failed: {response.StatusCode} - {error}");
+        }
         return response.IsSuccessStatusCode;
     }
 
