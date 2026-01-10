@@ -124,10 +124,13 @@ if (app.Environment.IsDevelopment())
     });   
     Console.WriteLine("Swagger UI enabled in Development environment.");
     
-    // Seed database with sample data
-    using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await DbSeeder.SeedAsync(dbContext);
+    // Seed database with sample data (controlled by config)
+    if (builder.Configuration.GetValue<bool>("SeedDatabase"))
+    {
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await DbSeeder.SeedAsync(dbContext);
+    }
 }
 
 app.UseHttpsRedirection();
