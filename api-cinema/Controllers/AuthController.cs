@@ -274,6 +274,67 @@ public class AuthController : ControllerBase
             VerificationCode = verificationCode
         });
     }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto request)
+    {
+        var email = request.Email?.Trim();
+        if (string.IsNullOrWhiteSpace(email))
+            return BadRequest("Email is required.");
+        
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+        
+        if (user == null)
+        {
+            // Don't reveal if email exists - return success anyway
+            return Ok(new ForgotPasswordResponse
+            {
+                Message = "If this email exists, a reset code has been sent.",
+                Email = email,
+                ResetCode = "",
+                UserId = 0
+            });
+        }
+        
+        // Generate 6-digit reset code
+        var resetCode = new Random().Next(100000, 999999).ToString();
+        user.EmailVerificationCode = resetCode; // Reuse verification code field
+        user.EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(15);
+        await _db.SaveChangesAsync();
+        
+        return Ok(new ForgotPasswordResponse
+        {
+            Message = "Password reset code sent to your email.",
+            Email = user.Email ?? "",
+            ResetCode = resetCode,
+            UserId = user.Id
+        });
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
+    {
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
+        
+        if (user == null)
+            return NotFound("User not found.");
+        
+        if (user.EmailVerificationCode != request.Code)
+            return BadRequest("Invalid reset code.");
+        
+        if (user.EmailVerificationCodeExpiry < DateTime.UtcNow)
+            return BadRequest("Reset code has expired. Please request a new one.");
+        
+        // Update password
+        CreatePasswordHash(request.NewPassword, out var hash, out var salt);
+        user.PasswordHash = hash;
+        user.PasswordSalt = salt;
+        user.EmailVerificationCode = null;
+        user.EmailVerificationCodeExpiry = null;
+        await _db.SaveChangesAsync();
+        
+        return Ok(new { Message = "Password reset successfully. You can now login." });
+    }
 }
 
 public class VerifyEmailDto
@@ -302,4 +363,24 @@ public class RegisterResponse
     public string Username { get; set; } = string.Empty;
     public string VerificationCode { get; set; } = string.Empty;
     public bool RequiresVerification { get; set; }
+}
+
+public class ForgotPasswordDto
+{
+    public string Email { get; set; } = string.Empty;
+}
+
+public class ForgotPasswordResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string ResetCode { get; set; } = string.Empty;
+    public int UserId { get; set; }
+}
+
+public class ResetPasswordDto
+{
+    public int UserId { get; set; }
+    public string Code { get; set; } = string.Empty;
+    public string NewPassword { get; set; } = string.Empty;
 }

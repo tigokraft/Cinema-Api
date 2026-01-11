@@ -157,6 +157,80 @@ public class AuthController : Controller
         _apiService.ClearAuthToken();
         return RedirectToAction("Index", "Home");
     }
+
+    [HttpGet]
+    public IActionResult ForgotPassword()
+    {
+        return View(new ForgotPasswordViewModel());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var response = await _apiService.ForgotPasswordAsync(model.Email);
+
+        if (response != null && response.UserId > 0)
+        {
+            TempData["ResetUserId"] = response.UserId;
+            TempData["ResetEmail"] = response.Email;
+            TempData["ResetCode"] = response.ResetCode;
+            return RedirectToAction("ResetPassword");
+        }
+
+        // Even if email doesn't exist, show success for security
+        model.SuccessMessage = "If this email exists, a reset code has been sent.";
+        return View(model);
+    }
+
+    [HttpGet]
+    public IActionResult ResetPassword()
+    {
+        var userId = TempData["ResetUserId"];
+        var email = TempData["ResetEmail"] as string;
+        var code = TempData["ResetCode"] as string;
+        
+        if (userId == null || email == null)
+        {
+            return RedirectToAction("ForgotPassword");
+        }
+        
+        TempData.Keep("ResetUserId");
+        TempData.Keep("ResetEmail");
+        TempData.Keep("ResetCode");
+        
+        return View(new ResetPasswordViewModel
+        {
+            UserId = (int)userId,
+            Email = email,
+            ResetCode = code ?? ""
+        });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+    {
+        if (model.NewPassword != model.ConfirmPassword)
+        {
+            model.ErrorMessage = "Passwords do not match.";
+            return View(model);
+        }
+
+        var (success, message) = await _apiService.ResetPasswordAsync(model.UserId, model.EnteredCode, model.NewPassword);
+        
+        if (success)
+        {
+            TempData["SuccessMessage"] = "Password reset successfully! You can now sign in.";
+            return RedirectToAction("Login");
+        }
+        
+        model.ErrorMessage = message;
+        return View(model);
+    }
 }
 
 public class VerifyEmailViewModel
@@ -168,3 +242,22 @@ public class VerifyEmailViewModel
     public string EnteredCode { get; set; } = string.Empty;
     public string? ErrorMessage { get; set; }
 }
+
+public class ForgotPasswordViewModel
+{
+    public string Email { get; set; } = string.Empty;
+    public string? ErrorMessage { get; set; }
+    public string? SuccessMessage { get; set; }
+}
+
+public class ResetPasswordViewModel
+{
+    public int UserId { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string ResetCode { get; set; } = string.Empty;
+    public string EnteredCode { get; set; } = string.Empty;
+    public string NewPassword { get; set; } = string.Empty;
+    public string ConfirmPassword { get; set; } = string.Empty;
+    public string? ErrorMessage { get; set; }
+}
+

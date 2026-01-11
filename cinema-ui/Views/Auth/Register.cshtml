@@ -1,39 +1,40 @@
 @model cinema_ui.Models.RegisterViewModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Create Account";
     Layout = "_AuthLayout";
 }
 
 <div class="auth-container">
     <div class="auth-box">
-        <h1 class="auth-logo">CINEMA</h1>
-        <h2 class="auth-title">Sign Up</h2>
+        <div class="auth-logo">CINEMA</div>
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-subtitle">Start your cinema journey</p>
         
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
-            <div class="alert alert-danger" role="alert">
-                @Model.ErrorMessage
-            </div>
+            <div class="alert-danger">@Model.ErrorMessage</div>
         }
 
         <form asp-action="Register" method="post" class="auth-form">
             <div class="form-group">
-                <input asp-for="Email" type="email" class="form-control" placeholder="Email" required />
+                <input asp-for="Email" type="email" class="form-control" placeholder="Email address" required autocomplete="email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             
             <div class="form-group">
-                <input asp-for="Password" type="password" class="form-control" placeholder="Password" required />
+                <input asp-for="Password" type="password" class="form-control" placeholder="Password" required autocomplete="new-password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             
             <div class="form-group">
-                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" required />
+                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm password" required autocomplete="new-password" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
             
-            <button type="submit" class="btn-auth">Sign Up</button>
+            <button type="submit" class="btn-auth">Create Account</button>
         </form>
+        
+        <div class="divider">or</div>
         
         <p class="auth-footer">
             Already have an account? <a asp-action="Login" class="auth-link">Sign in</a>
@@ -44,4 +45,3 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-

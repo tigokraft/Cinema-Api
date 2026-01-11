@@ -107,6 +107,42 @@ public class ApiService
         return null;
     }
 
+    public async Task<ForgotPasswordResponse?> ForgotPasswordAsync(string email)
+    {
+        var request = new { Email = email };
+        var json = JsonSerializer.Serialize(request);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Auth/forgot-password", content);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<ForgotPasswordResponse>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<(bool Success, string Message)> ResetPasswordAsync(int userId, string code, string newPassword)
+    {
+        var request = new { UserId = userId, Code = code, NewPassword = newPassword };
+        var json = JsonSerializer.Serialize(request);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Auth/reset-password", content);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        
+        if (response.IsSuccessStatusCode)
+        {
+            return (true, "Password reset successfully!");
+        }
+        
+        return (false, responseContent);
+    }
+
     public async Task<List<Movie>?> GetMoviesAsync()
     {
         var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Movie");
@@ -422,4 +458,13 @@ public class ResendVerificationResponse
     public string Email { get; set; } = string.Empty;
     public string VerificationCode { get; set; } = string.Empty;
 }
+
+public class ForgotPasswordResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string ResetCode { get; set; } = string.Empty;
+    public int UserId { get; set; }
+}
+
 

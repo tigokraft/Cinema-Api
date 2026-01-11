@@ -1,29 +1,33 @@
 @model cinema_ui.Models.LoginViewModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Sign In";
     Layout = "_AuthLayout";
 }
 
 <div class="auth-container">
     <div class="auth-box">
-        <h1 class="auth-logo">CINEMA</h1>
-        <h2 class="auth-title">Sign In</h2>
+        <div class="auth-logo">CINEMA</div>
+        <h1 class="auth-title">Sign in to your account</h1>
+        <p class="auth-subtitle">Enter your credentials below</p>
         
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
-            <div class="alert alert-danger" role="alert">
-                @Model.ErrorMessage
-            </div>
+            <div class="alert-danger">@Model.ErrorMessage</div>
+        }
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert-success">@TempData["SuccessMessage"]</div>
         }
 
         <form asp-action="Login" method="post" class="auth-form">
             <div class="form-group">
-                <input asp-for="EmailOrUsername" class="form-control" placeholder="Email or Username" required />
+                <input asp-for="EmailOrUsername" class="form-control" placeholder="Email or username" required autocomplete="username" />
                 <span asp-validation-for="EmailOrUsername" class="text-danger"></span>
             </div>
             
             <div class="form-group">
-                <input asp-for="Password" type="password" class="form-control" placeholder="Password" required />
+                <input asp-for="Password" type="password" class="form-control" placeholder="Password" required autocomplete="current-password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             
@@ -31,7 +35,13 @@
         </form>
         
         <p class="auth-footer">
-            New to Cinema? <a asp-action="Register" class="auth-link">Sign up now</a>
+            <a asp-action="ForgotPassword" class="auth-link">Forgot password?</a>
+        </p>
+        
+        <div class="divider">or</div>
+        
+        <p class="auth-footer">
+            Don't have an account? <a asp-action="Register" class="auth-link">Create one</a>
         </p>
     </div>
 </div>
@@ -39,4 +49,3 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-
