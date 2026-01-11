@@ -48,7 +48,7 @@ public class AuthController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        model.ErrorMessage = "Invalid email/username or password.";
+        model.ErrorMessage = "Invalid email/username or password. If you just registered, please verify your email first.";
         return View(model);
     }
 
@@ -72,15 +72,82 @@ public class AuthController : Controller
             return View(model);
         }
 
-        var success = await _apiService.RegisterAsync(model.Email, model.Password);
+        var response = await _apiService.RegisterAsync(model.Email, model.Password);
 
-        if (success)
+        if (response != null && response.RequiresVerification)
         {
-            return RedirectToAction("Login", "Auth");
+            // Store verification data in TempData for the verification page
+            TempData["VerifyUserId"] = response.UserId;
+            TempData["VerifyEmail"] = response.Email;
+            TempData["VerifyCode"] = response.VerificationCode;
+            TempData["VerifyUsername"] = response.Username;
+            
+            return RedirectToAction("VerifyEmail");
         }
 
         model.ErrorMessage = "Registration failed. Email may already be in use.";
         return View(model);
+    }
+
+    [HttpGet]
+    public IActionResult VerifyEmail()
+    {
+        var userId = TempData["VerifyUserId"];
+        var email = TempData["VerifyEmail"] as string;
+        var code = TempData["VerifyCode"] as string;
+        var username = TempData["VerifyUsername"] as string;
+        
+        if (userId == null || email == null)
+        {
+            return RedirectToAction("Register");
+        }
+        
+        // Keep the data available for the view and potential resend
+        TempData.Keep("VerifyUserId");
+        TempData.Keep("VerifyEmail");
+        TempData.Keep("VerifyCode");
+        TempData.Keep("VerifyUsername");
+        
+        var viewModel = new VerifyEmailViewModel
+        {
+            UserId = (int)userId,
+            Email = email,
+            VerificationCode = code ?? "",
+            Username = username ?? ""
+        };
+        
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> VerifyEmail(VerifyEmailViewModel model)
+    {
+        var (success, message) = await _apiService.VerifyEmailAsync(model.UserId, model.EnteredCode);
+        
+        if (success)
+        {
+            TempData["SuccessMessage"] = "Email verified successfully! You can now log in.";
+            return RedirectToAction("Login");
+        }
+        
+        model.ErrorMessage = message;
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ResendVerification(int userId)
+    {
+        var response = await _apiService.ResendVerificationAsync(userId);
+        
+        if (response != null)
+        {
+            TempData["VerifyUserId"] = userId;
+            TempData["VerifyEmail"] = response.Email;
+            TempData["VerifyCode"] = response.VerificationCode;
+            TempData["ResendMessage"] = "New verification code sent!";
+        }
+        
+        return RedirectToAction("VerifyEmail");
     }
 
     [HttpPost]
@@ -92,3 +159,12 @@ public class AuthController : Controller
     }
 }
 
+public class VerifyEmailViewModel
+{
+    public int UserId { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string VerificationCode { get; set; } = string.Empty;
+    public string EnteredCode { get; set; } = string.Empty;
+    public string? ErrorMessage { get; set; }
+}

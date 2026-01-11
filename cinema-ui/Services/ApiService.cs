@@ -47,11 +47,11 @@ public class ApiService
         return null;
     }
 
-    public async Task<bool> RegisterAsync(string email, string password)
+    public async Task<RegisterResponse?> RegisterAsync(string email, string password)
     {
         var request = new
         {
-            email = email,
+            emailOrUsername = email,
             password = password
         };
 
@@ -59,7 +59,52 @@ public class ApiService
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Auth/register", content);
-        return response.IsSuccessStatusCode;
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<RegisterResponse>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
+    }
+
+    public async Task<(bool Success, string Message)> VerifyEmailAsync(int userId, string code)
+    {
+        var request = new { UserId = userId, Code = code };
+        var json = JsonSerializer.Serialize(request);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Auth/verify-email", content);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        
+        if (response.IsSuccessStatusCode)
+        {
+            return (true, "Email verified successfully!");
+        }
+        
+        return (false, responseContent);
+    }
+
+    public async Task<ResendVerificationResponse?> ResendVerificationAsync(int userId)
+    {
+        var request = new { UserId = userId };
+        var json = JsonSerializer.Serialize(request);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Auth/resend-verification", content);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<ResendVerificationResponse>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        return null;
     }
 
     public async Task<List<Movie>?> GetMoviesAsync()
@@ -360,3 +405,21 @@ public class Screening
     public decimal Price { get; set; }
     public int AvailableSeats { get; set; }
 }
+
+public class RegisterResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public int UserId { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string VerificationCode { get; set; } = string.Empty;
+    public bool RequiresVerification { get; set; }
+}
+
+public class ResendVerificationResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string VerificationCode { get; set; } = string.Empty;
+}
+

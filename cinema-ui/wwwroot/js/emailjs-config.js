@@ -16,7 +16,7 @@ function sendTicketConfirmationEmail(emailData) {
         return Promise.reject('EmailJS not loaded');
     }
     
-    return emailjs.send('service_qz6sbsp', 'template_ticket', emailData);
+    return emailjs.send('service_qz6sbsp', 'template_tfodn2f', emailData);
 }
 
 // Send ticket cancellation email

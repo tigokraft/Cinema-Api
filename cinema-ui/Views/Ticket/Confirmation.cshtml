@@ -317,7 +317,7 @@
             
             // Only send if we have an email
             if (emailData.to_email && emailData.to_email.includes('@@')) {
-                emailjs.send('service_qz6sbsp', 'template_ticket', emailData)
+                emailjs.send('service_qz6sbsp', 'template_tfodn2f', emailData)
                     .then(function(response) {
                         console.log('Email sent successfully:', response);
                         statusEl.innerHTML = '<div class="success"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg> Confirmation email sent to ' + emailData.to_email + '</div>';

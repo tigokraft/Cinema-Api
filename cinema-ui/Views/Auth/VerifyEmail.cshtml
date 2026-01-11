@@ -1,0 +1,267 @@
+@model cinema_ui.Controllers.VerifyEmailViewModel
+@{
+    ViewData["Title"] = "Verify Email";
+    Layout = "_Layout";
+}
+
+<div class="verify-page slide-in">
+    <div class="verify-container">
+        <div class="verify-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="48" height="48">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+        </div>
+        
+        <h1>Verify your email</h1>
+        <p class="subtitle">We've sent a verification code to <strong>@Model.Email</strong></p>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="error-message">@Model.ErrorMessage</div>
+        }
+        
+        @if (TempData["ResendMessage"] != null)
+        {
+            <div class="success-message">@TempData["ResendMessage"]</div>
+        }
+
+        <form asp-action="VerifyEmail" method="post" class="verify-form">
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" asp-for="VerificationCode" />
+            <input type="hidden" asp-for="Username" />
+            
+            <div class="code-input-group">
+                <input type="text" 
+                       asp-for="EnteredCode" 
+                       class="code-input" 
+                       placeholder="Enter 6-digit code" 
+                       maxlength="6" 
+                       pattern="[0-9]{6}"
+                       inputmode="numeric"
+                       autocomplete="one-time-code"
+                       required />
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg submit-btn">
+                Verify Email
+            </button>
+        </form>
+        
+        <div class="resend-section">
+            <p>Didn't receive the code?</p>
+            <form asp-action="ResendVerification" method="post">
+                <input type="hidden" name="userId" value="@Model.UserId" />
+                <button type="submit" class="btn-link">Resend code</button>
+            </form>
+        </div>
+        
+        <p class="note">Code expires in 15 minutes</p>
+    </div>
+</div>
+
+<!-- Hidden data for EmailJS -->
+<div id="emailData" 
+     data-email="@Model.Email" 
+     data-code="@Model.VerificationCode" 
+     data-username="@Model.Username"
+     style="display: none;"></div>
+
+<style>
+.verify-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px var(--spacing-lg) var(--spacing-2xl);
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(222 47% 8%) 100%);
+}
+
+.slide-in {
+    animation: slideIn 0.4s ease-out;
+}
+
+@@keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.verify-container {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: var(--spacing-xl);
+}
+
+.verify-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verify-icon svg {
+    color: hsl(var(--foreground));
+}
+
+.verify-container h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: hsl(var(--foreground));
+}
+
+.subtitle {
+    color: hsl(var(--muted-foreground));
+    margin-bottom: var(--spacing-lg);
+}
+
+.subtitle strong {
+    color: hsl(var(--foreground));
+}
+
+.verify-form {
+    margin-bottom: var(--spacing-lg);
+}
+
+.code-input-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.code-input {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: hsl(var(--foreground));
+    transition: all 0.2s ease;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: hsl(var(--foreground));
+}
+
+.code-input::placeholder {
+    font-size: 1rem;
+    letter-spacing: normal;
+    color: hsl(var(--muted-foreground));
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    background: hsl(var(--foreground));
+    color: hsl(var(--background));
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
+}
+
+.resend-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: var(--spacing-md);
+}
+
+.resend-section p {
+    margin: 0;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.9rem;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: hsl(var(--foreground));
+    font-size: 0.9rem;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.btn-link:hover {
+    opacity: 0.8;
+}
+
+.note {
+    font-size: 0.8rem;
+    color: hsl(var(--muted-foreground));
+    margin: 0;
+}
+
+.error-message {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    color: hsl(0 84% 60%);
+    font-size: 0.9rem;
+}
+
+.success-message {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 8px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    color: hsl(142 76% 45%);
+    font-size: 0.9rem;
+}
+</style>
+
+@section Scripts {
+    <script>
+        // Send verification email on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const dataEl = document.getElementById('emailData');
+            const email = dataEl.dataset.email;
+            const code = dataEl.dataset.code;
+            const username = dataEl.dataset.username || 'there';
+            
+            // Only send if we have email and code
+            if (email && code && typeof emailjs !== 'undefined') {
+                const emailData = {
+                    to_email: email,
+                    to_name: username,
+                    verification_code: code,
+                    subject: 'Verify your Cinema account'
+                };
+                
+                // Send verification email using a verification template
+                emailjs.send('service_qz6sbsp', 'template_verify', emailData)
+                    .then(function(response) {
+                        console.log('Verification email sent:', response);
+                    }, function(error) {
+                        console.error('Failed to send verification email:', error);
+                    });
+            }
+        });
+        
+        // Auto-format code input
+        document.querySelector('.code-input')?.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 6);
+        });
+    </script>
+}

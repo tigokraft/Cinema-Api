@@ -11,6 +11,11 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
     
+    // Email verification
+    public bool IsEmailVerified { get; set; } = false;
+    public string? EmailVerificationCode { get; set; }
+    public DateTime? EmailVerificationCodeExpiry { get; set; }
+    
     // Navigation properties
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 }

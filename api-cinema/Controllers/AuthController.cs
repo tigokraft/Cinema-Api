@@ -36,32 +36,42 @@ public class AuthController : ControllerBase
 
         var isEmail = emailOrUsername.Contains("@");
         
+        if (!isEmail)
+            return BadRequest("Please register with a valid email address for verification.");
+        
         // Check if email or username already exists
-        if (isEmail)
-        {
-            if (await _db.Users.AnyAsync(u => u.Email == emailOrUsername || u.Username == emailOrUsername))
-                return BadRequest("User with this email or username already exists.");
-        }
-        else
-        {
-            if (await _db.Users.AnyAsync(u => u.Username == emailOrUsername || u.Email == emailOrUsername))
-                return BadRequest("Username or email already exists.");
-        }
+        if (await _db.Users.AnyAsync(u => u.Email == emailOrUsername || u.Username == emailOrUsername))
+            return BadRequest("User with this email or username already exists.");
 
         CreatePasswordHash(request.Password, out var hash, out var salt);
 
+        // Generate 6-digit verification code
+        var verificationCode = new Random().Next(100000, 999999).ToString();
+        
         var user = new User
         {
-            Username = isEmail ? emailOrUsername.Split('@')[0] : emailOrUsername,
-            Email = isEmail ? emailOrUsername : null,
+            Username = emailOrUsername.Split('@')[0],
+            Email = emailOrUsername,
             PasswordHash = hash,
-            PasswordSalt = salt
+            PasswordSalt = salt,
+            IsEmailVerified = false,
+            EmailVerificationCode = verificationCode,
+            EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(15) // 15 min expiry
         };
 
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
 
-        return Ok("User registered successfully.");
+        // Return data needed for client-side email sending
+        return Ok(new RegisterResponse
+        {
+            Message = "Please verify your email to complete registration.",
+            UserId = user.Id,
+            Email = user.Email,
+            Username = user.Username,
+            VerificationCode = verificationCode,
+            RequiresVerification = true
+        });
     }
 
     [HttpPost("login")]
@@ -87,6 +97,17 @@ public class AuthController : ControllerBase
         
         if (user == null || !VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             return Unauthorized("Invalid username/email or password.");
+
+        // Check email verification
+        if (!user.IsEmailVerified)
+        {
+            return Unauthorized(new { 
+                Message = "Email not verified. Please check your email for the verification code.", 
+                RequiresVerification = true,
+                UserId = user.Id,
+                Email = user.Email
+            });
+        }
 
         var token = _jwt.GenerateToken(user.Username, user.Id, user.Role);
 
@@ -203,4 +224,82 @@ public class AuthController : ControllerBase
         var computedHashString = Convert.ToBase64String(computedHash);
         return computedHashString == passwordHash;
     }
+
+    [HttpPost("verify-email")]
+    public async Task<IActionResult> VerifyEmail(VerifyEmailDto request)
+    {
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
+        
+        if (user == null)
+            return NotFound("User not found.");
+        
+        if (user.IsEmailVerified)
+            return Ok(new { Message = "Email already verified.", IsVerified = true });
+        
+        if (user.EmailVerificationCode != request.Code)
+            return BadRequest("Invalid verification code.");
+        
+        if (user.EmailVerificationCodeExpiry < DateTime.UtcNow)
+            return BadRequest("Verification code has expired. Please register again.");
+        
+        user.IsEmailVerified = true;
+        user.EmailVerificationCode = null;
+        user.EmailVerificationCodeExpiry = null;
+        await _db.SaveChangesAsync();
+        
+        return Ok(new { Message = "Email verified successfully! You can now log in.", IsVerified = true });
+    }
+
+    [HttpPost("resend-verification")]
+    public async Task<IActionResult> ResendVerification([FromBody] ResendVerificationDto request)
+    {
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
+        
+        if (user == null)
+            return NotFound("User not found.");
+        
+        if (user.IsEmailVerified)
+            return Ok(new { Message = "Email already verified.", IsVerified = true });
+        
+        // Generate new code
+        var verificationCode = new Random().Next(100000, 999999).ToString();
+        user.EmailVerificationCode = verificationCode;
+        user.EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(15);
+        await _db.SaveChangesAsync();
+        
+        return Ok(new ResendVerificationResponse
+        {
+            Message = "New verification code generated.",
+            Email = user.Email ?? "",
+            VerificationCode = verificationCode
+        });
+    }
+}
+
+public class VerifyEmailDto
+{
+    public int UserId { get; set; }
+    public string Code { get; set; } = string.Empty;
+}
+
+public class ResendVerificationDto
+{
+    public int UserId { get; set; }
+}
+
+public class ResendVerificationResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string VerificationCode { get; set; } = string.Empty;
+}
+
+public class RegisterResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public int UserId { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string VerificationCode { get; set; } = string.Empty;
+    public bool RequiresVerification { get; set; }
 }
