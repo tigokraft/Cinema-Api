@@ -2,204 +2,593 @@
 @{
     ViewData["Title"] = "Select Your Seats - " + Model.Movie.Title;
     Layout = "_Layout";
+    var midPoint = Model.Screening.SeatsPerRow / 2;
 }
 
-<div class="content-section" style="margin-top: 100px;">
-    <div class="mb-4">
-        <a asp-action="MovieDetail" asp-route-id="@Model.Movie.Id" class="btn btn-secondary">← Back to Movie</a>
-    </div>
-
-    <h2 class="section-title">Select Your Seats</h2>
-    <div class="card mb-4">
-        <div class="card-header">
-            <h3>@Model.Movie.Title</h3>
+<div class="cinema-page">
+    <div class="cinema-container">
+        <!-- Movie Info Header -->
+        <div class="cinema-header">
+            <a asp-action="MovieDetail" asp-route-id="@Model.Movie.Id" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+            </a>
+            <div class="movie-info-compact">
+                <h1>@Model.Movie.Title</h1>
+                <div class="show-details">
+                    <span class="detail">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        @Model.Screening.TheaterName
+                    </span>
+                    <span class="detail">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        @Model.Screening.ShowTime.ToString("ddd, MMM d • h:mm tt")
+                    </span>
+                    <span class="detail price">
+                        $@Model.Screening.Price.ToString("F2") / seat
+                    </span>
+                </div>
+            </div>
         </div>
-        <div class="card-description">
-            <p><strong>Theater:</strong> @Model.Screening.TheaterName</p>
-            <p><strong>Show Time:</strong> @Model.Screening.ShowTime.ToString("MMM dd, yyyy HH:mm")</p>
-            <p><strong>Price per seat:</strong> $@Model.Screening.Price.ToString("F2")</p>
-        </div>
-    </div>
 
-    <div class="seat-selection-container">
-        <div class="screen-indicator">SCREEN</div>
-        
-        <div class="seat-map" id="seatMap">
-            @for (int row = 0; row < Model.Screening.Rows; row++)
-            {
-                <div class="seat-row">
-                    <span class="row-label">@((char)('A' + row))</span>
-                    @for (int seat = 1; seat <= Model.Screening.SeatsPerRow; seat++)
+        <!-- Cinema Theater View -->
+        <div class="theater-view">
+            <!-- Curved Screen -->
+            <div class="screen-wrapper">
+                <div class="screen">
+                    <div class="screen-glow"></div>
+                    <span class="screen-text">SCREEN</span>
+                </div>
+            </div>
+
+            <!-- Seat Map with Perspective -->
+            <div class="seat-map-perspective">
+                <div class="seat-map" id="seatMap">
+                    @for (int row = 0; row < Model.Screening.Rows; row++)
                     {
-                        var seatNumber = $"{(char)('A' + row)}{seat}";
-                        var isOccupied = Model.Screening.OccupiedSeats.Contains(seatNumber);
-                        
-                        <button type="button" 
-                                class="seat-btn @(isOccupied ? "seat-occupied" : "seat-available")"
-                                data-seat="@seatNumber"
-                                data-price="@Model.Screening.Price"
-                                @(isOccupied ? "disabled" : "")>
-                            @seat
-                        </button>
+                        var rowLetter = (char)('A' + row);
+                        <div class="seat-row" style="--row-index: @row;">
+                            <span class="row-label left">@rowLetter</span>
+                            
+                            @for (int seat = 1; seat <= Model.Screening.SeatsPerRow; seat++)
+                            {
+                                var seatNumber = $"{rowLetter}{seat}";
+                                var isOccupied = Model.Screening.OccupiedSeats.Contains(seatNumber);
+                                var isAisle = seat == midPoint;
+                                
+                                @if (isAisle)
+                                {
+                                    <div class="aisle"></div>
+                                }
+                                
+                                <button type="button" 
+                                        class="cinema-seat @(isOccupied ? "occupied" : "available")"
+                                        data-seat="@seatNumber"
+                                        data-price="@Model.Screening.Price"
+                                        @(isOccupied ? "disabled" : "")
+                                        title="Seat @seatNumber">
+                                    <div class="seat-back"></div>
+                                    <div class="seat-bottom">
+                                        <span class="seat-number">@seat</span>
+                                    </div>
+                                </button>
+                            }
+                            
+                            <span class="row-label right">@rowLetter</span>
+                        </div>
                     }
                 </div>
-            }
-        </div>
+            </div>
 
-        <div class="seat-legend">
-            <div class="legend-item">
-                <span class="seat-btn seat-available"></span>
-                <span>Available</span>
-            </div>
-            <div class="legend-item">
-                <span class="seat-btn seat-selected"></span>
-                <span>Selected</span>
-            </div>
-            <div class="legend-item">
-                <span class="seat-btn seat-occupied"></span>
-                <span>Occupied</span>
-            </div>
-        </div>
-
-        <!-- Selection Summary -->
-        <div class="selection-summary" id="selectionSummary" style="display: none;">
-            <div class="summary-content">
-                <div class="summary-seats">
-                    <span class="label">Selected seats:</span>
-                    <span class="seats-list" id="seatsList"></span>
+            <!-- Legend -->
+            <div class="seat-legend">
+                <div class="legend-item">
+                    <div class="cinema-seat legend available">
+                        <div class="seat-back"></div>
+                        <div class="seat-bottom"></div>
+                    </div>
+                    <span>Available</span>
                 </div>
-                <div class="summary-total">
-                    <span class="label">Total:</span>
-                    <span class="total-price" id="totalPrice">$0.00</span>
+                <div class="legend-item">
+                    <div class="cinema-seat legend selected">
+                        <div class="seat-back"></div>
+                        <div class="seat-bottom"></div>
+                    </div>
+                    <span>Selected</span>
+                </div>
+                <div class="legend-item">
+                    <div class="cinema-seat legend occupied">
+                        <div class="seat-back"></div>
+                        <div class="seat-bottom"></div>
+                    </div>
+                    <span>Occupied</span>
                 </div>
             </div>
         </div>
 
-        <form id="seatForm" asp-action="UserInfo" method="get" style="display: none;">
-            <input type="hidden" name="screeningId" value="@Model.Screening.Id" />
-            <input type="hidden" name="seatNumbers" id="selectedSeats" />
-            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: var(--spacing-md);">
-                Continue to Booking
-            </button>
-        </form>
+        <!-- Selection Summary (Fixed Bottom) -->
+        <div class="selection-panel" id="selectionPanel">
+            <div class="selection-content">
+                <div class="selected-info">
+                    <div class="seat-count">
+                        <span class="count" id="seatCount">0</span>
+                        <span class="label">seats</span>
+                    </div>
+                    <div class="selected-seats" id="selectedSeatsList">
+                        <span class="placeholder">Click seats to select</span>
+                    </div>
+                </div>
+                <div class="total-section">
+                    <div class="total-amount">
+                        <span class="label">Total</span>
+                        <span class="price" id="totalPrice">$0.00</span>
+                    </div>
+                    <form id="seatForm" asp-action="UserInfo" method="get">
+                        <input type="hidden" name="screeningId" value="@Model.Screening.Id" />
+                        <input type="hidden" name="seatNumbers" id="selectedSeats" />
+                        <button type="submit" class="continue-btn" id="continueBtn" disabled>
+                            Continue
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-.seat-selection-container {
-    max-width: 800px;
-    margin: 0 auto;
+/* Cinema Page Layout */
+.cinema-page {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0a0a0f 0%, #12121a 50%, #0a0a0f 100%);
+    padding-bottom: 120px;
 }
 
-.screen-indicator {
-    text-align: center;
-    padding: var(--spacing-md);
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-    border-radius: calc(var(--radius) + 2px);
-    margin-bottom: var(--spacing-xl);
+.cinema-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+.cinema-header {
+    padding: 100px 0 30px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.back-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.movie-info-compact h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.show-details {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.show-details .detail {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+}
+
+.show-details .detail.price {
+    color: #22c55e;
     font-weight: 600;
+}
+
+/* Theater View */
+.theater-view {
+    background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(15,15,25,0.6) 100%);
+    border-radius: 24px;
+    padding: 40px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Curved Screen */
+.screen-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+    perspective: 1000px;
+}
+
+.screen {
+    position: relative;
+    width: 80%;
+    max-width: 600px;
+    height: 40px;
+    background: linear-gradient(180deg, #e8f4ff 0%, #b8d4f0 100%);
+    border-radius: 100% 100% 0 0 / 200% 200% 0 0;
+    box-shadow: 
+        0 0 60px rgba(200, 220, 255, 0.5),
+        0 0 120px rgba(150, 180, 255, 0.3),
+        inset 0 -10px 30px rgba(0, 0, 0, 0.1);
+    transform: rotateX(-15deg);
+}
+
+.screen-glow {
+    position: absolute;
+    bottom: -40px;
+    left: 10%;
+    right: 10%;
+    height: 80px;
+    background: radial-gradient(ellipse at top, rgba(200, 220, 255, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.screen-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+}
+
+/* Seat Map Perspective */
+.seat-map-perspective {
+    perspective: 800px;
+    overflow-x: auto;
+    padding: 20px 0;
 }
 
 .seat-map {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-xl);
+    gap: 8px;
+    transform: rotateX(15deg);
+    transform-origin: center top;
+    padding: 0 20px;
 }
 
+/* Seat Row */
 .seat-row {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
     justify-content: center;
+    gap: 6px;
+    animation: fadeInUp 0.4s ease-out both;
+    animation-delay: calc(var(--row-index) * 0.05s);
 }
 
 .row-label {
-    width: 30px;
+    width: 24px;
+    font-size: 0.75rem;
     font-weight: 600;
-    color: hsl(var(--foreground));
+    color: rgba(255, 255, 255, 0.4);
+    text-align: center;
 }
 
-.seat-btn {
-    width: 40px;
-    height: 40px;
-    border: 2px solid hsl(var(--border));
-    border-radius: calc(var(--radius) - 2px);
-    background: hsl(var(--muted));
-    color: hsl(var(--foreground));
+.row-label.left { margin-right: 12px; }
+.row-label.right { margin-left: 12px; }
+
+/* Aisle */
+.aisle {
+    width: 24px;
+    flex-shrink: 0;
+}
+
+/* Cinema Seat - 3D Design */
+.cinema-seat {
+    position: relative;
+    width: 36px;
+    height: 42px;
+    background: none;
+    border: none;
     cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.875rem;
-    font-weight: 500;
+    padding: 0;
+    transition: transform 0.2s ease;
 }
 
-.seat-btn.seat-available:hover {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-    border-color: hsl(var(--primary));
-    transform: scale(1.1);
+.cinema-seat:hover:not(.occupied):not(.legend) {
+    transform: translateY(-4px) scale(1.1);
+    z-index: 10;
 }
 
-.seat-btn.seat-selected {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-    border-color: hsl(var(--primary));
+/* Seat Back */
+.seat-back {
+    position: absolute;
+    top: 0;
+    left: 2px;
+    right: 2px;
+    height: 20px;
+    background: linear-gradient(180deg, #3b4252 0%, #2e3440 100%);
+    border-radius: 6px 6px 2px 2px;
+    transition: all 0.2s ease;
 }
 
-.seat-btn.seat-occupied {
-    background: hsl(var(--destructive) / 0.3);
-    color: hsl(var(--muted-foreground));
+/* Seat Bottom (Cushion) */
+.seat-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 24px;
+    background: linear-gradient(180deg, #4c566a 0%, #3b4252 100%);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.seat-number {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.2s ease;
+}
+
+/* Available Seat */
+.cinema-seat.available .seat-back {
+    background: linear-gradient(180deg, #4a5568 0%, #2d3748 100%);
+}
+
+.cinema-seat.available .seat-bottom {
+    background: linear-gradient(180deg, #5a6577 0%, #4a5568 100%);
+}
+
+.cinema-seat.available:hover .seat-back {
+    background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
+}
+
+.cinema-seat.available:hover .seat-bottom {
+    background: linear-gradient(180deg, #818cf8 0%, #6366f1 100%);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+.cinema-seat.available:hover .seat-number {
+    color: white;
+}
+
+/* Selected Seat */
+.cinema-seat.selected .seat-back {
+    background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+}
+
+.cinema-seat.selected .seat-bottom {
+    background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+    box-shadow: 0 6px 25px rgba(34, 197, 94, 0.5);
+}
+
+.cinema-seat.selected .seat-number {
+    color: white;
+    font-weight: 700;
+}
+
+/* Occupied Seat */
+.cinema-seat.occupied {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
+.cinema-seat.occupied .seat-back {
+    background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+}
+
+.cinema-seat.occupied .seat-bottom {
+    background: linear-gradient(180deg, #374151 0%, #1f2937 100%);
+}
+
+/* Legend Seats */
+.cinema-seat.legend {
+    width: 28px;
+    height: 32px;
+    cursor: default;
+}
+
+.cinema-seat.legend .seat-back {
+    height: 14px;
+}
+
+.cinema-seat.legend .seat-bottom {
+    height: 18px;
+}
+
+/* Seat Legend */
 .seat-legend {
     display: flex;
     justify-content: center;
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-xl);
+    gap: 40px;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    color: hsl(var(--muted-foreground));
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
 }
 
-.selection-summary {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius);
-    padding: var(--spacing-lg);
-    margin-bottom: var(--spacing-md);
+/* Selection Panel - Fixed Bottom */
+.selection-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15, 15, 25, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 20px;
+    z-index: 100;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
 }
 
-.summary-content {
+.selection-content {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: var(--spacing-md);
+    justify-content: space-between;
+    gap: 20px;
 }
 
-.summary-seats .label,
-.summary-total .label {
-    color: hsl(var(--muted-foreground));
+.selected-info {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.seat-count {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.seat-count .count {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #22c55e;
+    line-height: 1;
+}
+
+.seat-count .label {
+    color: rgba(255, 255, 255, 0.5);
     font-size: 0.875rem;
-    margin-right: var(--spacing-sm);
 }
 
-.seats-list {
+.selected-seats {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.selected-seats .placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.875rem;
+}
+
+.selected-seats .seat-tag {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
     font-weight: 600;
-    color: hsl(var(--foreground));
 }
 
-.total-price {
+.total-section {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.total-amount {
+    text-align: right;
+}
+
+.total-amount .label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    display: block;
+}
+
+.total-amount .price {
     font-size: 1.5rem;
     font-weight: 700;
-    color: hsl(var(--primary));
+    color: white;
+}
+
+.continue-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.continue-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+}
+
+.continue-btn:disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.3);
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@@media (max-width: 768px) {
+    .cinema-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .seat-map {
+        transform: none;
+    }
+    
+    .cinema-seat {
+        width: 32px;
+        height: 38px;
+    }
+    
+    .selection-content {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .selected-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .total-section {
+        width: 100%;
+        justify-content: space-between;
+    }
 }
 </style>
 
@@ -207,46 +596,45 @@
 let selectedSeats = [];
 const seatPrice = @Model.Screening.Price;
 
-document.querySelectorAll('.seat-btn.seat-available').forEach(btn => {
+document.querySelectorAll('.cinema-seat.available').forEach(btn => {
     btn.addEventListener('click', function() {
         const seatNumber = this.dataset.seat;
         
-        if (this.classList.contains('seat-selected')) {
-            // Deselect seat
-            this.classList.remove('seat-selected');
+        if (this.classList.contains('selected')) {
+            this.classList.remove('selected');
             selectedSeats = selectedSeats.filter(s => s !== seatNumber);
         } else {
-            // Select seat
-            this.classList.add('seat-selected');
+            this.classList.add('selected');
             selectedSeats.push(seatNumber);
         }
         
-        updateSummary();
+        updateSelection();
     });
 });
 
-function updateSummary() {
-    const summaryEl = document.getElementById('selectionSummary');
-    const formEl = document.getElementById('seatForm');
-    const seatsListEl = document.getElementById('seatsList');
+function updateSelection() {
+    const countEl = document.getElementById('seatCount');
+    const seatsListEl = document.getElementById('selectedSeatsList');
     const totalPriceEl = document.getElementById('totalPrice');
     const selectedSeatsInput = document.getElementById('selectedSeats');
+    const continueBtn = document.getElementById('continueBtn');
     
-    if (selectedSeats.length > 0) {
-        summaryEl.style.display = 'block';
-        formEl.style.display = 'block';
-        
-        // Sort seats for display
-        selectedSeats.sort();
-        seatsListEl.textContent = selectedSeats.join(', ');
-        
-        const total = selectedSeats.length * seatPrice;
-        totalPriceEl.textContent = '$' + total.toFixed(2);
-        
-        selectedSeatsInput.value = selectedSeats.join(',');
+    selectedSeats.sort();
+    const count = selectedSeats.length;
+    const total = count * seatPrice;
+    
+    countEl.textContent = count;
+    totalPriceEl.textContent = '$' + total.toFixed(2);
+    selectedSeatsInput.value = selectedSeats.join(',');
+    
+    if (count > 0) {
+        seatsListEl.innerHTML = selectedSeats.map(s => 
+            `<span class="seat-tag">${s}</span>`
+        ).join('');
+        continueBtn.disabled = false;
     } else {
-        summaryEl.style.display = 'none';
-        formEl.style.display = 'none';
+        seatsListEl.innerHTML = '<span class="placeholder">Click seats to select</span>';
+        continueBtn.disabled = true;
     }
 }
 </script>

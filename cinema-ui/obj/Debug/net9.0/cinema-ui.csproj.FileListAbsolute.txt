@@ -26,7 +26,6 @@
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/9f96620o1z-{0}-jm6vq1r0f5-jm6vq1r0f5.gz
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/y3ukizdv3e-{0}-8wv65jzwtr-8wv65jzwtr.gz
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/w0y62ztg62-{0}-1noewccul5-1noewccul5.gz
-/home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/hv94csr79x-{0}-7gnnutjlp1-7gnnutjlp1.gz
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/bhqy7thvyn-{0}-61n19gt1b8-61n19gt1b8.gz
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/2a9w2n6lo6-{0}-eomutkip6m-eomutkip6m.gz
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/6es7tq7op4-{0}-dgyzp07kiw-dgyzp07kiw.gz
@@ -104,3 +103,5 @@
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/ref/cinema-ui.dll
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/fa0a3asb1r-{0}-v8esj8atvj-v8esj8atvj.gz
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/1o97tlvdyj-{0}-nf5j9hyuty-nf5j9hyuty.gz
+/home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/etvkeuldt2-{0}-o33e0nsm80-o33e0nsm80.gz
+/home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/hv94csr79x-{0}-nudts0lrda-nudts0lrda.gz
