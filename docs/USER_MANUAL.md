@@ -144,7 +144,7 @@ View all your purchased tickets:
 
 | Status | Description |
 |--------|-------------|
-| **Active** | Valid ticket for upcoming show |
+| **Active** | Valid ticket for upcoming show |make the seat selectmake the seat selectuu
 | **Used** | Ticket has been checked in |
 | **Cancelled** | Refunded ticket |
 | **Expired** | Show has passed |
