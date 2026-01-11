@@ -251,6 +251,33 @@ public class ApiService
         }
         return null;
     }
+
+    public async Task<(bool Success, string Message)> CancelTicketAsync(int ticketId)
+    {
+        LoadTokenFromContext();
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/Ticket/{ticketId}/cancel", null);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            return (true, "Ticket cancelled successfully. A refund will be processed.");
+        }
+        
+        var errorContent = await response.Content.ReadAsStringAsync();
+        // Try to get error message from response
+        if (!string.IsNullOrEmpty(errorContent))
+        {
+            try
+            {
+                return (false, errorContent);
+            }
+            catch
+            {
+                // If we can't parse, return generic message
+            }
+        }
+        
+        return (false, "Failed to cancel ticket. Please try again.");
+    }
 }
 
 public class UserProfile

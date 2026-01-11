@@ -204,13 +204,18 @@ public class TicketController : ControllerBase
         if (ticket.Status != "Active")
             return BadRequest("Ticket is not active and cannot be cancelled.");
 
-        if (ticket.Screening!.ShowTime <= DateTime.UtcNow)
-            return BadRequest("Cannot cancel ticket for a past screening.");
+        // Check if screening is on current date (UTC)
+        var screeningDate = ticket.Screening!.ShowTime.Date;
+        var today = DateTime.UtcNow.Date;
+        
+        if (screeningDate <= today)
+            return BadRequest("Cannot cancel tickets for screenings on the current date or in the past. Cancellations must be made at least one day before the screening.");
 
         ticket.Status = "Cancelled";
+        ticket.RefundReason = "User requested cancellation";
         await _db.SaveChangesAsync();
 
-        return Ok("Ticket cancelled successfully.");
+        return Ok(new { Message = "Ticket cancelled successfully. A refund will be processed.", TicketId = id });
     }
 
     // GET: api/Ticket/all - Admin only: Get all tickets

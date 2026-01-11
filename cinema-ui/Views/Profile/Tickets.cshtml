@@ -8,6 +8,19 @@
     <div class="content-section" style="padding-top: 120px;">
         <h2 class="section-title">My Tickets</h2>
 
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success mb-4">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
         <div class="flex gap-3 mb-4" style="flex-wrap: wrap;">
             <a asp-action="Tickets" asp-route-status="" 
                class="btn @(string.IsNullOrEmpty(Model.SelectedStatus) ? "btn-primary" : "btn-secondary")">
@@ -32,32 +45,60 @@
             <div class="screenings-grid">
                 @foreach (var ticket in Model.Tickets)
                 {
-                    <div class="screening-card" style="flex-direction: column; min-height: auto; max-height: none; height: auto;">
-                        <div class="screening-info" style="padding: var(--spacing-lg); width: 100%;">
-                            <h3 class="screening-movie" style="white-space: normal; margin-bottom: var(--spacing-sm);">@ticket.MovieTitle</h3>
-                            <p class="screening-theater" style="white-space: normal; margin-bottom: var(--spacing-xs);">@ticket.TheaterName</p>
-                            <p class="screening-time" style="white-space: normal; margin-bottom: var(--spacing-sm);">@ticket.ShowTime.ToString("MMM dd, yyyy HH:mm")</p>
-                            
-                            <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-sm); flex-wrap: wrap;">
-                                <div>
-                                    <strong style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); display: block;">Seat</strong>
-                                    <span style="font-size: 1rem; font-weight: 600;">@ticket.SeatNumber</span>
-                                </div>
-                                <div>
-                                    <strong style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); display: block;">Price</strong>
-                                    <span class="screening-price" style="font-size: 1rem; font-weight: 600;">$@ticket.Price.ToString("F2")</span>
-                                </div>
+                    var screeningDate = ticket.ShowTime.Date;
+                    var today = DateTime.UtcNow.Date;
+                    var canCancel = ticket.Status == "Active" && screeningDate > today;
+                    
+                    <div class="ticket-card @(ticket.Status.ToLower())">
+                        <div class="ticket-header">
+                            <h3 class="ticket-movie">@ticket.MovieTitle</h3>
+                            <span class="status-badge @(ticket.Status == "Active" ? "active" : ticket.Status == "Cancelled" ? "cancelled" : "used")">
+                                @ticket.Status
+                            </span>
+                        </div>
+                        
+                        <div class="ticket-details">
+                            <div class="detail-row">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                <span>@ticket.TheaterName</span>
                             </div>
+                            <div class="detail-row">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                <span>@ticket.ShowTime.ToString("dddd, MMM d 'at' h:mm tt")</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-info-row">
+                            <div class="info-item">
+                                <span class="label">Seat</span>
+                                <span class="value seat-badge">@ticket.SeatNumber</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Price</span>
+                                <span class="value price">$@ticket.Price.ToString("F2")</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-footer">
+                            <small class="purchase-date">Purchased @ticket.PurchaseDate.ToString("MMM d, yyyy")</small>
                             
-                            <div style="margin-bottom: var(--spacing-xs);">
-                                <strong style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Status:</strong>
-                                <span class="badge @(ticket.Status == "Active" ? "badge-success" : ticket.Status == "Cancelled" ? "badge-destructive" : "badge-secondary")" 
-                                      style="margin-left: 0.5rem;">
-                                    @ticket.Status
+                            @if (canCancel)
+                            {
+                                <form asp-action="CancelTicket" method="post" class="cancel-form" onsubmit="return confirm('Are you sure you want to cancel this ticket? This action cannot be undone.');">
+                                    <input type="hidden" name="ticketId" value="@ticket.Id" />
+                                    <button type="submit" class="btn btn-cancel">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                        Cancel Ticket
+                                    </button>
+                                </form>
+                            }
+                            @if (ticket.Status == "Active" && !canCancel)
+                            {
+                                <span class="cancel-notice">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Cannot cancel on screening day
                                 </span>
-                            </div>
-                            
-                            <small class="text-muted" style="font-size: 0.75rem;">Purchased: @ticket.PurchaseDate.ToString("MMM dd, yyyy")</small>
+                            }
                         </div>
                     </div>
                 }
@@ -73,3 +114,210 @@
         }
     </div>
 </div>
+
+<style>
+.screenings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.ticket-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    transition: all 0.3s ease;
+}
+
+.ticket-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.ticket-card.cancelled {
+    opacity: 0.6;
+}
+
+.ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-md);
+}
+
+.ticket-movie {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    margin: 0;
+    flex: 1;
+    margin-right: var(--spacing-sm);
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.active {
+    background: rgba(34, 197, 94, 0.15);
+    color: hsl(142 76% 45%);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-badge.cancelled {
+    background: rgba(239, 68, 68, 0.15);
+    color: hsl(0 84% 60%);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-badge.used {
+    background: rgba(156, 163, 175, 0.15);
+    color: hsl(var(--muted-foreground));
+    border: 1px solid rgba(156, 163, 175, 0.3);
+}
+
+.ticket-details {
+    margin-bottom: var(--spacing-md);
+}
+
+.ticket-details .detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+    margin-bottom: 6px;
+}
+
+.ticket-details .detail-row svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.ticket-info-row {
+    display: flex;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md) 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--spacing-md);
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-item .label {
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item .value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+}
+
+.seat-badge {
+    background: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(263 70% 50%) 100%);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.price {
+    color: hsl(142 76% 45%) !important;
+}
+
+.ticket-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.purchase-date {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.8rem;
+}
+
+.btn-cancel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: hsl(0 84% 60%);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.cancel-notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.cancel-form {
+    margin: 0;
+}
+
+.alert {
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: hsl(142 76% 45%);
+}
+
+.alert-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: hsl(0 84% 60%);
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.empty-state h3 {
+    color: hsl(var(--foreground));
+    margin-bottom: var(--spacing-sm);
+}
+
+.empty-state p {
+    color: hsl(var(--muted-foreground));
+}
+</style>

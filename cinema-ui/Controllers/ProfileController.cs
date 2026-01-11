@@ -62,6 +62,23 @@ public class ProfileController : Controller
         };
         return View(viewModel);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> CancelTicket(int ticketId)
+    {
+        var (success, message) = await _apiService.CancelTicketAsync(ticketId);
+        
+        if (success)
+        {
+            TempData["SuccessMessage"] = message;
+        }
+        else
+        {
+            TempData["ErrorMessage"] = message;
+        }
+        
+        return RedirectToAction("Tickets");
+    }
 }
 
 public class UpdateProfileViewModel
