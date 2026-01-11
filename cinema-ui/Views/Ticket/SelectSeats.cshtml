@@ -1,6 +1,6 @@
 @model cinema_ui.Controllers.SeatSelectionViewModel
 @{
-    ViewData["Title"] = "Select Your Seat - " + Model.Movie.Title;
+    ViewData["Title"] = "Select Your Seats - " + Model.Movie.Title;
     Layout = "_Layout";
 }
 
@@ -9,7 +9,7 @@
         <a asp-action="MovieDetail" asp-route-id="@Model.Movie.Id" class="btn btn-secondary">← Back to Movie</a>
     </div>
 
-    <h2 class="section-title">Select Your Seat</h2>
+    <h2 class="section-title">Select Your Seats</h2>
     <div class="card mb-4">
         <div class="card-header">
             <h3>@Model.Movie.Title</h3>
@@ -17,7 +17,7 @@
         <div class="card-description">
             <p><strong>Theater:</strong> @Model.Screening.TheaterName</p>
             <p><strong>Show Time:</strong> @Model.Screening.ShowTime.ToString("MMM dd, yyyy HH:mm")</p>
-            <p><strong>Price:</strong> $@Model.Screening.Price.ToString("F2")</p>
+            <p><strong>Price per seat:</strong> $@Model.Screening.Price.ToString("F2")</p>
         </div>
     </div>
 
@@ -37,6 +37,7 @@
                         <button type="button" 
                                 class="seat-btn @(isOccupied ? "seat-occupied" : "seat-available")"
                                 data-seat="@seatNumber"
+                                data-price="@Model.Screening.Price"
                                 @(isOccupied ? "disabled" : "")>
                             @seat
                         </button>
@@ -60,10 +61,26 @@
             </div>
         </div>
 
+        <!-- Selection Summary -->
+        <div class="selection-summary" id="selectionSummary" style="display: none;">
+            <div class="summary-content">
+                <div class="summary-seats">
+                    <span class="label">Selected seats:</span>
+                    <span class="seats-list" id="seatsList"></span>
+                </div>
+                <div class="summary-total">
+                    <span class="label">Total:</span>
+                    <span class="total-price" id="totalPrice">$0.00</span>
+                </div>
+            </div>
+        </div>
+
         <form id="seatForm" asp-action="UserInfo" method="get" style="display: none;">
             <input type="hidden" name="screeningId" value="@Model.Screening.Id" />
-            <input type="hidden" name="seatNumber" id="selectedSeat" />
-            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: var(--spacing-xl);">Continue to Booking</button>
+            <input type="hidden" name="seatNumbers" id="selectedSeats" />
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: var(--spacing-md);">
+                Continue to Booking
+            </button>
         </form>
     </div>
 </div>
@@ -150,24 +167,86 @@
     gap: var(--spacing-sm);
     color: hsl(var(--muted-foreground));
 }
+
+.selection-summary {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.summary-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.summary-seats .label,
+.summary-total .label {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+    margin-right: var(--spacing-sm);
+}
+
+.seats-list {
+    font-weight: 600;
+    color: hsl(var(--foreground));
+}
+
+.total-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: hsl(var(--primary));
+}
 </style>
 
 <script>
-let selectedSeat = null;
+let selectedSeats = [];
+const seatPrice = @Model.Screening.Price;
 
 document.querySelectorAll('.seat-btn.seat-available').forEach(btn => {
     btn.addEventListener('click', function() {
-        // Remove previous selection
-        document.querySelectorAll('.seat-btn').forEach(b => b.classList.remove('seat-selected'));
+        const seatNumber = this.dataset.seat;
         
-        // Select this seat
-        this.classList.add('seat-selected');
-        selectedSeat = this.dataset.seat;
+        if (this.classList.contains('seat-selected')) {
+            // Deselect seat
+            this.classList.remove('seat-selected');
+            selectedSeats = selectedSeats.filter(s => s !== seatNumber);
+        } else {
+            // Select seat
+            this.classList.add('seat-selected');
+            selectedSeats.push(seatNumber);
+        }
         
-        // Show form and set seat number
-        document.getElementById('selectedSeat').value = selectedSeat;
-        document.getElementById('seatForm').style.display = 'block';
+        updateSummary();
     });
 });
-</script>
 
+function updateSummary() {
+    const summaryEl = document.getElementById('selectionSummary');
+    const formEl = document.getElementById('seatForm');
+    const seatsListEl = document.getElementById('seatsList');
+    const totalPriceEl = document.getElementById('totalPrice');
+    const selectedSeatsInput = document.getElementById('selectedSeats');
+    
+    if (selectedSeats.length > 0) {
+        summaryEl.style.display = 'block';
+        formEl.style.display = 'block';
+        
+        // Sort seats for display
+        selectedSeats.sort();
+        seatsListEl.textContent = selectedSeats.join(', ');
+        
+        const total = selectedSeats.length * seatPrice;
+        totalPriceEl.textContent = '$' + total.toFixed(2);
+        
+        selectedSeatsInput.value = selectedSeats.join(',');
+    } else {
+        summaryEl.style.display = 'none';
+        formEl.style.display = 'none';
+    }
+}
+</script>

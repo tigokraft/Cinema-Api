@@ -6,7 +6,6 @@ using cinema_ui.Models;
 
 namespace cinema_ui.Controllers;
 
-[Authorize]
 public class TicketController : Controller
 {
     private readonly ApiService _apiService;
@@ -19,7 +18,8 @@ public class TicketController : Controller
         _apiService.LoadTokenFromContext();
     }
 
-    // Movie Detail Page
+    // Movie Detail Page - Allow anonymous access
+    [AllowAnonymous]
     public async Task<IActionResult> MovieDetail(int id, DateTime? date = null, int? theaterId = null)
     {
         var movie = await _apiService.GetMovieAsync(id);
@@ -76,7 +76,8 @@ public class TicketController : Controller
         return View(viewModel);
     }
 
-    // Screening Selection / Seat Selection
+    // Screening Selection / Seat Selection - Allow anonymous access
+    [AllowAnonymous]
     public async Task<IActionResult> SelectSeats(int screeningId)
     {
         var screening = await _apiService.GetScreeningDetailAsync(screeningId);
@@ -102,8 +103,9 @@ public class TicketController : Controller
         return View(viewModel);
     }
 
-    // User Information Form
-    public async Task<IActionResult> UserInfo(int screeningId, string seatNumber)
+    // User Information Form - Requires authentication
+    [Authorize]
+    public async Task<IActionResult> UserInfo(int screeningId, string seatNumbers)
     {
         var profile = await _apiService.GetUserProfileAsync();
         var screening = await _apiService.GetScreeningDetailAsync(screeningId);
@@ -120,14 +122,20 @@ public class TicketController : Controller
             return RedirectToAction("Index", "Home");
         }
 
+        var seatList = seatNumbers?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
+        var seatCount = seatList.Length;
+        var totalPrice = screening.Price * seatCount;
+
         var viewModel = new UserInfoViewModel
         {
             ScreeningId = screeningId,
-            SeatNumber = seatNumber,
+            SeatNumbers = seatNumbers ?? "",
+            SeatCount = seatCount,
             MovieTitle = movie.Title,
             TheaterName = screening.TheaterName,
             ShowTime = screening.ShowTime,
-            Price = screening.Price,
+            PricePerSeat = screening.Price,
+            TotalPrice = totalPrice,
             FirstName = profile?.FirstName ?? string.Empty,
             LastName = profile?.LastName ?? string.Empty,
             Email = profile?.Email ?? string.Empty
@@ -137,6 +145,7 @@ public class TicketController : Controller
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> UserInfo(UserInfoViewModel model)
     {
         if (!ModelState.IsValid)
@@ -149,36 +158,45 @@ public class TicketController : Controller
 
         // Store in TempData for payment page
         TempData["ScreeningId"] = model.ScreeningId;
-        TempData["SeatNumber"] = model.SeatNumber;
-        TempData["Price"] = model.Price.ToString();
+        TempData["SeatNumbers"] = model.SeatNumbers;
+        TempData["PricePerSeat"] = model.PricePerSeat.ToString();
+        TempData["TotalPrice"] = model.TotalPrice.ToString();
+        TempData["SeatCount"] = model.SeatCount.ToString();
         TempData["MovieTitle"] = model.MovieTitle;
 
         return RedirectToAction("Payment");
     }
 
-    // Payment Page (Fake)
+    // Payment Page (Fake) - Requires authentication
+    [Authorize]
     public async Task<IActionResult> Payment()
     {
         var screeningId = TempData["ScreeningId"]?.ToString();
-        var seatNumber = TempData["SeatNumber"]?.ToString();
-        var price = TempData["Price"]?.ToString();
+        var seatNumbers = TempData["SeatNumbers"]?.ToString();
+        var pricePerSeat = TempData["PricePerSeat"]?.ToString();
+        var totalPrice = TempData["TotalPrice"]?.ToString();
+        var seatCount = TempData["SeatCount"]?.ToString();
         var movieTitle = TempData["MovieTitle"]?.ToString();
 
-        if (string.IsNullOrEmpty(screeningId) || string.IsNullOrEmpty(seatNumber) || string.IsNullOrEmpty(price))
+        if (string.IsNullOrEmpty(screeningId) || string.IsNullOrEmpty(seatNumbers) || string.IsNullOrEmpty(totalPrice))
         {
             TempData["ErrorMessage"] = "Invalid booking information.";
             return RedirectToAction("Index", "Home");
         }
 
-        var parsedPrice = decimal.Parse(price);
+        var parsedTotalPrice = decimal.Parse(totalPrice);
+        var parsedPricePerSeat = decimal.Parse(pricePerSeat ?? totalPrice);
+        var parsedSeatCount = int.Parse(seatCount ?? "1");
         var screening = await _apiService.GetScreeningDetailAsync(int.Parse(screeningId));
 
         var viewModel = new PaymentViewModel
         {
             ScreeningId = int.Parse(screeningId),
-            SeatNumber = seatNumber,
-            Price = parsedPrice,
-            OriginalPrice = parsedPrice,
+            SeatNumbers = seatNumbers,
+            SeatCount = parsedSeatCount,
+            Price = parsedTotalPrice,
+            OriginalPrice = parsedTotalPrice,
+            PricePerSeat = parsedPricePerSeat,
             MovieTitle = movieTitle ?? "Unknown Movie",
             TheaterName = screening?.TheaterName,
             ShowTime = screening?.ShowTime
@@ -186,12 +204,13 @@ public class TicketController : Controller
 
         // Store again for confirmation
         TempData["ScreeningId"] = screeningId;
-        TempData["SeatNumber"] = seatNumber;
+        TempData["SeatNumbers"] = seatNumbers;
 
         return View(viewModel);
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> ProcessPayment(PaymentViewModel model)
     {
         if (!ModelState.IsValid)
@@ -201,30 +220,46 @@ public class TicketController : Controller
 
         // This is a fake payment - just validate the form, don't actually process payment
         var screeningId = model.ScreeningId;
-        var seatNumber = model.SeatNumber;
+        var seatNumbers = model.SeatNumbers?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
 
-        // Purchase the ticket
-        var ticket = await _apiService.PurchaseTicketAsync(screeningId, seatNumber);
-        
-        if (ticket == null)
+        // Purchase tickets for each seat
+        var purchasedTicketIds = new List<int>();
+        foreach (var seatNumber in seatNumbers)
         {
-            TempData["ErrorMessage"] = "Failed to purchase ticket. The seat may have been taken or the screening is no longer available.";
+            var ticket = await _apiService.PurchaseTicketAsync(screeningId, seatNumber.Trim());
+            if (ticket != null)
+            {
+                purchasedTicketIds.Add(ticket.Id);
+            }
+        }
+        
+        if (purchasedTicketIds.Count == 0)
+        {
+            TempData["ErrorMessage"] = "Failed to purchase tickets. The seats may have been taken or the screening is no longer available.";
             return RedirectToAction("Payment");
         }
 
-        TempData["TicketId"] = ticket.Id;
-        return RedirectToAction("Confirmation", new { ticketId = ticket.Id });
+        // Store all ticket IDs for confirmation page
+        TempData["TicketIds"] = string.Join(",", purchasedTicketIds);
+        return RedirectToAction("Confirmation", new { ticketIds = string.Join(",", purchasedTicketIds) });
     }
 
-    // Confirmation Page
-    public async Task<IActionResult> Confirmation(int ticketId)
+    // Confirmation Page - Requires authentication
+    [Authorize]
+    public async Task<IActionResult> Confirmation(string ticketIds)
     {
-        var tickets = await _apiService.GetMyTicketsAsync();
-        var ticket = tickets?.FirstOrDefault(t => t.Id == ticketId);
+        var allTickets = await _apiService.GetMyTicketsAsync();
+        
+        var ticketIdList = ticketIds?.Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(id => int.TryParse(id.Trim(), out var parsed) ? parsed : 0)
+            .Where(id => id > 0)
+            .ToList() ?? new List<int>();
 
-        if (ticket == null)
+        var purchasedTickets = allTickets?.Where(t => ticketIdList.Contains(t.Id)).ToList() ?? new List<Ticket>();
+
+        if (purchasedTickets.Count == 0)
         {
-            TempData["ErrorMessage"] = "Ticket not found.";
+            TempData["ErrorMessage"] = "Tickets not found.";
             return RedirectToAction("Tickets", "Profile");
         }
 
@@ -232,7 +267,7 @@ public class TicketController : Controller
         
         var viewModel = new TicketConfirmationViewModel
         {
-            Ticket = ticket,
+            Tickets = purchasedTickets,
             UserEmail = profile?.Email ?? "",
             UserName = $"{profile?.FirstName} {profile?.LastName}".Trim()
         };
@@ -243,7 +278,8 @@ public class TicketController : Controller
 
 public class TicketConfirmationViewModel
 {
-    public Ticket Ticket { get; set; } = null!;
+    public List<Ticket> Tickets { get; set; } = new();
+    public Ticket? Ticket => Tickets.FirstOrDefault(); // For backwards compatibility
     public string UserEmail { get; set; } = string.Empty;
     public string UserName { get; set; } = string.Empty;
 }
@@ -274,11 +310,13 @@ public class SeatSelectionViewModel
 public class UserInfoViewModel
 {
     public int ScreeningId { get; set; }
-    public string SeatNumber { get; set; } = string.Empty;
+    public string SeatNumbers { get; set; } = string.Empty;
+    public int SeatCount { get; set; }
     public string MovieTitle { get; set; } = string.Empty;
     public string TheaterName { get; set; } = string.Empty;
     public DateTime ShowTime { get; set; }
-    public decimal Price { get; set; }
+    public decimal PricePerSeat { get; set; }
+    public decimal TotalPrice { get; set; }
 
     [Required]
     public string FirstName { get; set; } = string.Empty;
@@ -294,9 +332,11 @@ public class UserInfoViewModel
 public class PaymentViewModel
 {
     public int ScreeningId { get; set; }
-    public string SeatNumber { get; set; } = string.Empty;
+    public string SeatNumbers { get; set; } = string.Empty;
+    public int SeatCount { get; set; }
     public decimal Price { get; set; }
     public decimal OriginalPrice { get; set; }
+    public decimal PricePerSeat { get; set; }
     public decimal DiscountAmount { get; set; }
     public string MovieTitle { get; set; } = string.Empty;
     public string? TheaterName { get; set; }
@@ -321,4 +361,5 @@ public class PaymentViewModel
     [Display(Name = "CVV")]
     public string Cvv { get; set; } = string.Empty;
 }
+
 

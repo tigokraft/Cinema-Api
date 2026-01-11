@@ -24,12 +24,19 @@
                 
                 <div class="ticket-details">
                     <div class="detail-row">
-                        <span class="label">Seat</span>
-                        <span class="value seat-badge">@Model.SeatNumber</span>
+                        <span class="label">Seats (@Model.SeatCount)</span>
+                        <span class="value seat-badge">@Model.SeatNumbers</span>
                     </div>
+                    @if (Model.SeatCount > 1)
+                    {
+                        <div class="detail-row">
+                            <span class="label">Price per seat</span>
+                            <span class="value">$@Model.PricePerSeat.ToString("F2")</span>
+                        </div>
+                    }
                     <div class="detail-row total-row">
-                        <span class="label">Price</span>
-                        <span class="value total">$@Model.Price.ToString("F2")</span>
+                        <span class="label">Total</span>
+                        <span class="value total">$@Model.TotalPrice.ToString("F2")</span>
                     </div>
                 </div>
             </div>
@@ -69,11 +76,13 @@
 
             <form asp-action="UserInfo" method="post" id="userInfoForm">
                 <input type="hidden" asp-for="ScreeningId" />
-                <input type="hidden" asp-for="SeatNumber" />
+                <input type="hidden" asp-for="SeatNumbers" />
+                <input type="hidden" asp-for="SeatCount" />
                 <input type="hidden" asp-for="MovieTitle" />
                 <input type="hidden" asp-for="TheaterName" />
                 <input type="hidden" asp-for="ShowTime" />
-                <input type="hidden" asp-for="Price" />
+                <input type="hidden" asp-for="PricePerSeat" />
+                <input type="hidden" asp-for="TotalPrice" />
 
                 <div class="name-row">
                     <div class="form-group">

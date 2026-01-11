@@ -30,13 +30,16 @@
                 
                 <div class="ticket-details">
                     <div class="detail-row">
-                        <span class="label">Seat</span>
-                        <span class="value seat-badge">@Model.SeatNumber</span>
+                        <span class="label">Seats (@Model.SeatCount)</span>
+                        <span class="value seat-badge">@Model.SeatNumbers</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Ticket Price</span>
-                        <span class="value">$@Model.OriginalPrice.ToString("F2")</span>
-                    </div>
+                    @if (Model.SeatCount > 1)
+                    {
+                        <div class="detail-row">
+                            <span class="label">Price per seat</span>
+                            <span class="value">$@Model.PricePerSeat.ToString("F2")</span>
+                        </div>
+                    }
                     <div class="detail-row discount-row" id="discountRow" style="display: none;">
                         <span class="label">Discount</span>
                         <span class="value discount" id="discountAmount">-$0.00</span>
@@ -63,9 +66,11 @@
 
             <form asp-action="ProcessPayment" method="post" id="paymentForm">
                 <input type="hidden" asp-for="ScreeningId" />
-                <input type="hidden" asp-for="SeatNumber" />
+                <input type="hidden" asp-for="SeatNumbers" />
+                <input type="hidden" asp-for="SeatCount" />
                 <input type="hidden" asp-for="Price" id="priceField" />
                 <input type="hidden" asp-for="OriginalPrice" />
+                <input type="hidden" asp-for="PricePerSeat" />
                 <input type="hidden" asp-for="DiscountAmount" id="discountField" />
                 <input type="hidden" asp-for="MovieTitle" />
                 <input type="hidden" asp-for="TheaterName" />
