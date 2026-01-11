@@ -1,0 +1,791 @@
+/* ================================================
+   CINEMA UI - ANIMATIONS STYLESHEET
+   Comprehensive animations for all UI elements
+   ================================================ */
+
+/* ================================================
+   1. KEYFRAME ANIMATIONS
+   ================================================ */
+
+/* Fade In */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Fade In Up */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade In Down */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade In Left */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade In Right */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Scale In Bounce */
+@keyframes scaleInBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Slide In Up */
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Slide In Right */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Pulse */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Bounce */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Shake */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Spin */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Glow Pulse */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(99, 102, 241, 0.3),
+                0 0 10px rgba(99, 102, 241, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.5),
+                0 0 30px rgba(99, 102, 241, 0.3);
+  }
+}
+
+/* Shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Float */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Gradient Shift */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Ripple */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Stagger Fade */
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================================================
+   2. ANIMATION UTILITY CLASSES
+   ================================================ */
+
+.animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
+.animate-fadeInUp { animation: fadeInUp 0.5s ease-out forwards; }
+.animate-fadeInDown { animation: fadeInDown 0.5s ease-out forwards; }
+.animate-fadeInLeft { animation: fadeInLeft 0.5s ease-out forwards; }
+.animate-fadeInRight { animation: fadeInRight 0.5s ease-out forwards; }
+.animate-scaleIn { animation: scaleIn 0.3s ease-out forwards; }
+.animate-scaleInBounce { animation: scaleInBounce 0.6s ease-out forwards; }
+.animate-slideInUp { animation: slideInUp 0.4s ease-out forwards; }
+.animate-slideInRight { animation: slideInRight 0.4s ease-out forwards; }
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }
+.animate-bounce { animation: bounce 1s ease-in-out infinite; }
+.animate-shake { animation: shake 0.5s ease-in-out; }
+.animate-spin { animation: spin 1s linear infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-glow { animation: glowPulse 2s ease-in-out infinite; }
+
+/* Animation Delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-1000 { animation-delay: 1s; }
+
+/* ================================================
+   3. PAGE TRANSITIONS
+   ================================================ */
+
+/* Main content fade in on page load */
+main,
+.content-section,
+.checkout-page,
+.confirmation-page,
+.auth-container {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Staggered page elements */
+.page-header {
+  animation: fadeInDown 0.4s ease-out;
+}
+
+.page-content > * {
+  animation: fadeInUp 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.page-content > *:nth-child(1) { animation-delay: 0.1s; }
+.page-content > *:nth-child(2) { animation-delay: 0.15s; }
+.page-content > *:nth-child(3) { animation-delay: 0.2s; }
+.page-content > *:nth-child(4) { animation-delay: 0.25s; }
+.page-content > *:nth-child(5) { animation-delay: 0.3s; }
+
+/* ================================================
+   4. NAVIGATION ANIMATIONS
+   ================================================ */
+
+/* Navbar */
+.navbar {
+  animation: fadeInDown 0.4s ease-out;
+}
+
+.nav-link {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, hsl(217 91% 60%), hsl(263 70% 50%));
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+}
+
+/* ================================================
+   5. CARD ANIMATIONS
+   ================================================ */
+
+.card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+              0 0 30px rgba(99, 102, 241, 0.1);
+}
+
+/* Movie Card Specific */
+.movie-card {
+  animation: fadeInUp 0.5s ease-out both;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.movie-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+.movie-card:hover .movie-poster {
+  transform: scale(1.05);
+}
+
+.movie-poster {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Card Grid Stagger */
+.movie-grid .movie-card,
+.grid .card {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.movie-grid .movie-card:nth-child(1),
+.grid .card:nth-child(1) { animation-delay: 0.05s; }
+.movie-grid .movie-card:nth-child(2),
+.grid .card:nth-child(2) { animation-delay: 0.1s; }
+.movie-grid .movie-card:nth-child(3),
+.grid .card:nth-child(3) { animation-delay: 0.15s; }
+.movie-grid .movie-card:nth-child(4),
+.grid .card:nth-child(4) { animation-delay: 0.2s; }
+.movie-grid .movie-card:nth-child(5),
+.grid .card:nth-child(5) { animation-delay: 0.25s; }
+.movie-grid .movie-card:nth-child(6),
+.grid .card:nth-child(6) { animation-delay: 0.3s; }
+.movie-grid .movie-card:nth-child(7),
+.grid .card:nth-child(7) { animation-delay: 0.35s; }
+.movie-grid .movie-card:nth-child(8),
+.grid .card:nth-child(8) { animation-delay: 0.4s; }
+
+/* ================================================
+   6. BUTTON ANIMATIONS
+   ================================================ */
+
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Primary Button Glow */
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
+/* Ripple Effect */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+}
+
+.btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Icon in Button */
+.btn svg,
+.btn i {
+  transition: transform 0.3s ease;
+}
+
+.btn:hover svg,
+.btn:hover i {
+  transform: scale(1.1);
+}
+
+/* Arrow animation on hover */
+.btn:hover svg[class*="arrow"],
+.btn:hover .arrow-icon {
+  transform: translateX(3px);
+}
+
+/* ================================================
+   7. FORM ANIMATIONS
+   ================================================ */
+
+.input,
+.form-control,
+select,
+textarea {
+  transition: all 0.3s ease;
+}
+
+.input:focus,
+.form-control:focus,
+select:focus,
+textarea:focus {
+  transform: scale(1.01);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2),
+              0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Group Animation */
+.form-group {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.15s; }
+.form-group:nth-child(3) { animation-delay: 0.2s; }
+.form-group:nth-child(4) { animation-delay: 0.25s; }
+.form-group:nth-child(5) { animation-delay: 0.3s; }
+
+/* Label Animation */
+.form-group label {
+  transition: color 0.2s ease;
+}
+
+.form-group:focus-within label {
+  color: hsl(217 91% 60%);
+}
+
+/* Error Shake */
+.input-error,
+.form-control.is-invalid {
+  animation: shake 0.5s ease-in-out;
+  border-color: hsl(var(--destructive)) !important;
+}
+
+/* ================================================
+   8. SEAT SELECTION ANIMATIONS
+   ================================================ */
+
+.seat-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.seat-btn.seat-available:hover {
+  transform: scale(1.15);
+  z-index: 10;
+}
+
+.seat-btn.seat-selected {
+  animation: scaleInBounce 0.4s ease-out;
+}
+
+/* Seat Row Stagger */
+.seat-row {
+  animation: fadeInUp 0.3s ease-out both;
+}
+
+.seat-row:nth-child(1) { animation-delay: 0.05s; }
+.seat-row:nth-child(2) { animation-delay: 0.1s; }
+.seat-row:nth-child(3) { animation-delay: 0.15s; }
+.seat-row:nth-child(4) { animation-delay: 0.2s; }
+.seat-row:nth-child(5) { animation-delay: 0.25s; }
+.seat-row:nth-child(6) { animation-delay: 0.3s; }
+.seat-row:nth-child(7) { animation-delay: 0.35s; }
+.seat-row:nth-child(8) { animation-delay: 0.4s; }
+
+/* Selection Summary Slide In */
+.selection-summary {
+  animation: slideInUp 0.4s ease-out;
+}
+
+/* ================================================
+   9. CHECKOUT ANIMATIONS
+   ================================================ */
+
+.checkout-page,
+.payment-form-section,
+.order-summary {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.order-summary { animation-delay: 0.1s; }
+.payment-form-section { animation-delay: 0.2s; }
+
+/* Progress Steps */
+.step {
+  transition: all 0.3s ease;
+}
+
+.step.completed .step-icon {
+  animation: scaleInBounce 0.5s ease-out;
+}
+
+.step-line {
+  transition: background 0.5s ease;
+}
+
+/* ================================================
+   10. CONFIRMATION ANIMATIONS
+   ================================================ */
+
+.confirmation-page .success-icon {
+  animation: scaleInBounce 0.6s ease-out;
+}
+
+.confirmation-page h1 {
+  animation: fadeInUp 0.5s ease-out 0.3s both;
+}
+
+.confirmation-page .subtitle {
+  animation: fadeInUp 0.5s ease-out 0.4s both;
+}
+
+.ticket-display {
+  animation: fadeInUp 0.5s ease-out 0.5s both;
+}
+
+.ticket-display:hover {
+  transform: translateY(-4px) rotateX(2deg);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* ================================================
+   11. ALERT ANIMATIONS
+   ================================================ */
+
+.alert,
+.alert-success,
+.alert-danger,
+.alert-info,
+.alert-destructive {
+  animation: fadeInDown 0.4s ease-out;
+}
+
+/* Success Alert Pulse */
+.alert-success {
+  animation: fadeInDown 0.4s ease-out, glowPulse 2s ease-in-out 1s infinite;
+}
+
+/* ================================================
+   12. BADGE ANIMATIONS
+   ================================================ */
+
+.badge {
+  transition: all 0.2s ease;
+}
+
+.badge:hover {
+  transform: scale(1.05);
+}
+
+.badge-success {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ================================================
+   13. TABLE ANIMATIONS
+   ================================================ */
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  transform: translateX(2px);
+  background-color: rgba(99, 102, 241, 0.05) !important;
+}
+
+/* Table Row Stagger */
+.table tbody tr {
+  animation: fadeInLeft 0.3s ease-out both;
+}
+
+.table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+.table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+.table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+.table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+.table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+
+/* ================================================
+   14. MODAL ANIMATIONS
+   ================================================ */
+
+.modal-backdrop {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* ================================================
+   15. LOADING ANIMATIONS
+   ================================================ */
+
+.loading,
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+.skeleton {
+  animation: shimmer 2s linear infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+}
+
+/* Loading Dots */
+.loading-dots span {
+  animation: bounce 1.4s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+/* ================================================
+   16. LINK ANIMATIONS
+   ================================================ */
+
+a {
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+a:hover {
+  color: hsl(217 91% 60%);
+}
+
+/* Underline Animation */
+.link-animated {
+  position: relative;
+}
+
+.link-animated::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+
+.link-animated:hover::after {
+  width: 100%;
+}
+
+/* ================================================
+   17. IMAGE ANIMATIONS
+   ================================================ */
+
+img {
+  transition: transform 0.4s ease, opacity 0.3s ease;
+}
+
+.img-hover-zoom {
+  overflow: hidden;
+}
+
+.img-hover-zoom img,
+.img-hover-zoom .movie-poster-img {
+  transition: transform 0.5s ease;
+}
+
+.img-hover-zoom:hover img,
+.img-hover-zoom:hover .movie-poster-img {
+  transform: scale(1.1);
+}
+
+/* Image Fade In */
+img[loading="lazy"] {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* ================================================
+   18. HERO SECTION ANIMATIONS
+   ================================================ */
+
+.hero,
+.featured-movie {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.hero-title,
+.featured-title {
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.hero-description,
+.featured-description {
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+.hero-buttons,
+.featured-buttons {
+  animation: fadeInUp 0.6s ease-out 0.6s both;
+}
+
+/* ================================================
+   19. ICON ANIMATIONS
+   ================================================ */
+
+.icon-animated {
+  transition: transform 0.3s ease;
+}
+
+.icon-animated:hover {
+  transform: scale(1.2) rotate(5deg);
+}
+
+/* Checkmark Animation */
+.icon-success {
+  animation: scaleInBounce 0.5s ease-out;
+}
+
+/* ================================================
+   20. TOOLTIP ANIMATIONS
+   ================================================ */
+
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-5px);
+}
+
+/* ================================================
+   21. REDUCED MOTION SUPPORT
+   ================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

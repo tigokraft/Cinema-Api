@@ -1,6 +1,7 @@
 /* Site-wide styles - shadcn/ui-inspired */
 
 @import url('./shadcn.css');
+@import url('./animations.css');
 
 /* Override for light mode on public site */
 body {
