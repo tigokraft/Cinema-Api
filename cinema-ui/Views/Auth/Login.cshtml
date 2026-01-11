@@ -6,9 +6,9 @@
 
 <div class="auth-container">
     <div class="auth-box">
-        <div class="auth-logo">CINEMA</div>
-        <h1 class="auth-title">Sign in to your account</h1>
-        <p class="auth-subtitle">Enter your credentials below</p>
+        <h1 class="auth-logo">CINEMA</h1>
+        <h2 class="auth-title">Welcome back</h2>
+        <p class="auth-subtitle">Sign in to continue to your account</p>
         
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
@@ -22,12 +22,14 @@
 
         <form asp-action="Login" method="post" class="auth-form">
             <div class="form-group">
-                <input asp-for="EmailOrUsername" class="form-control" placeholder="Email or username" required autocomplete="username" />
+                <label>Email or Username</label>
+                <input asp-for="EmailOrUsername" class="form-control" placeholder="Enter your email or username" required autocomplete="username" />
                 <span asp-validation-for="EmailOrUsername" class="text-danger"></span>
             </div>
             
             <div class="form-group">
-                <input asp-for="Password" type="password" class="form-control" placeholder="Password" required autocomplete="current-password" />
+                <label>Password</label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             

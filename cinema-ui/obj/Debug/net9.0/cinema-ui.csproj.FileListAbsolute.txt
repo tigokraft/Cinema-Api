@@ -23,7 +23,6 @@
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/scopedcss/bundle/cinema-ui.styles.css
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/scopedcss/projectbundle/cinema-ui.bundle.scp.css
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/n886cej742-{0}-24yuiotwyy-24yuiotwyy.gz
-/home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/1o97tlvdyj-{0}-kw7ky9havu-kw7ky9havu.gz
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/9f96620o1z-{0}-jm6vq1r0f5-jm6vq1r0f5.gz
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/y3ukizdv3e-{0}-8wv65jzwtr-8wv65jzwtr.gz
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/w0y62ztg62-{0}-1noewccul5-1noewccul5.gz
@@ -104,3 +103,4 @@
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/cinema-ui.genruntimeconfig.cache
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/ref/cinema-ui.dll
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/fa0a3asb1r-{0}-v8esj8atvj-v8esj8atvj.gz
+/home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/1o97tlvdyj-{0}-y5kbl7m3x3-y5kbl7m3x3.gz

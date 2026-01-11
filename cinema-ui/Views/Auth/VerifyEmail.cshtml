@@ -6,9 +6,9 @@
 
 <div class="auth-container">
     <div class="auth-box">
-        <div class="auth-logo">CINEMA</div>
-        <h1 class="auth-title">Verify your email</h1>
-        <p class="auth-subtitle">Enter the code sent to <strong style="color: #fff;">@Model.Email</strong></p>
+        <h1 class="auth-logo">CINEMA</h1>
+        <h2 class="auth-title">Verify your email</h2>
+        <p class="auth-subtitle">We sent a code to <strong>@Model.Email</strong></p>
 
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
@@ -27,6 +27,7 @@
             <input type="hidden" asp-for="Username" />
             
             <div class="form-group">
+                <label>Verification Code</label>
                 <input type="text" 
                        asp-for="EnteredCode" 
                        class="code-input" 
@@ -38,16 +39,16 @@
                        required />
             </div>
             
-            <button type="submit" class="btn-auth">Verify</button>
+            <button type="submit" class="btn-auth">Verify Email</button>
         </form>
         
-        <p class="auth-footer" style="margin-top: 24px; color: #666; font-size: 12px;">
-            Code expires in 15 minutes
+        <p class="auth-footer" style="margin-top: 16px;">
+            <small style="color: hsl(var(--muted-foreground));">Code expires in 15 minutes</small>
         </p>
         
         <div class="divider">or</div>
         
-        <form asp-action="ResendVerification" method="post" style="margin: 0;">
+        <form asp-action="ResendVerification" method="post">
             <input type="hidden" name="userId" value="@Model.UserId" />
             <button type="submit" class="btn-auth btn-auth-secondary">Resend Code</button>
         </form>

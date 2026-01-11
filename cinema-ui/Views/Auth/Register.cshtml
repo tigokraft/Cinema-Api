@@ -6,9 +6,9 @@
 
 <div class="auth-container">
     <div class="auth-box">
-        <div class="auth-logo">CINEMA</div>
-        <h1 class="auth-title">Create your account</h1>
-        <p class="auth-subtitle">Start your cinema journey</p>
+        <h1 class="auth-logo">CINEMA</h1>
+        <h2 class="auth-title">Create an account</h2>
+        <p class="auth-subtitle">Get started with your movie journey</p>
         
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
@@ -17,17 +17,20 @@
 
         <form asp-action="Register" method="post" class="auth-form">
             <div class="form-group">
-                <input asp-for="Email" type="email" class="form-control" placeholder="Email address" required autocomplete="email" />
+                <label>Email Address</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="Enter your email" required autocomplete="email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             
             <div class="form-group">
-                <input asp-for="Password" type="password" class="form-control" placeholder="Password" required autocomplete="new-password" />
+                <label>Password</label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Create a password" required autocomplete="new-password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             
             <div class="form-group">
-                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm password" required autocomplete="new-password" />
+                <label>Confirm Password</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm your password" required autocomplete="new-password" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
             
