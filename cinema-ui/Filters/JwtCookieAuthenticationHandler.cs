@@ -99,5 +99,13 @@ public class JwtCookieAuthenticationHandler : AuthenticationHandler<Authenticati
             return Task.FromResult(AuthenticateResult.NoResult());
         }
     }
+
+    protected override Task HandleChallengeAsync(AuthenticationProperties properties)
+    {
+        // Redirect to login page with the return URL
+        var returnUrl = Request.Path + Request.QueryString;
+        Response.Redirect($"/Auth/Login?returnUrl={Uri.EscapeDataString(returnUrl)}");
+        return Task.CompletedTask;
+    }
 }
 

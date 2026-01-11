@@ -16,16 +16,18 @@ public class AuthController : Controller
     }
 
     [HttpGet]
-    public IActionResult Login()
+    public IActionResult Login(string? returnUrl = null)
     {
+        ViewBag.ReturnUrl = returnUrl;
         return View(new LoginViewModel());
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model)
+    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
         if (!ModelState.IsValid)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View(model);
         }
 
@@ -45,9 +47,15 @@ public class AuthController : Controller
             // Set token in API service for subsequent requests
             _apiService.SetAuthToken(response.Token);
 
+            // Redirect to returnUrl if provided and valid, otherwise home
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return LocalRedirect(returnUrl);
+            }
             return RedirectToAction("Index", "Home");
         }
 
+        ViewBag.ReturnUrl = returnUrl;
         model.ErrorMessage = "Invalid email/username or password. If you just registered, please verify your email first.";
         return View(model);
     }

@@ -20,7 +20,7 @@
             <div class="alert-success">@TempData["SuccessMessage"]</div>
         }
 
-        <form asp-action="Login" method="post" class="auth-form">
+        <form asp-action="Login" asp-route-returnUrl="@ViewBag.ReturnUrl" method="post" class="auth-form">
             <div class="form-group">
                 <label>Email or Username</label>
                 <input asp-for="EmailOrUsername" class="form-control" placeholder="Enter your email or username" required autocomplete="username" />
