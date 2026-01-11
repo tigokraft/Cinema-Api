@@ -821,6 +821,23 @@ public class AdminApiService
         return response.IsSuccessStatusCode;
     }
 
+    public async Task<PromoCodeValidationResult> ValidatePromoCodeAsync(string code, decimal? purchaseAmount)
+    {
+        var url = $"{ApiBaseUrl}/PromoCode/validate/{Uri.EscapeDataString(code)}";
+        if (purchaseAmount.HasValue)
+            url += $"?purchaseAmount={purchaseAmount}";
+        
+        var response = await _httpClient.GetAsync(url);
+        if (response.IsSuccessStatusCode)
+        {
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<PromoCodeValidationResult>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
+                ?? new PromoCodeValidationResult { IsValid = false, ErrorMessage = "Invalid response" };
+        }
+        
+        return new PromoCodeValidationResult { IsValid = false, ErrorMessage = "Could not validate code" };
+    }
+
     // Audit Log Methods
     public async Task<AuditLogListDto?> GetAuditLogsAsync(string? action = null, string? entityType = null, int? userId = null, DateTime? from = null, DateTime? to = null, int page = 1, int pageSize = 50)
     {
@@ -1393,3 +1410,12 @@ public class AuditLogResponseDto
     public string? IpAddress { get; set; }
     public DateTime Timestamp { get; set; }
 }
+
+public class PromoCodeValidationResult
+{
+    public bool IsValid { get; set; }
+    public string? ErrorMessage { get; set; }
+    public decimal DiscountPercent { get; set; }
+    public decimal? MaxDiscountAmount { get; set; }
+}
+
