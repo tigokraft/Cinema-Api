@@ -228,8 +228,24 @@ public class TicketController : Controller
             return RedirectToAction("Tickets", "Profile");
         }
 
-        return View(ticket);
+        var profile = await _apiService.GetUserProfileAsync();
+        
+        var viewModel = new TicketConfirmationViewModel
+        {
+            Ticket = ticket,
+            UserEmail = profile?.Email ?? "",
+            UserName = $"{profile?.FirstName} {profile?.LastName}".Trim()
+        };
+
+        return View(viewModel);
     }
+}
+
+public class TicketConfirmationViewModel
+{
+    public Ticket Ticket { get; set; } = null!;
+    public string UserEmail { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
 }
 
 public class MovieDetailViewModel
