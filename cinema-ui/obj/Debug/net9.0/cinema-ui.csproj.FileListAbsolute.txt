@@ -103,4 +103,4 @@
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/cinema-ui.pdb
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/cinema-ui.genruntimeconfig.cache
 /home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/ref/cinema-ui.dll
-/home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/fa0a3asb1r-{0}-tuwi7wrewe-tuwi7wrewe.gz
+/home/exxo/code/cinema-api/cinema-ui/obj/Debug/net9.0/compressed/fa0a3asb1r-{0}-v8esj8atvj-v8esj8atvj.gz
